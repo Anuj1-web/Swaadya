@@ -842,6 +842,21 @@ ul {
 
 /* CSS PACK */
 
+.product-image > img.product-real-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    padding: 0;
+}
+
+.product-image.image-fallback::before {
+    content: "SWAADYA";
+    color: var(--green-700);
+    font-family: Georgia, serif;
+    font-size: 24px;
+    font-weight: 700;
+}
+
 .product-pack {
     position: relative;
 
@@ -1018,6 +1033,13 @@ ul {
     color: var(--ink);
 
     outline: none;
+}
+
+.selected-net-quantity {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
 }
 
 .product-price {
@@ -1541,6 +1563,7 @@ ul {
 .cart-thumbnail {
     width: 62px;
     height: 72px;
+    overflow: hidden;
 
     display: grid;
     place-items: center;
@@ -2958,7 +2981,7 @@ ul {
             target="_blank"
             rel="noopener"
         >
-            Follow @SWAADYA_USERNAME
+            Follow @Swaadya_01
         </a>
 
     </div>
@@ -3008,7 +3031,7 @@ ul {
                     class="contact-value"
                     id="contactEmail"
                 >
-                    [EMAIL TO BE ADDED]
+                    supportswaadya@gmail.com
                 </div>
 
                 <div class="contact-description">
@@ -3028,7 +3051,7 @@ ul {
                     class="contact-value"
                     id="contactWhatsApp"
                 >
-                    [WHATSAPP NUMBER]
+                    7878426819
                 </div>
 
                 <div class="contact-description">
@@ -3049,7 +3072,7 @@ ul {
                 </div>
 
                 <div class="contact-description">
-                    [BUSINESS ADDRESS TO BE ADDED]
+                    Jaipur, Rajasthan
                 </div>
 
             </div>
@@ -3193,16 +3216,13 @@ ul {
                     Instagram
                 </a>
 
-                <a
-                    href="#"
-                    class="footer-link"
-                >
-                    YouTube
-                </a>
+                <span class="footer-link" title="YouTube link will be added later">
+                    YouTube — link coming soon
+                </span>
 
                 <p class="footer-link">
                     Customer Care:
-                    [CONTACT NUMBER TO BE ADDED]
+                    7878426819
                 </p>
 
             </div>
@@ -3612,6 +3632,9 @@ ul {
 
    Do NOT put payment gateway secret keys here.
 
+   Product prices are in CONFIG.products[].prices for each size.
+   Change only those values when you are ready to publish prices.
+
    ========================================================= */
 
 
@@ -3624,31 +3647,43 @@ const CONFIG = {
         "The Taste of Real Spices",
 
     email:
-        "[supportswaadya@gmail.com]",
+        "supportswaadya@gmail.com",
 
     whatsapp:
-        "[7878426819]",
+        "7878426819",
 
     instagram:
         "Swaadya_01",
 
     youtube:
-        "[YOUTUBE LINK]",
+        "[YOUTUBE LINK TO BE ADDED]",
 
     address:
-        "[Jaipur, Rajasthan]",
+        "Jaipur, Rajasthan",
 
     contactNumber:
-        "[7878426819]",
+        "7878426819",
 
     fssai:
-        "[FSSAI NUMBER TO BE ADDED]",
+        "[TO BE ADDED]",
 
-    shipping:
-        "₹50",
+    manufacturerAddress:
+        "Jaipur, Rajasthan",
 
-    freeShipping:
-        "₹500",
+    batchNumber:
+        "[TO BE ADDED]",
+
+    shelfLife:
+        "18 months",
+
+    shippingMin:
+        50,
+
+    shippingMax:
+        70,
+
+    freeShippingThreshold:
+        500,
 
 
     /* =====================================================
@@ -3676,6 +3711,9 @@ const CONFIG = {
 
             imageClass:
                 "red",
+
+            image:
+                "https://github.com/Anuj1-web/Swaadya/blob/main/ChatGPT%20Image%20Aug%208,%202026,%2008_33_08%20PM.png?raw=true",
 
             emoji:
                 "🌶️",
@@ -3729,16 +3767,19 @@ const CONFIG = {
             imageClass:
                 "yellow",
 
+            image:
+                "https://github.com/Anuj1-web/Swaadya/blob/main/ChatGPT%20Image%20Aug%208,%202026,%2008_33_14%20PM.png?raw=true",
+
             emoji:
                 "🌕",
 
             prices: {
 
                 250:
-                    "50",
+                    "60",
 
                 500:
-                    "95"
+                    "120"
 
             },
 
@@ -3780,6 +3821,9 @@ const CONFIG = {
 
             imageClass:
                 "green",
+
+            image:
+                "https://github.com/Anuj1-web/Swaadya/blob/main/ChatGPT%20Image%20Aug%208,%202026,%2008_33_18%20PM.png?raw=true",
 
             emoji:
                 "🌿",
@@ -3934,37 +3978,13 @@ function renderProducts() {
                         "
                     >
 
-                        <div
-                            class="product-pack"
-                            aria-label="${product.name} placeholder"
+                        <img
+                            class="product-real-image"
+                            src="${product.image}"
+                            alt="${product.name}"
+                            loading="lazy"
+                            onerror="this.onerror=null; this.style.display='none'; this.parentElement.classList.add('image-fallback');"
                         >
-
-                            <div
-                                class="pack-brand"
-                            >
-                                SWAADYA
-                            </div>
-
-                            <div
-                                class="pack-line"
-                            >
-                            </div>
-
-                            <div
-                                class="pack-product"
-                            >
-                                ${product.name
-                                    .replace("Swaadya ", "")
-                                }
-                            </div>
-
-                            <div
-                                class="pack-small"
-                            >
-                                THE TASTE OF REAL SPICES
-                            </div>
-
-                        </div>
 
                     </div>
 
@@ -4024,11 +4044,14 @@ function renderProducts() {
                             </div>
 
 
-                            <div
-                                class="product-price"
-                                id="price-${product.id}"
-                            >
-                                ${formatPrice(firstPrice)}
+                            <div>
+                                <div
+                                    class="product-price"
+                                    id="price-${product.id}"
+                                >
+                                    ${formatPrice(firstPrice)}
+                                </div>
+                                <div class="selected-net-quantity" id="net-${product.id}">Net Quantity: 250g</div>
                             </div>
 
 
@@ -4111,6 +4134,11 @@ function updateProductPrice(
     $("price-" + productId)
         .textContent =
         formatPrice(price);
+
+    const netQuantity = $("net-" + productId);
+    if (netQuantity) {
+        netQuantity.textContent = "Net Quantity: " + select.value + "g";
+    }
 
 }
 
@@ -4266,6 +4294,15 @@ function getCartTotal() {
 }
 
 
+function getShippingCharge(subtotal) {
+    return subtotal >= CONFIG.freeShippingThreshold ? 0 : CONFIG.shippingMin;
+}
+
+function formatShipping(subtotal) {
+    const shipping = getShippingCharge(subtotal);
+    return shipping === 0 ? "FREE" : formatPrice(shipping);
+}
+
 /* =========================================================
    CART RENDER
    ========================================================= */
@@ -4341,10 +4378,8 @@ function renderCart() {
                 >
 
 
-                    <div
-                        class="cart-thumbnail"
-                    >
-                        ${product.emoji}
+                    <div class="cart-thumbnail">
+                        <img src="${product.image}" alt="${product.name}" onerror="this.onerror=null; this.style.display='none'; this.parentElement.textContent='S';">
                     </div>
 
 
@@ -4435,22 +4470,17 @@ function renderCart() {
     $("cartFooter")
         .innerHTML = `
 
-            <div
-                class="cart-total-line"
-            >
-
-                <span>
-                    Subtotal
-                </span>
-
-                <span>
-                    ${
-                        total > 0
-                        ? formatPrice(total)
-                        : "₹XX"
-                    }
-                </span>
-
+            <div class="cart-total-line">
+                <span>Subtotal</span>
+                <span>${total > 0 ? formatPrice(total) : "₹XX"}</span>
+            </div>
+            <div class="cart-total-line">
+                <span>Shipping</span>
+                <span>${formatShipping(total)}</span>
+            </div>
+            <div class="cart-total-line">
+                <span>Total</span>
+                <span>${total > 0 ? formatPrice(total + getShippingCharge(total)) : "₹XX"}</span>
             </div>
 
 
@@ -4612,38 +4642,10 @@ function openCheckout() {
     $("checkoutSummary")
         .innerHTML = `
 
-            <div
-                class="cart-total-line"
-            >
-
-                <span>
-                    Total Items
-                </span>
-
-                <span>
-                    ${quantity}
-                </span>
-
-            </div>
-
-
-            <div
-                class="cart-total-line"
-            >
-
-                <span>
-                    Subtotal
-                </span>
-
-                <span>
-                    ${
-                        total > 0
-                        ? formatPrice(total)
-                        : "₹XX"
-                    }
-                </span>
-
-            </div>
+            <div class="cart-total-line"><span>Total Items</span><span>${quantity}</span></div>
+            <div class="cart-total-line"><span>Subtotal</span><span>${total > 0 ? formatPrice(total) : "₹XX"}</span></div>
+            <div class="cart-total-line"><span>Shipping</span><span>${formatShipping(total)}</span></div>
+            <div class="cart-total-line"><span>Total</span><span>${total > 0 ? formatPrice(total + getShippingCharge(total)) : "₹XX"}</span></div>
 
         `;
 
@@ -4752,9 +4754,11 @@ $("checkoutForm")
             getCartTotal();
 
 
+        const shipping = getShippingCharge(total);
+        const grandTotal = total + shipping;
         const totalText =
             total > 0
-            ? formatPrice(total)
+            ? formatPrice(grandTotal)
             : "₹XX";
 
 
@@ -4901,39 +4905,12 @@ function showProductDetails(
                     "
                 >
 
-                    <div
-                        class="product-pack"
+                    <img
+                        class="product-real-image"
+                        src="${product.image}"
+                        alt="${product.name}"
+                        onerror="this.onerror=null; this.style.display='none'; this.parentElement.classList.add('image-fallback');"
                     >
-
-                        <div
-                            class="pack-brand"
-                        >
-                            SWAADYA
-                        </div>
-
-                        <div
-                            class="pack-line"
-                        >
-                        </div>
-
-                        <div
-                            class="pack-product"
-                        >
-                            ${product.name
-                                .replace(
-                                    "Swaadya ",
-                                    ""
-                                )
-                            }
-                        </div>
-
-                        <div
-                            class="pack-small"
-                        >
-                            THE TASTE OF REAL SPICES
-                        </div>
-
-                    </div>
 
                 </div>
 
@@ -4982,65 +4959,26 @@ function showProductDetails(
                         </li>
 
                         <li>
-                            <strong>
-                                Batch Information:
-                            </strong>
-                            [BATCH INFORMATION TO BE ADDED]
-                        </li>
-
-                        <li>
-                            <strong>
-                                Shelf Life:
-                            </strong>
-                            [SHELF LIFE TO BE ADDED]
-                        </li>
-
-                        <li>
-                            <strong>
-                                FSSAI:
-                            </strong>
-                            ${CONFIG.fssai}
+                            <strong>Shelf Life:</strong>
+                            ${CONFIG.shelfLife}
                         </li>
 
                     </ul>
 
 
-                    <div
-                        style="
-                            margin-top:20px;
-                            display:flex;
-                            gap:8px;
-                            flex-wrap:wrap;
-                        "
-                    >
-
-                        <button
-                            class="btn btn-primary"
-                            onclick="
-                                addToCart(
-                                    '${product.id}',
-                                    '250'
-                                );
-                                closeInfoModal();
-                            "
-                        >
-                            Add 250g
-                        </button>
-
-
-                        <button
-                            class="btn btn-secondary"
-                            onclick="
-                                addToCart(
-                                    '${product.id}',
-                                    '500'
-                                );
-                                closeInfoModal();
-                            "
-                        >
-                            Add 500g
-                        </button>
-
+                    <div style="margin-top:20px; display:flex; gap:10px; align-items:end; flex-wrap:wrap;">
+                        <div>
+                            <label class="field-label" for="detail-size-${product.id}">SIZE</label>
+                            <select class="size-select" id="detail-size-${product.id}" onchange="updateDetailSelection('${product.id}')">
+                                <option value="250">250g</option>
+                                <option value="500">500g</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div class="field-label">PRICE</div>
+                            <div class="product-price" id="detail-price-${product.id}">${formatPrice(product.prices[250])}</div>
+                        </div>
+                        <button class="btn btn-primary" onclick="addDetailToCart('${product.id}')">Add to Cart</button>
                     </div>
 
                 </div>
@@ -5068,38 +5006,15 @@ function showProductDetails(
 
                 <br><br>
 
-                Net Quantity:
-                [NET QUANTITY TO BE ADDED]
+                Net Quantity: <span id="detailNetQuantity">250g</span>
 
                 <br>
 
-                Batch/Lot Number:
-                [BATCH/LOT NUMBER TO BE ADDED]
+                Shelf Life: ${CONFIG.shelfLife}
 
                 <br>
 
-                Date of Packing:
-                [DATE OF PACKING TO BE ADDED]
-
-                <br>
-
-                Best Before:
-                [BEST BEFORE TO BE ADDED]
-
-                <br>
-
-                MRP:
-                [MRP TO BE ADDED]
-
-                <br>
-
-                Manufacturer/Packer:
-                [MANUFACTURER/PACKER TO BE ADDED]
-
-                <br>
-
-                Address:
-                [BUSINESS ADDRESS TO BE ADDED]
+                Manufacturer/Packer/Business Address: ${CONFIG.manufacturerAddress}
 
             </div>
 
@@ -5114,6 +5029,22 @@ function showProductDetails(
 
 }
 
+
+function updateDetailSelection(productId) {
+    const product = CONFIG.products.find(item => item.id === productId);
+    const select = $("detail-size-" + productId);
+    const net = $("detailNetQuantity");
+    const price = $("detail-price-" + productId);
+    if (!product || !select) return;
+    if (net) net.textContent = select.value + "g";
+    if (price) price.textContent = formatPrice(product.prices[select.value]);
+}
+
+function addDetailToCart(productId) {
+    const select = $("detail-size-" + productId);
+    addToCart(productId, select ? select.value : "250");
+    closeInfoModal();
+}
 
 /* =========================================================
    INFO MODAL
@@ -5206,21 +5137,20 @@ const POLICY_CONTENT = {
             <strong>
                 Local Shipping:
             </strong>
-            ₹XX
+            ₹50–₹70
         </p>
 
         <p>
             <strong>
                 Free Shipping Above:
             </strong>
-            ₹XXX
+            ₹500
         </p>
 
         <br>
 
         <p>
-            These values are placeholders and must be
-            configured before launch.
+            Orders below ₹500: applicable local shipping charge (default ₹50). Orders of ₹500 or more: free shipping.
         </p>
 
     `,
@@ -5524,3 +5454,4 @@ renderCart();
 
 </body>
 </html>
+
