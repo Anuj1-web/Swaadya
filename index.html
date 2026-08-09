@@ -2192,73 +2192,139 @@ ul {
     }
 
 }
-      /* =========================================================
-   SWAADYA AUTH BUTTONS
+   <style>
+<style>
+/* =========================================================
+   SWAADYA LOGIN / SIGNUP BUTTONS
+   FIXED HEADER-RIGHT POSITION
+   Login + Sign Up → immediately left of Cart
    ========================================================= */
 
 .swaadya-auth-buttons {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-left: 18px;
-    flex-shrink: 0;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+
+    gap: 8px !important;
+
+    /* IMPORTANT:
+       Do not allow this block to create a new row */
+    position: absolute !important;
+
+    right: 70px !important;
+    top: 50% !important;
+
+    transform: translateY(-50%) !important;
+
+    width: max-content !important;
+    height: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    z-index: 999 !important;
+
+    white-space: nowrap !important;
 }
 
-.swaadya-auth-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
 
-    min-height: 40px;
-    padding: 0 17px;
+/* =========================================================
+   LOGIN
+   ========================================================= */
 
-    border-radius: 999px;
+.swaadya-login-btn {
+    display: inline-flex !important;
 
-    text-decoration: none;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 600;
+    align-items: center !important;
+    justify-content: center !important;
 
-    white-space: nowrap;
+    min-width: 70px !important;
+    height: 38px !important;
 
-    cursor: pointer;
+    padding: 0 15px !important;
+
+    border: 1px solid currentColor !important;
+    border-radius: 999px !important;
+
+    background: transparent !important;
+
+    color: inherit !important;
+
+    text-decoration: none !important;
+
+    font-family: inherit !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+
+    line-height: 1 !important;
+
+    white-space: nowrap !important;
+
+    cursor: pointer !important;
+
+    box-sizing: border-box !important;
 
     transition:
         transform 0.2s ease,
         box-shadow 0.2s ease,
-        background 0.2s ease,
-        color 0.2s ease,
-        border-color 0.2s ease;
-}
-
-/* Login */
-
-.swaadya-login-btn {
-    background: transparent;
-    color: inherit;
-    border: 1px solid currentColor;
+        background 0.2s ease !important;
 }
 
 .swaadya-login-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.12);
+
+    box-shadow:
+        0 5px 16px rgba(0, 0, 0, 0.12);
 }
 
-/* Sign Up */
+
+/* =========================================================
+   SIGN UP
+   ========================================================= */
 
 .swaadya-signup-btn {
-    color: #fff;
-    background: linear-gradient(
-        135deg,
-        #8b1e1e,
-        #b83232
-    );
+    display: inline-flex !important;
 
-    border: 1px solid transparent;
+    align-items: center !important;
+    justify-content: center !important;
+
+    min-width: 78px !important;
+    height: 38px !important;
+
+    padding: 0 16px !important;
+
+    border: 1px solid transparent !important;
+    border-radius: 999px !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #8b1e1e,
+            #b83232
+        ) !important;
+
+    color: #ffffff !important;
+
+    text-decoration: none !important;
+
+    font-family: inherit !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+
+    line-height: 1 !important;
+
+    white-space: nowrap !important;
+
+    cursor: pointer !important;
+
+    box-sizing: border-box !important;
 
     box-shadow:
         0 5px 16px rgba(139, 30, 30, 0.18);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease !important;
 }
 
 .swaadya-signup-btn:hover {
@@ -2268,12 +2334,80 @@ ul {
         0 8px 22px rgba(139, 30, 30, 0.28);
 }
 
-/* Keyboard focus */
+
+/* =========================================================
+   FOCUS
+   ========================================================= */
 
 .swaadya-auth-btn:focus-visible {
     outline: 3px solid rgba(184, 50, 50, 0.25);
     outline-offset: 3px;
 }
+
+
+/* =========================================================
+   IMPORTANT HEADER FIX
+   ========================================================= */
+
+/*
+   Make the existing header the positioning reference.
+   This does NOT change the existing header design.
+*/
+
+header {
+    position: relative;
+}
+
+
+/*
+   If the project uses one of these common header wrappers,
+   make it a positioning reference as well.
+*/
+
+header .header,
+header .navbar,
+header .nav-container,
+header .header-container,
+header .container {
+    position: relative;
+}
+
+
+/* =========================================================
+   DESKTOP
+   ========================================================= */
+
+@media (min-width: 1101px) {
+
+    .swaadya-auth-buttons {
+        right: 75px !important;
+    }
+}
+
+
+/* =========================================================
+   LAPTOP / TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) and (min-width: 769px) {
+
+    .swaadya-auth-buttons {
+        right: 65px !important;
+
+        gap: 6px !important;
+    }
+
+    .swaadya-login-btn,
+    .swaadya-signup-btn {
+        height: 36px !important;
+
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+
+        font-size: 13px !important;
+    }
+}
+
 
 /* =========================================================
    MOBILE
@@ -2282,30 +2416,53 @@ ul {
 @media (max-width: 768px) {
 
     .swaadya-auth-buttons {
-        gap: 6px;
-        margin-left: 8px;
+        right: 52px !important;
+
+        gap: 4px !important;
     }
 
-    .swaadya-auth-btn {
-        min-height: 36px;
-        padding: 0 12px;
-        font-size: 13px;
+    .swaadya-login-btn {
+        min-width: 55px !important;
+        height: 32px !important;
+
+        padding: 0 8px !important;
+
+        font-size: 11px !important;
+    }
+
+    .swaadya-signup-btn {
+        min-width: 62px !important;
+        height: 32px !important;
+
+        padding: 0 9px !important;
+
+        font-size: 11px !important;
     }
 }
 
-/* Very small screens */
 
-@media (max-width: 420px) {
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 400px) {
 
     .swaadya-auth-buttons {
-        gap: 5px;
-        margin-left: 5px;
+        right: 48px !important;
+
+        gap: 3px !important;
     }
 
-    .swaadya-auth-btn {
-        min-height: 34px;
-        padding: 0 9px;
-        font-size: 12px;
+    .swaadya-login-btn,
+    .swaadya-signup-btn {
+        height: 30px !important;
+
+        min-width: auto !important;
+
+        padding-left: 7px !important;
+        padding-right: 7px !important;
+
+        font-size: 10px !important;
     }
 }
 
@@ -2333,6 +2490,9 @@ ul {
 
     <div class="container navbar">
 
+
+        <!-- MOBILE MENU -->
+
         <button
             class="icon-button mobile-menu-button"
             id="mobileMenuButton"
@@ -2343,7 +2503,12 @@ ul {
         </button>
 
 
-        <a href="#home" class="brand">
+        <!-- BRAND -->
+
+        <a
+            href="#home"
+            class="brand"
+        >
 
             <span class="brand-mark">
                 S
@@ -2353,6 +2518,8 @@ ul {
 
         </a>
 
+
+        <!-- DESKTOP NAVIGATION -->
 
         <nav class="desktop-nav">
 
@@ -2379,7 +2546,37 @@ ul {
         </nav>
 
 
+        <!-- =================================================
+             RIGHT SIDE HEADER ACTIONS
+             LOGIN → SIGN UP → CART
+             ================================================= -->
+
         <div class="header-actions">
+
+
+            <!-- LOGIN / SIGNUP -->
+
+            <div class="swaadya-auth-buttons">
+
+                <a
+                    href="login.html"
+                    class="swaadya-auth-btn swaadya-login-btn"
+                >
+                    Login
+                </a>
+
+
+                <a
+                    href="signup.html"
+                    class="swaadya-auth-btn swaadya-signup-btn"
+                >
+                    Sign Up
+                </a>
+
+            </div>
+
+
+            <!-- EXISTING CART -->
 
             <button
                 class="icon-button"
@@ -2398,10 +2595,15 @@ ul {
 
             </button>
 
+
         </div>
 
     </div>
 
+
+    <!-- =====================================================
+         MOBILE NAVIGATION
+         ===================================================== -->
 
     <div
         class="mobile-nav"
@@ -2429,25 +2631,8 @@ ul {
         </a>
 
     </div>
-      <!-- =========================================================
-     SWAADYA AUTH BUTTONS
-     Login + Signup
-     ========================================================= -->
-
-<div class="swaadya-auth-buttons" id="swaadyaAuthButtons">
-
-    <a href="login.html" class="swaadya-auth-btn swaadya-login-btn">
-        Login
-    </a>
-
-    <a href="signup.html" class="swaadya-auth-btn swaadya-signup-btn">
-        Sign Up
-    </a>
-
-</div>
 
 </header>
-
 
 <!-- =======================================================
      MAIN
