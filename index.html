@@ -2192,280 +2192,10 @@ ul {
     }
 
 }
-   <style>
-<style>
-/* =========================================================
-   SWAADYA LOGIN / SIGNUP BUTTONS
-   FIXED HEADER-RIGHT POSITION
-   Login + Sign Up → immediately left of Cart
-   ========================================================= */
 
-.swaadya-auth-buttons {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-end !important;
 
-    gap: 8px !important;
-
-    /* IMPORTANT:
-       Do not allow this block to create a new row */
-    position: absolute !important;
-
-    right: 70px !important;
-    top: 50% !important;
-
-    transform: translateY(-50%) !important;
-
-    width: max-content !important;
-    height: auto !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    z-index: 999 !important;
-
-    white-space: nowrap !important;
-}
-
-
-/* =========================================================
-   LOGIN
-   ========================================================= */
-
-.swaadya-login-btn {
-    display: inline-flex !important;
-
-    align-items: center !important;
-    justify-content: center !important;
-
-    min-width: 70px !important;
-    height: 38px !important;
-
-    padding: 0 15px !important;
-
-    border: 1px solid currentColor !important;
-    border-radius: 999px !important;
-
-    background: transparent !important;
-
-    color: inherit !important;
-
-    text-decoration: none !important;
-
-    font-family: inherit !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-
-    line-height: 1 !important;
-
-    white-space: nowrap !important;
-
-    cursor: pointer !important;
-
-    box-sizing: border-box !important;
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease !important;
-}
-
-.swaadya-login-btn:hover {
-    transform: translateY(-1px);
-
-    box-shadow:
-        0 5px 16px rgba(0, 0, 0, 0.12);
-}
-
-
-/* =========================================================
-   SIGN UP
-   ========================================================= */
-
-.swaadya-signup-btn {
-    display: inline-flex !important;
-
-    align-items: center !important;
-    justify-content: center !important;
-
-    min-width: 78px !important;
-    height: 38px !important;
-
-    padding: 0 16px !important;
-
-    border: 1px solid transparent !important;
-    border-radius: 999px !important;
-
-    background:
-        linear-gradient(
-            135deg,
-            #8b1e1e,
-            #b83232
-        ) !important;
-
-    color: #ffffff !important;
-
-    text-decoration: none !important;
-
-    font-family: inherit !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-
-    line-height: 1 !important;
-
-    white-space: nowrap !important;
-
-    cursor: pointer !important;
-
-    box-sizing: border-box !important;
-
-    box-shadow:
-        0 5px 16px rgba(139, 30, 30, 0.18);
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease !important;
-}
-
-.swaadya-signup-btn:hover {
-    transform: translateY(-1px);
-
-    box-shadow:
-        0 8px 22px rgba(139, 30, 30, 0.28);
-}
-
-
-/* =========================================================
-   FOCUS
-   ========================================================= */
-
-.swaadya-auth-btn:focus-visible {
-    outline: 3px solid rgba(184, 50, 50, 0.25);
-    outline-offset: 3px;
-}
-
-
-/* =========================================================
-   IMPORTANT HEADER FIX
-   ========================================================= */
-
-/*
-   Make the existing header the positioning reference.
-   This does NOT change the existing header design.
-*/
-
-header {
-    position: relative;
-}
-
-
-/*
-   If the project uses one of these common header wrappers,
-   make it a positioning reference as well.
-*/
-
-header .header,
-header .navbar,
-header .nav-container,
-header .header-container,
-header .container {
-    position: relative;
-}
-
-
-/* =========================================================
-   DESKTOP
-   ========================================================= */
-
-@media (min-width: 1101px) {
-
-    .swaadya-auth-buttons {
-        right: 75px !important;
-    }
-}
-
-
-/* =========================================================
-   LAPTOP / TABLET
-   ========================================================= */
-
-@media (max-width: 1100px) and (min-width: 769px) {
-
-    .swaadya-auth-buttons {
-        right: 65px !important;
-
-        gap: 6px !important;
-    }
-
-    .swaadya-login-btn,
-    .swaadya-signup-btn {
-        height: 36px !important;
-
-        padding-left: 12px !important;
-        padding-right: 12px !important;
-
-        font-size: 13px !important;
-    }
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 768px) {
-
-    .swaadya-auth-buttons {
-        right: 52px !important;
-
-        gap: 4px !important;
-    }
-
-    .swaadya-login-btn {
-        min-width: 55px !important;
-        height: 32px !important;
-
-        padding: 0 8px !important;
-
-        font-size: 11px !important;
-    }
-
-    .swaadya-signup-btn {
-        min-width: 62px !important;
-        height: 32px !important;
-
-        padding: 0 9px !important;
-
-        font-size: 11px !important;
-    }
-}
-
-
-/* =========================================================
-   VERY SMALL PHONES
-   ========================================================= */
-
-@media (max-width: 400px) {
-
-    .swaadya-auth-buttons {
-        right: 48px !important;
-
-        gap: 3px !important;
-    }
-
-    .swaadya-login-btn,
-    .swaadya-signup-btn {
-        height: 30px !important;
-
-        min-width: auto !important;
-
-        padding-left: 7px !important;
-        padding-right: 7px !important;
-
-        font-size: 10px !important;
-    }
-}
-
+/* SWAADYA ACCOUNT / LOCATION EXTENSION */
+.swaadya-account-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}.swaadya-account-btn,.swaadya-auth-link{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;border:1px solid var(--border);border-radius:11px;background:var(--white);color:var(--green-700);font-size:12px;font-weight:800;white-space:nowrap;transition:var(--transition)}.swaadya-account-btn:hover,.swaadya-auth-link:hover{border-color:var(--gold-600);transform:translateY(-2px)}.swaadya-auth-links{display:flex;align-items:center;gap:7px}.swaadya-auth-link.signup{background:var(--green-700);border-color:var(--green-700);color:#fff}.swaadya-account-name{max-width:110px;overflow:hidden;text-overflow:ellipsis}.swaadya-checkout-extra{grid-column:1/-1;padding:16px;background:var(--cream-100);border:1px solid var(--border);border-radius:13px}.swaadya-checkout-extra h3{margin-bottom:10px;color:var(--green-700);font-family:Georgia,serif;font-size:18px;font-weight:500}.swaadya-address-list{display:grid;gap:8px;margin-bottom:12px}.swaadya-address-option{display:flex;align-items:flex-start;gap:10px;padding:11px;border:1px solid var(--border);border-radius:10px;background:#fff;cursor:pointer}.swaadya-address-meta{font-size:11px;color:var(--muted);line-height:1.5}.swaadya-address-title{font-size:12px;font-weight:900;color:var(--green-700)}.swaadya-location-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.swaadya-location-btn{min-height:38px;padding:0 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--green-700);font-size:12px;font-weight:800}.swaadya-location-status{margin-top:8px;font-size:11px;color:var(--muted)}.swaadya-save-address{display:flex;align-items:center;gap:8px;margin-top:10px;color:var(--muted);font-size:12px}.swaadya-map-modal{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(12,24,17,.55)}.swaadya-map-modal.open{display:flex}.swaadya-map-box{width:min(900px,100%);height:min(680px,90vh);display:flex;flex-direction:column;overflow:hidden;background:#fff;border-radius:18px;box-shadow:var(--shadow-lg)}.swaadya-map-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}.swaadya-map-head h3{color:var(--green-700);font-family:Georgia,serif;font-size:20px;font-weight:500}#swaadyaMap{flex:1;min-height:300px}.swaadya-map-foot{display:flex;justify-content:flex-end;gap:8px;padding:12px;border-top:1px solid var(--border)}@media(max-width:900px){.navbar{gap:10px}.swaadya-account-btn{padding:0 10px}.swaadya-account-name{max-width:80px}}@media(max-width:768px){.swaadya-account-actions{gap:5px}.swaadya-auth-links{gap:4px}.swaadya-auth-link,.swaadya-account-btn{min-height:36px;padding:0 9px;font-size:11px}.swaadya-auth-link.signup{display:none}.swaadya-checkout-extra{padding:12px}.swaadya-location-row{flex-direction:column}.swaadya-location-btn{width:100%}}
 </style>
 </head>
 
@@ -2490,9 +2220,6 @@ header .container {
 
     <div class="container navbar">
 
-
-        <!-- MOBILE MENU -->
-
         <button
             class="icon-button mobile-menu-button"
             id="mobileMenuButton"
@@ -2503,12 +2230,7 @@ header .container {
         </button>
 
 
-        <!-- BRAND -->
-
-        <a
-            href="#home"
-            class="brand"
-        >
+        <a href="#home" class="brand">
 
             <span class="brand-mark">
                 S
@@ -2518,8 +2240,6 @@ header .container {
 
         </a>
 
-
-        <!-- DESKTOP NAVIGATION -->
 
         <nav class="desktop-nav">
 
@@ -2546,37 +2266,16 @@ header .container {
         </nav>
 
 
-        <!-- =================================================
-             RIGHT SIDE HEADER ACTIONS
-             LOGIN → SIGN UP → CART
-             ================================================= -->
+        <div class="swaadya-account-actions" id="swaadyaAccountActions">
+            <div class="swaadya-auth-links" id="swaadyaAuthLinks">
+                <a href="login.html" class="swaadya-auth-link">Login</a>
+                <a href="signup.html" class="swaadya-auth-link signup">Sign Up</a>
+            </div>
+            <a href="account.html" class="swaadya-account-btn" id="swaadyaAccountBtn" style="display:none;"><span class="swaadya-account-name" id="swaadyaAccountName">Account</span></a>
+            <button class="swaadya-account-btn" id="swaadyaLogoutBtn" type="button" style="display:none;">Logout</button>
+        </div>
 
         <div class="header-actions">
-
-
-            <!-- LOGIN / SIGNUP -->
-
-            <div class="swaadya-auth-buttons">
-
-                <a
-                    href="login.html"
-                    class="swaadya-auth-btn swaadya-login-btn"
-                >
-                    Login
-                </a>
-
-
-                <a
-                    href="signup.html"
-                    class="swaadya-auth-btn swaadya-signup-btn"
-                >
-                    Sign Up
-                </a>
-
-            </div>
-
-
-            <!-- EXISTING CART -->
 
             <button
                 class="icon-button"
@@ -2595,15 +2294,10 @@ header .container {
 
             </button>
 
-
         </div>
 
     </div>
 
-
-    <!-- =====================================================
-         MOBILE NAVIGATION
-         ===================================================== -->
 
     <div
         class="mobile-nav"
@@ -2633,6 +2327,7 @@ header .container {
     </div>
 
 </header>
+
 
 <!-- =======================================================
      MAIN
@@ -3793,6 +3488,18 @@ header .container {
             </div>
 
 
+            <div class="swaadya-checkout-extra" id="swaadyaDeliveryExtra">
+                <h3>Delivery Address</h3>
+                <div id="swaadyaSavedAddresses" class="swaadya-address-list"></div>
+                <button type="button" class="btn btn-secondary" id="swaadyaAddAddressBtn">+ Add New Delivery Address</button>
+                <div class="swaadya-location-row">
+                    <button type="button" class="swaadya-location-btn" id="swaadyaCurrentLocationBtn">📍 Use my current location</button>
+                    <button type="button" class="swaadya-location-btn" id="swaadyaMapLocationBtn">🗺 Select location on map</button>
+                </div>
+                <div class="swaadya-location-status" id="swaadyaLocationStatus">Manual address entry remains available.</div>
+                <label class="swaadya-save-address" id="swaadyaSaveAddressWrap" style="display:none;"><input type="checkbox" id="swaadyaSaveAddress"> Save this address to my Swaadya account</label>
+            </div>
+
             <div class="payment-placeholder">
 
                 <strong>
@@ -3815,8 +3522,9 @@ header .container {
             <button
                 class="btn btn-primary btn-block"
                 type="submit"
+                id="swaadyaCheckoutSubmit"
             >
-                Place Demo Order
+                Pay Securely
             </button>
 
 
@@ -3918,6 +3626,15 @@ header .container {
 
 </div>
 
+
+<!-- OPTIONAL MAP LOCATION MODAL -->
+<div class="swaadya-map-modal" id="swaadyaMapModal" aria-hidden="true">
+    <div class="swaadya-map-box">
+        <div class="swaadya-map-head"><h3>Select Delivery Location</h3><button class="icon-button" type="button" id="swaadyaCloseMap">×</button></div>
+        <div id="swaadyaMap"></div>
+        <div class="swaadya-map-foot"><button class="btn btn-secondary" type="button" id="swaadyaCancelMap">Cancel</button><button class="btn btn-primary" type="button" id="swaadyaConfirmMap">Confirm Location</button></div>
+    </div>
+</div>
 
 <!-- =======================================================
      TOAST
@@ -4038,10 +3755,10 @@ const CONFIG = {
             prices: {
 
                 250:
-                    "90",
+                    "XX",
 
                 500:
-                    "180"
+                    "XX"
 
             },
 
@@ -4093,10 +3810,10 @@ const CONFIG = {
             prices: {
 
                 250:
-                    "60",
+                    "XX",
 
                 500:
-                    "120"
+                    "XX"
 
             },
 
@@ -4148,10 +3865,10 @@ const CONFIG = {
             prices: {
 
                 250:
-                    "40",
+                    "XX",
 
                 500:
-                    "80"
+                    "XX"
 
             },
 
@@ -5769,6 +5486,34 @@ renderCart();
 </script>
 
 
+<script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+const SWAADYA_BACKEND={supabaseUrl:"https://qogtlsrtigcnzkpbhdna.supabase.co",supabaseAnonKey:"sb_publishable_9RnptVmME1ZHWL_Hiy5mOg_QNekZoeU",paymentMode:"razorpay-test",createOrderFunction:"create-razorpay-order",verifyPaymentFunction:"verify-razorpay-payment"};
+const supabase=createClient(SWAADYA_BACKEND.supabaseUrl,SWAADYA_BACKEND.supabaseAnonKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});window.swaadyaSupabase=supabase;
+let session=null,profile=null,addresses=[],coords={latitude:null,longitude:null},map=null,marker=null,mapCoords=null,busy=false;
+const $=id=>document.getElementById(id), esc=v=>window.escapeHTML?window.escapeHTML(v??""):String(v??"");
+function msg(e,f="Something went wrong. Please try again."){console.error("Swaadya:",e);const m=String(e?.message||"");if(/invalid login credentials|invalid credentials/i.test(m))return"Email or password is incorrect.";if(/email not confirmed/i.test(m))return"Please verify your email before logging in.";if(/network|fetch/i.test(m))return"Network error. Please check your connection and try again.";return f}
+function header(){const logged=!!session,links=$("swaadyaAuthLinks"),acct=$("swaadyaAccountBtn"),logout=$("swaadyaLogoutBtn"),name=$("swaadyaAccountName");if(links)links.style.display=logged?"none":"flex";if(acct)acct.style.display=logged?"inline-flex":"none";if(logout)logout.style.display=logged?"inline-flex":"none";if(name)name.textContent=profile?.full_name?`Hi, ${profile.full_name.trim().split(/\s+/)[0]}`:"Account"}
+async function loadUser(){try{const r=await supabase.auth.getSession();session=r.data.session;if(session){const p=await supabase.from("profiles").select("id,full_name,mobile,email").eq("id",session.user.id).maybeSingle();if(p.error)throw p.error;profile=p.data||{full_name:session.user.user_metadata?.full_name||"",mobile:session.user.user_metadata?.mobile||"",email:session.user.email||""};const a=await supabase.from("addresses").select("id,label,full_name,mobile,address_line,area,landmark,city,district,state,pincode,latitude,longitude,is_default").eq("user_id",session.user.id).order("is_default",{ascending:false}).order("created_at",{ascending:false});if(a.error)throw a.error;addresses=a.data||[]}else{profile=null;addresses=[]}header()}catch(e){console.error(e);session=null;profile=null;addresses=[];header()}}
+supabase.auth.onAuthStateChange((_e,s)=>{session=s;loadUser()});
+function fillProfile(){if(!profile)return;if($("customerName")&&!$("customerName").value)$("customerName").value=profile.full_name||"";if($("customerMobile")&&!$("customerMobile").value)$("customerMobile").value=profile.mobile||"";if($("customerEmail")&&!$("customerEmail").value)$("customerEmail").value=profile.email||session?.user?.email||"";$("swaadyaSaveAddressWrap")?.style.setProperty("display",session?"flex":"none")}
+function renderAddresses(){const b=$("swaadyaSavedAddresses");if(!b)return;if(!session){b.innerHTML='<div class="swaadya-address-meta">Already have an account? <a href="login.html" style="color:var(--green-700);font-weight:800">Login</a> to use saved addresses.</div>';return}if(!addresses.length){b.innerHTML='<div class="swaadya-address-meta">No saved addresses yet. Enter a new delivery address below.</div>';return}b.innerHTML=addresses.map(a=>`<label class="swaadya-address-option"><input type="radio" name="swaadyaSavedAddress" value="${esc(a.id)}"><span><span class="swaadya-address-title">${esc(a.label||"Saved Address")}${a.is_default?" • Default":""}</span><br><span class="swaadya-address-meta">${esc(a.full_name)} • ${esc(a.mobile)}<br>${esc(a.address_line)}, ${esc(a.area)}, ${esc(a.city)}, ${esc(a.state)} - ${esc(a.pincode)}</span></span></label>`).join("");b.querySelectorAll("input[name=swaadyaSavedAddress]").forEach(i=>i.addEventListener("change",()=>applyAddress(addresses.find(a=>a.id===i.value))))}
+function applyAddress(a){if(!a)return;const v={customerName:a.full_name,customerMobile:a.mobile,customerAddress:a.address_line,customerTown:a.area||a.city,customerDistrict:a.district,customerState:a.state,customerPin:a.pincode};Object.entries(v).forEach(([id,x])=>{const e=$(id);if(e)e.value=x||""});coords={latitude:a.latitude??null,longitude:a.longitude??null};if($("swaadyaLocationStatus"))$("swaadyaLocationStatus").textContent=a.latitude!=null?"Saved location selected ✓":"Saved address selected."}
+function validate(){const n=$("customerName")?.value.trim(),m=$("customerMobile")?.value.trim(),p=$("customerPin")?.value.trim(),a=$("customerAddress")?.value.trim(),t=$("customerTown")?.value.trim(),d=$("customerDistrict")?.value.trim(),s=$("customerState")?.value.trim(),e=$("customerEmail")?.value.trim();if(!n)return"Please enter your name.";if(!/^[6-9]\d{9}$/.test(m))return"Enter a valid 10-digit mobile number.";if(e&&!/^\S+@\S+\.\S+$/.test(e))return"Enter a valid email address.";if(!a)return"Please enter your delivery address.";if(!t)return"Please enter your village/town or area.";if(!d)return"Please enter your district.";if(!s)return"Please enter your state.";if(!/^\d{6}$/.test(p))return"Enter a valid 6-digit PIN code.";return null}
+function payload(){return{user_id:session?.user?.id||null,customer:{full_name:$("customerName")?.value.trim()||"",mobile:$("customerMobile")?.value.trim()||"",email:$("customerEmail")?.value.trim()||""},delivery:{address_line:$("customerAddress")?.value.trim()||"",area:$("customerTown")?.value.trim()||"",landmark:"",city:$("customerTown")?.value.trim()||"",district:$("customerDistrict")?.value.trim()||"",state:$("customerState")?.value.trim()||"",pincode:$("customerPin")?.value.trim()||"",latitude:coords.latitude,longitude:coords.longitude},items:cart.map(i=>{const p=CONFIG.products.find(x=>x.id===i.productId);return{product_id:i.productId,variant_size:`${i.size}g`,quantity:Number(i.quantity),unit_price:Number(p?.prices?.[i.size])}})}}
+async function maybeSaveAddress(p){if(!session||!$("swaadyaSaveAddress")?.checked)return;const {error}=await supabase.from("addresses").insert({user_id:session.user.id,label:"Home",full_name:p.customer.full_name,mobile:p.customer.mobile,address_line:p.delivery.address_line,area:p.delivery.area,landmark:p.delivery.landmark,city:p.delivery.city,district:p.delivery.district,state:p.delivery.state,pincode:p.delivery.pincode,latitude:p.delivery.latitude,longitude:p.delivery.longitude,is_default:addresses.length===0});if(error)throw error}
+function location(){if(!navigator.geolocation){$("swaadyaLocationStatus").textContent="Location is unavailable. Enter your address manually.";return}const b=$("swaadyaCurrentLocationBtn");b.disabled=true;b.textContent="Getting location…";navigator.geolocation.getCurrentPosition(p=>{coords={latitude:p.coords.latitude,longitude:p.coords.longitude};$("swaadyaLocationStatus").textContent="Location selected ✓";b.disabled=false;b.textContent="📍 Use my current location"},()=>{$("swaadyaLocationStatus").textContent="Location permission was not granted. Manual address entry remains available.";b.disabled=false;b.textContent="📍 Use my current location"},{enableHighAccuracy:true,timeout:12000,maximumAge:0})}
+async function mapPicker(){try{if(!window.L){await new Promise((ok,no)=>{const c=document.createElement("link");c.rel="stylesheet";c.href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";document.head.appendChild(c);const j=document.createElement("script");j.src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";j.onload=ok;j.onerror=no;document.head.appendChild(j)})}$("swaadyaMapModal").classList.add("open");const d=coords.latitude!=null?[coords.latitude,coords.longitude]:[26.9124,75.7873];if(!map){map=L.map("swaadyaMap").setView(d,13);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors"}).addTo(map);marker=L.marker(d,{draggable:true}).addTo(map);marker.on("dragend",()=>{const p=marker.getLatLng();mapCoords={latitude:p.lat,longitude:p.lng}})}else{map.setView(d,13);marker.setLatLng(d)}mapCoords={latitude:d[0],longitude:d[1]};setTimeout(()=>map.invalidateSize(),100)}catch(e){console.error(e);$("swaadyaLocationStatus").textContent="Map is unavailable. Use GPS or enter the address manually."}}
+function closeMap(){$("swaadyaMapModal").classList.remove("open")}
+function confirmMap(){if(mapCoords)coords={...mapCoords};if($("swaadyaLocationStatus")&&coords.latitude!=null)$("swaadyaLocationStatus").textContent=`Location selected ✓ (${coords.latitude.toFixed(5)}, ${coords.longitude.toFixed(5)})`;closeMap()}
+function busyState(v,label){busy=v;const b=$("swaadyaCheckoutSubmit");if(b){b.disabled=v;b.textContent=v?label:(SWAADYA_BACKEND.paymentMode==="demo"?"Place Demo Order":"Pay Securely")}}
+async function razor(payload){busyState(true,"Creating payment…");const r=await supabase.functions.invoke(SWAADYA_BACKEND.createOrderFunction,{body:payload});if(r.error)throw r.error;if(!r.data?.order_id||!r.data?.amount)throw new Error("Invalid payment order response");if(!window.Razorpay)throw new Error("Payment gateway is unavailable.");return new Promise((resolve,reject)=>{const o={key:r.data.key_id,amount:r.data.amount,currency:r.data.currency||"INR",name:"Swaadya",description:"The Taste of Real Spices",order_id:r.data.order_id,prefill:{name:payload.customer.full_name,email:payload.customer.email,contact:payload.customer.mobile},theme:{color:"#234d38"},modal:{ondismiss:()=>{busyState(false);reject(new Error("Payment was not completed."))}},handler:async resp=>{try{busyState(true,"Verifying payment…");const v=await supabase.functions.invoke(SWAADYA_BACKEND.verifyPaymentFunction,{body:{...resp,checkout:payload}});if(v.error||!v.data?.verified)throw v.error||new Error("Payment verification failed");$("orderResult").innerHTML=`<strong>Order:</strong> #${esc(v.data.order.order_number||"SW-PENDING")}<br><strong>Amount Paid:</strong> ${formatPrice(Number(v.data.order.total))}<br><strong>Payment ID:</strong> ${esc(resp.razorpay_payment_id)}<br><strong>Order Status:</strong> Confirmed<br><br>Thank you for ordering from Swaadya.`;cart=[];saveCart();$("checkoutForm").reset();$("customerState").value="Rajasthan";closeCheckout();$("successModal").classList.add("open");$("overlay").classList.add("active");resolve(v.data)}catch(e){busyState(false);showToast(msg(e,"Payment could not be verified. Your cart has been kept so you can retry."));reject(e)}}};try{new window.Razorpay(o).open()}catch(e){busyState(false);reject(e)}})}
+function demo(p){const total=getCartTotal()+getShippingCharge(getCartTotal()),id="SW"+Date.now().toString().slice(-8);$("orderResult").innerHTML=`<strong>Order ID:</strong> ${id}<br><strong>Customer:</strong> ${esc(p.customer.full_name)}<br><strong>Items:</strong> ${getCartQuantity()}<br><strong>Total:</strong> ${formatPrice(total)}<br><strong>Delivery:</strong> ${esc(p.delivery.address_line)}, ${esc(p.delivery.area)}, ${esc(p.delivery.district)}, ${esc(p.delivery.state)} - ${esc(p.delivery.pincode)}<br><br>This is a demo/test order.`;cart=[];saveCart();$("checkoutForm").reset();$("customerState").value="Rajasthan";closeCheckout();$("successModal").classList.add("open");$("overlay").classList.add("active")}
+async function submit(e){e.preventDefault();e.stopImmediatePropagation();if(busy)return;const v=validate();if(v){showToast(v);return}if(!cart.length){showToast("Your cart is empty");return}const p=payload();try{await maybeSaveAddress(p);if(SWAADYA_BACKEND.paymentMode==="demo")demo(p);else await razor(p)}catch(x){console.error(x);showToast(msg(x,"We could not start the payment. Your cart has been kept."));busyState(false)}}
+const oldOpen=window.openCheckout;window.openCheckout=function(){if(oldOpen)oldOpen();fillProfile();renderAddresses();busyState(false)};
+window.addEventListener("load",async()=>{const f=$("checkoutForm");if(f)f.addEventListener("submit",submit,true);$("swaadyaCurrentLocationBtn")?.addEventListener("click",location);$("swaadyaMapLocationBtn")?.addEventListener("click",mapPicker);$("swaadyaCloseMap")?.addEventListener("click",closeMap);$("swaadyaCancelMap")?.addEventListener("click",closeMap);$("swaadyaConfirmMap")?.addEventListener("click",confirmMap);$("swaadyaLogoutBtn")?.addEventListener("click",async()=>{const b=$("swaadyaLogoutBtn");b.disabled=true;const r=await supabase.auth.signOut();b.disabled=false;if(r.error)showToast(msg(r.error,"Could not log out."));else{session=null;profile=null;addresses=[];header();showToast("Logged out successfully")}});await loadUser();fillProfile()});
+</script>
 </body>
 </html>
 
