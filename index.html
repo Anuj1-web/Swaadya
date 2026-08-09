@@ -3930,21 +3930,14 @@ function ensureAdminButton() {
    CHECK ADMIN
    =========================================================
 
-   THIS IS THE IMPORTANT PART.
-
-   It checks:
+   Admin authorization is based on:
 
        admin_users.user_id
        =
        session.user.id
 
-   AND:
-
-       admin_users.role
-       =
-       "admin"
-
-   If both match, Admin button is displayed.
+   If the logged-in user's UUID exists in the
+   admin_users table, the Admin button is displayed.
 
    ========================================================= */
 
@@ -3993,18 +3986,18 @@ async function checkAdmin(
             await supabase
                 .from("admin_users")
                 .select(
-                    "user_id, role"
+                    "user_id,email,created_at"
                 )
                 .eq(
                     "user_id",
                     user.id
                 )
-                .eq(
-                    "role",
-                    "admin"
-                )
                 .maybeSingle();
 
+
+        /*
+         * Database error.
+         */
 
         if (
             result.error
@@ -4015,11 +4008,14 @@ async function checkAdmin(
                 result.error
             );
 
+
             isAdmin =
                 false;
 
+
             adminButton.style.display =
                 "none";
+
 
             return false;
 
@@ -4028,13 +4024,12 @@ async function checkAdmin(
 
         /*
          * If a matching admin_users row exists,
-         * the user is an admin.
+         * the logged-in user is an admin.
          */
 
         if (
             result.data &&
-            result.data.user_id === user.id &&
-            result.data.role === "admin"
+            result.data.user_id === user.id
         ) {
 
             isAdmin =
@@ -4043,6 +4038,12 @@ async function checkAdmin(
 
             adminButton.style.display =
                 "inline-flex";
+
+
+            console.log(
+                "Swaadya: Admin verified:",
+                user.email
+            );
 
 
             return true;
@@ -4063,6 +4064,7 @@ async function checkAdmin(
 
 
         return false;
+
 
     } catch (error) {
 
@@ -4085,7 +4087,6 @@ async function checkAdmin(
     }
 
 }
-
 
 /* =========================================================
    HEADER UPDATE
