@@ -3647,1011 +3647,2468 @@ ul {
 </div>
 
 
-<script>
+<script type="module">
 
 /* =========================================================
-   SWAADYA CENTRAL CONFIGURATION
-   =========================================================
-
-   IMPORTANT:
-
-   CHANGE PRODUCT PRICES HERE.
-
-   Example:
-
-   prices: {
-       250: 99,
-       500: 179
-   }
-
-   Do NOT put payment gateway secret keys here.
-
-   Product prices are in CONFIG.products[].prices for each size.
-   Change only those values when you are ready to publish prices.
-
+   SWAADYA SUPABASE / CHECKOUT / AUTH SYSTEM
    ========================================================= */
 
+import {
+    createClient
+} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-const CONFIG = {
 
-    brandName:
-        "SWAADYA",
+/* =========================================================
+   CENTRAL BACKEND CONFIGURATION
+   ========================================================= */
 
-    tagline:
-        "The Taste of Real Spices",
+const SWAADYA_BACKEND = {
 
-    email:
-        "supportswaadya@gmail.com",
+    supabaseUrl:
+        "https://qogtlsrtigcnzkpbhdna.supabase.co",
 
-    whatsapp:
-        "7878426819",
+    supabaseAnonKey:
+        "sb_publishable_9RnptVmME1ZHWL_Hiy5mOg_QNekZoeU",
 
-    instagram:
-        "Swaadya_01",
+    paymentMode:
+        "razorpay-test",
 
-    youtube:
-        "[YOUTUBE LINK TO BE ADDED]",
+    createOrderFunction:
+        "create-razorpay-order",
 
-    address:
-        "Jaipur, Rajasthan",
-
-    contactNumber:
-        "7878426819",
-
-    fssai:
-        "[TO BE ADDED]",
-
-    manufacturerAddress:
-        "Jaipur, Rajasthan",
-
-    batchNumber:
-        "[TO BE ADDED]",
-
-    shelfLife:
-        "18 months",
-
-    shippingMin:
-        50,
-
-    shippingMax:
-        70,
-
-    freeShippingThreshold:
-        500,
-
-
-    /* =====================================================
-       PRODUCTS
-       ===================================================== */
-
-    products: [
-
-        {
-
-            id:
-                "red-chilli",
-
-            slug:
-                "red-chilli-powder",
-
-            name:
-                "Swaadya Red Chilli Powder",
-
-            shortDescription:
-                "Freshly prepared red chilli powder made from carefully selected red chillies, with a vibrant natural colour and bold flavour.",
-
-            ingredients:
-                "Red chilli",
-
-            imageClass:
-                "red",
-
-            image:
-                "https://github.com/Anuj1-web/Swaadya/blob/main/ChatGPT%20Image%20Aug%208,%202026,%2008_33_08%20PM.png?raw=true",
-
-            emoji:
-                "🌶️",
-
-            prices: {
-
-                250:
-                    "90",
-
-                500:
-                    "180"
-
-            },
-
-            availability:
-                true,
-
-            storage:
-                "Store in a cool, dry place away from direct sunlight and moisture. Keep the pack properly sealed after opening.",
-
-            highlights: [
-
-                "Freshly prepared in small batches",
-
-                "Made from carefully selected red chillies",
-
-                "Bold flavour for everyday cooking"
-
-            ]
-
-        },
-
-
-        {
-
-            id:
-                "turmeric",
-
-            slug:
-                "turmeric-powder",
-
-            name:
-                "Swaadya Turmeric Powder",
-
-            shortDescription:
-                "Freshly prepared turmeric powder made from selected turmeric, bringing natural colour and earthy flavour to everyday cooking.",
-
-            ingredients:
-                "Turmeric",
-
-            imageClass:
-                "yellow",
-
-            image:
-                "https://github.com/Anuj1-web/Swaadya/blob/main/ChatGPT%20Image%20Aug%208,%202026,%2008_33_14%20PM.png?raw=true",
-
-            emoji:
-                "🌕",
-
-            prices: {
-
-                250:
-                    "60",
-
-                500:
-                    "120"
-
-            },
-
-            availability:
-                true,
-
-            storage:
-                "Store in a cool, dry place away from direct sunlight and moisture. Keep the pack properly sealed after opening.",
-
-            highlights: [
-
-                "Freshly prepared in small batches",
-
-                "Made from selected turmeric",
-
-                "Earthy flavour for everyday cooking"
-
-            ]
-
-        },
-
-
-        {
-
-            id:
-                "coriander",
-
-            slug:
-                "coriander-powder",
-
-            name:
-                "Swaadya Coriander Powder",
-
-            shortDescription:
-                "Freshly prepared coriander powder made from selected coriander seeds, offering a fresh aroma and authentic flavour.",
-
-            ingredients:
-                "Coriander",
-
-            imageClass:
-                "green",
-
-            image:
-                "https://github.com/Anuj1-web/Swaadya/blob/main/ChatGPT%20Image%20Aug%208,%202026,%2008_33_18%20PM.png?raw=true",
-
-            emoji:
-                "🌿",
-
-            prices: {
-
-                250:
-                    "40",
-
-                500:
-                    "80"
-
-            },
-
-            availability:
-                true,
-
-            storage:
-                "Store in a cool, dry place away from direct sunlight and moisture. Keep the pack properly sealed after opening.",
-
-            highlights: [
-
-                "Freshly prepared in small batches",
-
-                "Made from selected coriander seeds",
-
-                "Fresh aroma and authentic flavour"
-
-            ]
-
-        }
-
-    ]
+    verifyPaymentFunction:
+        "verify-razorpay-payment"
 
 };
 
 
 /* =========================================================
-   CART
+   SUPABASE CLIENT
    ========================================================= */
 
-
-let cart = [];
-
-
-try {
-
-    cart =
-        JSON.parse(
-            localStorage.getItem(
-                "swaadya_cart"
-            )
-        ) || [];
-
-} catch (error) {
-
-    cart = [];
-
-}
-
-
-/* =========================================================
-   DOM HELPERS
-   ========================================================= */
-
-const $ = id =>
-    document.getElementById(id);
-
-
-/* =========================================================
-   PRICE
-   ========================================================= */
-
-function formatPrice(value) {
-
-    if (
-        value ===
-        "XX"
-    ) {
-
-        return "₹XX";
-
-    }
-
-    const number =
-        Number(value);
-
-    if (
-        Number.isNaN(number)
-    ) {
-
-        return "₹XX";
-
-    }
-
-    return (
-        "₹" +
-        number.toLocaleString(
-            "en-IN"
-        )
+const supabase =
+    createClient(
+        SWAADYA_BACKEND.supabaseUrl,
+        SWAADYA_BACKEND.supabaseAnonKey,
+        {
+            auth: {
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: true
+            }
+        }
     );
 
-}
+
+window.swaadyaSupabase =
+    supabase;
 
 
 /* =========================================================
-   SAVE CART
+   GLOBAL STATE
    ========================================================= */
 
-function saveCart() {
+let session = null;
 
-    localStorage.setItem(
-        "swaadya_cart",
-        JSON.stringify(cart)
-    );
+let profile = null;
 
-    renderCart();
+let addresses = [];
 
-}
+let coords = {
+    latitude: null,
+    longitude: null
+};
+
+let map = null;
+
+let marker = null;
+
+let mapCoords = null;
+
+let busy = false;
+
+let isAdmin = false;
 
 
 /* =========================================================
-   PRODUCT RENDER
+   DOM HELPER
    ========================================================= */
 
-function renderProducts() {
-
-    const grid =
-        $("productsGrid");
-
-
-    grid.innerHTML =
-        CONFIG.products
-        .map(product => {
-
-
-            const firstPrice =
-                product.prices[250];
-
-
-            return `
-
-                <article
-                    class="product-card"
-                >
-
-
-                    <div
-                        class="
-                            product-image
-                            ${product.imageClass}
-                        "
-                    >
-
-                        <img
-                            class="product-real-image"
-                            src="${product.image}"
-                            alt="${product.name}"
-                            loading="lazy"
-                            onerror="this.onerror=null; this.style.display='none'; this.parentElement.classList.add('image-fallback');"
-                        >
-
-                    </div>
-
-
-                    <div class="product-body">
-
-
-                        <h3
-                            class="product-name"
-                        >
-                            ${product.name}
-                        </h3>
-
-
-                        <p
-                            class="product-description"
-                        >
-                            ${product.shortDescription}
-                        </p>
-
-
-                        <div
-                            class="product-controls"
-                        >
-
-
-                            <div>
-
-                                <label
-                                    class="field-label"
-                                    for="size-${product.id}"
-                                >
-                                    SIZE
-                                </label>
-
-
-                                <select
-                                    class="size-select"
-                                    id="size-${product.id}"
-                                    onchange="
-                                        updateProductPrice(
-                                            '${product.id}'
-                                        )
-                                    "
-                                >
-
-                                    <option value="250">
-                                        250g
-                                    </option>
-
-                                    <option value="500">
-                                        500g
-                                    </option>
-
-                                </select>
-
-                            </div>
-
-
-                            <div>
-                                <div
-                                    class="product-price"
-                                    id="price-${product.id}"
-                                >
-                                    ${formatPrice(firstPrice)}
-                                </div>
-                                <div class="selected-net-quantity" id="net-${product.id}">Net Quantity: 250g</div>
-                            </div>
-
-
-                        </div>
-
-
-                        <div
-                            class="product-actions"
-                        >
-
-                            <button
-                                class="btn btn-primary"
-                                onclick="
-                                    addToCart(
-                                        '${product.id}'
-                                    )
-                                "
-                            >
-                                Add to Cart
-                            </button>
-
-
-                            <button
-                                class="btn btn-secondary"
-                                onclick="
-                                    showProductDetails(
-                                        '${product.id}'
-                                    )
-                                "
-                            >
-                                Details
-                            </button>
-
-                        </div>
-
-
-                    </div>
-
-
-                </article>
-
-            `;
-
-        })
-        .join("");
-
-}
+const $ =
+    id =>
+        document.getElementById(id);
 
 
 /* =========================================================
-   UPDATE PRODUCT PRICE
+   HTML ESCAPE
    ========================================================= */
 
-function updateProductPrice(
-    productId
+const esc =
+    value =>
+        window.escapeHTML
+            ? window.escapeHTML(value ?? "")
+            : String(value ?? "");
+
+
+/* =========================================================
+   ERROR MESSAGE HELPER
+   ========================================================= */
+
+function msg(
+    e,
+    fallback =
+        "Something went wrong. Please try again."
 ) {
 
-    const product =
-        CONFIG.products.find(
-            item =>
-                item.id === productId
+    console.error(
+        "Swaadya:",
+        e
+    );
+
+
+    const message =
+        String(
+            e?.message || ""
         );
 
 
-    if (!product) {
-        return;
-    }
+    if (
+        /invalid login credentials|invalid credentials/i
+            .test(message)
+    ) {
 
+        return "Email or password is incorrect.";
 
-    const select =
-        $("size-" + productId);
-
-
-    const price =
-        product.prices[
-            select.value
-        ];
-
-
-    $("price-" + productId)
-        .textContent =
-        formatPrice(price);
-
-    const netQuantity = $("net-" + productId);
-    if (netQuantity) {
-        netQuantity.textContent = "Net Quantity: " + select.value + "g";
-    }
-
-}
-
-
-/* =========================================================
-   ADD TO CART
-   ========================================================= */
-
-function addToCart(
-    productId,
-    size
-) {
-
-    const product =
-        CONFIG.products.find(
-            item =>
-                item.id === productId
-        );
-
-
-    if (!product) {
-        return;
     }
 
 
     if (
-        !size
+        /email not confirmed/i
+            .test(message)
     ) {
 
-        const select =
-            $("size-" + productId);
-
-        size =
-            select.value;
+        return "Please verify your email before logging in.";
 
     }
 
 
-    const key =
-        productId +
-        "-" +
-        size;
+    if (
+        /network|fetch/i
+            .test(message)
+    ) {
+
+        return "Network error. Please check your connection and try again.";
+
+    }
 
 
-    const existing =
-        cart.find(
-            item =>
-                item.key === key
+    return fallback;
+
+}
+
+
+/* =========================================================
+   ADMIN BUTTON
+   =========================================================
+
+   This function makes sure there is exactly ONE admin
+   button in the header.
+
+   It does NOT create another Login or Signup button.
+
+   The button is:
+
+       Admin → admin.html
+
+   It is hidden unless the logged-in user exists in:
+
+       admin_users
+
+   with:
+
+       user_id = logged-in user's ID
+       role    = admin
+
+   ========================================================= */
+
+function ensureAdminButton() {
+
+    let adminButton =
+        $("swaadyaAdminBtn");
+
+
+    if (adminButton) {
+
+        return adminButton;
+
+    }
+
+
+    /*
+     * First try to find an admin button already present
+     * in the HTML.
+     */
+
+    adminButton =
+        document.querySelector(
+            'a[href="admin.html"]'
         );
 
 
-    if (existing) {
+    if (adminButton) {
 
-        existing.quantity += 1;
+        adminButton.id =
+            "swaadyaAdminBtn";
 
-    } else {
-
-        cart.push({
-
-            key,
-            productId,
-            size,
-            quantity: 1
-
-        });
+        return adminButton;
 
     }
 
 
-    saveCart();
+    /*
+     * Otherwise create one dynamically.
+     */
+
+    const accountArea =
+        $("swaadyaAuthLinks")?.parentElement ||
+        $("swaadyaAccountBtn")?.parentElement ||
+        document.querySelector(".header-actions");
 
 
-    showToast(
-        "Added to cart"
+    if (!accountArea) {
+
+        console.warn(
+            "Swaadya: Header account area not found. Admin button could not be created."
+        );
+
+        return null;
+
+    }
+
+
+    adminButton =
+        document.createElement("a");
+
+
+    adminButton.id =
+        "swaadyaAdminBtn";
+
+
+    adminButton.href =
+        "admin.html";
+
+
+    adminButton.className =
+        "swaadya-admin-button";
+
+
+    adminButton.innerHTML = `
+        <span aria-hidden="true">⚙</span>
+        <span>Admin</span>
+    `;
+
+
+    adminButton.style.display =
+        "none";
+
+
+    /*
+     * Put Admin beside the account/logout controls.
+     */
+
+    accountArea.appendChild(
+        adminButton
     );
 
 
-    openCart();
+    return adminButton;
 
 }
 
 
 /* =========================================================
-   CART TOTAL QUANTITY
+   CHECK ADMIN
+   =========================================================
+
+   THIS IS THE IMPORTANT PART.
+
+   It checks:
+
+       admin_users.user_id
+       =
+       session.user.id
+
+   AND:
+
+       admin_users.role
+       =
+       "admin"
+
+   If both match, Admin button is displayed.
+
    ========================================================= */
 
-function getCartQuantity() {
+async function checkAdmin(
+    user
+) {
 
-    return cart.reduce(
-        (
-            total,
-            item
-        ) =>
-            total +
-            item.quantity,
-        0
-    );
+    isAdmin =
+        false;
+
+
+    const adminButton =
+        ensureAdminButton();
+
+
+    if (!adminButton) {
+
+        return false;
+
+    }
+
+
+    /*
+     * Always hide it first.
+     */
+
+    adminButton.style.display =
+        "none";
+
+
+    /*
+     * If nobody is logged in,
+     * they cannot be an admin.
+     */
+
+    if (!user) {
+
+        return false;
+
+    }
+
+
+    try {
+
+        const result =
+            await supabase
+                .from("admin_users")
+                .select(
+                    "user_id, role"
+                )
+                .eq(
+                    "user_id",
+                    user.id
+                )
+                .eq(
+                    "role",
+                    "admin"
+                )
+                .maybeSingle();
+
+
+        if (
+            result.error
+        ) {
+
+            console.error(
+                "Swaadya: Admin check failed:",
+                result.error
+            );
+
+            isAdmin =
+                false;
+
+            adminButton.style.display =
+                "none";
+
+            return false;
+
+        }
+
+
+        /*
+         * If a matching admin_users row exists,
+         * the user is an admin.
+         */
+
+        if (
+            result.data &&
+            result.data.user_id === user.id &&
+            result.data.role === "admin"
+        ) {
+
+            isAdmin =
+                true;
+
+
+            adminButton.style.display =
+                "inline-flex";
+
+
+            return true;
+
+        }
+
+
+        /*
+         * Normal user.
+         */
+
+        isAdmin =
+            false;
+
+
+        adminButton.style.display =
+            "none";
+
+
+        return false;
+
+    } catch (error) {
+
+        console.error(
+            "Swaadya: Admin check unavailable:",
+            error
+        );
+
+
+        isAdmin =
+            false;
+
+
+        adminButton.style.display =
+            "none";
+
+
+        return false;
+
+    }
 
 }
 
 
 /* =========================================================
-   CART TOTAL
+   HEADER UPDATE
    ========================================================= */
 
-function getCartTotal() {
+function header() {
 
-    return cart.reduce(
-        (
-            total,
-            item
-        ) => {
-
-            const product =
-                CONFIG.products.find(
-                    product =>
-                        product.id ===
-                        item.productId
-                );
+    const logged =
+        !!session;
 
 
-            if (!product) {
-                return total;
+    const links =
+        $("swaadyaAuthLinks");
+
+
+    const acct =
+        $("swaadyaAccountBtn");
+
+
+    const logout =
+        $("swaadyaLogoutBtn");
+
+
+    const name =
+        $("swaadyaAccountName");
+
+
+    /*
+     * Existing Login / Signup area.
+     */
+
+    if (links) {
+
+        links.style.display =
+            logged
+                ? "none"
+                : "flex";
+
+    }
+
+
+    /*
+     * Existing Account button.
+     */
+
+    if (acct) {
+
+        acct.style.display =
+            logged
+                ? "inline-flex"
+                : "none";
+
+    }
+
+
+    /*
+     * Existing Logout button.
+     */
+
+    if (logout) {
+
+        logout.style.display =
+            logged
+                ? "inline-flex"
+                : "none";
+
+    }
+
+
+    /*
+     * Existing "Hi, User" name.
+     */
+
+    if (name) {
+
+        name.textContent =
+            profile?.full_name
+                ? `Hi, ${profile.full_name
+                    .trim()
+                    .split(/\s+/)[0]}`
+                : "Account";
+
+    }
+
+
+    /*
+     * IMPORTANT:
+     *
+     * Make sure admin button exists.
+     */
+
+    const adminButton =
+        ensureAdminButton();
+
+
+    /*
+     * Never show admin button when logged out.
+     */
+
+    if (
+        adminButton &&
+        !logged
+    ) {
+
+        adminButton.style.display =
+            "none";
+
+    }
+
+
+    /*
+     * If logged in, checkAdmin()
+     * will decide whether to show it.
+     */
+
+}
+
+
+/* =========================================================
+   LOAD CURRENT USER
+   ========================================================= */
+
+async function loadUser() {
+
+    try {
+
+        const result =
+            await supabase
+                .auth
+                .getSession();
+
+
+        session =
+            result.data.session;
+
+
+        /*
+         * LOGGED OUT
+         */
+
+        if (!session) {
+
+            profile =
+                null;
+
+            addresses =
+                [];
+
+            isAdmin =
+                false;
+
+
+            header();
+
+
+            /*
+             * Explicitly hide admin button.
+             */
+
+            const adminButton =
+                ensureAdminButton();
+
+
+            if (adminButton) {
+
+                adminButton.style.display =
+                    "none";
+
             }
 
 
-            const value =
-                product.prices[
-                    item.size
+            return;
+
+        }
+
+
+        /* =================================================
+           LOAD PROFILE
+           ================================================= */
+
+        const profileResult =
+            await supabase
+                .from("profiles")
+                .select(
+                    "id,full_name,mobile,email"
+                )
+                .eq(
+                    "id",
+                    session.user.id
+                )
+                .maybeSingle();
+
+
+        if (
+            profileResult.error
+        ) {
+
+            console.warn(
+                "Swaadya: Profile query failed:",
+                profileResult.error
+            );
+
+        }
+
+
+        profile =
+            profileResult.data ||
+            {
+                full_name:
+                    session.user
+                        .user_metadata
+                        ?.full_name ||
+                    "",
+
+                mobile:
+                    session.user
+                        .user_metadata
+                        ?.mobile ||
+                    "",
+
+                email:
+                    session.user.email ||
+                    ""
+            };
+
+
+        /* =================================================
+           LOAD SAVED ADDRESSES
+           ================================================= */
+
+        const addressResult =
+            await supabase
+                .from("addresses")
+                .select(
+                    "id,label,full_name,mobile,address_line,area,landmark,city,district,state,pincode,latitude,longitude,is_default"
+                )
+                .eq(
+                    "user_id",
+                    session.user.id
+                )
+                .order(
+                    "is_default",
+                    {
+                        ascending:
+                            false
+                    }
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending:
+                            false
+                    }
+                );
+
+
+        if (
+            addressResult.error
+        ) {
+
+            console.warn(
+                "Swaadya: Address query failed:",
+                addressResult.error
+            );
+
+
+            addresses =
+                [];
+
+        } else {
+
+            addresses =
+                addressResult.data ||
+                [];
+
+        }
+
+
+        /*
+         * Update normal header first.
+         */
+
+        header();
+
+
+        /*
+         * IMPORTANT:
+         *
+         * Now check whether this user is an admin.
+         */
+
+        await checkAdmin(
+            session.user
+        );
+
+
+    } catch (e) {
+
+        console.error(
+            "Swaadya: loadUser error:",
+            e
+        );
+
+
+        session =
+            null;
+
+        profile =
+            null;
+
+        addresses =
+            [];
+
+        isAdmin =
+            false;
+
+
+        header();
+
+
+        const adminButton =
+            ensureAdminButton();
+
+
+        if (adminButton) {
+
+            adminButton.style.display =
+                "none";
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   AUTH STATE CHANGE
+   ========================================================= */
+
+supabase
+    .auth
+    .onAuthStateChange(
+        async function (
+            event,
+            newSession
+        ) {
+
+            session =
+                newSession;
+
+
+            /*
+             * Immediately update normal header.
+             */
+
+            header();
+
+
+            /*
+             * Logged out.
+             */
+
+            if (!newSession) {
+
+                profile =
+                    null;
+
+                addresses =
+                    [];
+
+                isAdmin =
+                    false;
+
+
+                const adminButton =
+                    ensureAdminButton();
+
+
+                if (adminButton) {
+
+                    adminButton.style.display =
+                        "none";
+
+                }
+
+
+                header();
+
+
+                return;
+
+            }
+
+
+            /*
+             * Logged in.
+             *
+             * Reload profile and admin status.
+             */
+
+            await loadUser();
+
+        }
+    );
+
+
+/* =========================================================
+   FILL PROFILE INTO CHECKOUT
+   ========================================================= */
+
+function fillProfile() {
+
+    if (!profile) {
+
+        return;
+
+    }
+
+
+    if (
+        $("customerName") &&
+        !$("customerName").value
+    ) {
+
+        $("customerName").value =
+            profile.full_name ||
+            "";
+
+    }
+
+
+    if (
+        $("customerMobile") &&
+        !$("customerMobile").value
+    ) {
+
+        $("customerMobile").value =
+            profile.mobile ||
+            "";
+
+    }
+
+
+    if (
+        $("customerEmail") &&
+        !$("customerEmail").value
+    ) {
+
+        $("customerEmail").value =
+            profile.email ||
+            session?.user?.email ||
+            "";
+
+    }
+
+
+    const saveWrap =
+        $("swaadyaSaveAddressWrap");
+
+
+    if (saveWrap) {
+
+        saveWrap.style.setProperty(
+            "display",
+            session
+                ? "flex"
+                : "none"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDER SAVED ADDRESSES
+   ========================================================= */
+
+function renderAddresses() {
+
+    const box =
+        $("swaadyaSavedAddresses");
+
+
+    if (!box) {
+
+        return;
+
+    }
+
+
+    /*
+     * User is not logged in.
+     */
+
+    if (!session) {
+
+        box.innerHTML = `
+            <div class="swaadya-address-meta">
+                Already have an account?
+                <a
+                    href="login.html"
+                    style="
+                        color:var(--green-700);
+                        font-weight:800;
+                    "
+                >
+                    Login
+                </a>
+                to use saved addresses.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    /*
+     * No saved addresses.
+     */
+
+    if (!addresses.length) {
+
+        box.innerHTML = `
+            <div class="swaadya-address-meta">
+                No saved addresses yet.
+                Enter a new delivery address below.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    /*
+     * Render saved addresses.
+     */
+
+    box.innerHTML =
+        addresses
+            .map(
+                address => `
+
+                    <label
+                        class="swaadya-address-option"
+                    >
+
+                        <input
+                            type="radio"
+                            name="swaadyaSavedAddress"
+                            value="${esc(address.id)}"
+                        >
+
+                        <span>
+
+                            <span
+                                class="swaadya-address-title"
+                            >
+                                ${esc(
+                                    address.label ||
+                                    "Saved Address"
+                                )}
+
+                                ${
+                                    address.is_default
+                                        ? " • Default"
+                                        : ""
+                                }
+
+                            </span>
+
+                            <br>
+
+                            <span
+                                class="swaadya-address-meta"
+                            >
+
+                                ${esc(
+                                    address.full_name
+                                )}
+                                •
+                                ${esc(
+                                    address.mobile
+                                )}
+
+                                <br>
+
+                                ${esc(
+                                    address.address_line
+                                )},
+                                ${esc(
+                                    address.area
+                                )},
+                                ${esc(
+                                    address.city
+                                )},
+                                ${esc(
+                                    address.state
+                                )}
+                                -
+                                ${esc(
+                                    address.pincode
+                                )}
+
+                            </span>
+
+                        </span>
+
+                    </label>
+
+                `
+            )
+            .join("");
+
+
+    box
+        .querySelectorAll(
+            "input[name=swaadyaSavedAddress]"
+        )
+        .forEach(
+            input => {
+
+                input.addEventListener(
+                    "change",
+                    function () {
+
+                        const selected =
+                            addresses.find(
+                                address =>
+                                    address.id ===
+                                    input.value
+                            );
+
+
+                        applyAddress(
+                            selected
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   APPLY SAVED ADDRESS
+   ========================================================= */
+
+function applyAddress(
+    address
+) {
+
+    if (!address) {
+
+        return;
+
+    }
+
+
+    const values = {
+
+        customerName:
+            address.full_name,
+
+        customerMobile:
+            address.mobile,
+
+        customerAddress:
+            address.address_line,
+
+        customerTown:
+            address.area ||
+            address.city,
+
+        customerDistrict:
+            address.district,
+
+        customerState:
+            address.state,
+
+        customerPin:
+            address.pincode
+
+    };
+
+
+    Object
+        .entries(values)
+        .forEach(
+            ([id, value]) => {
+
+                const element =
+                    $(id);
+
+
+                if (element) {
+
+                    element.value =
+                        value ||
+                        "";
+
+                }
+
+            }
+        );
+
+
+    coords = {
+
+        latitude:
+            address.latitude ??
+            null,
+
+        longitude:
+            address.longitude ??
+            null
+
+    };
+
+
+    const status =
+        $("swaadyaLocationStatus");
+
+
+    if (status) {
+
+        status.textContent =
+            address.latitude != null
+                ? "Saved location selected ✓"
+                : "Saved address selected.";
+
+    }
+
+}
+
+
+/* =========================================================
+   CHECKOUT VALIDATION
+   ========================================================= */
+
+function validate() {
+
+    const name =
+        $("customerName")
+            ?.value
+            .trim();
+
+
+    const mobile =
+        $("customerMobile")
+            ?.value
+            .trim();
+
+
+    const pin =
+        $("customerPin")
+            ?.value
+            .trim();
+
+
+    const address =
+        $("customerAddress")
+            ?.value
+            .trim();
+
+
+    const town =
+        $("customerTown")
+            ?.value
+            .trim();
+
+
+    const district =
+        $("customerDistrict")
+            ?.value
+            .trim();
+
+
+    const state =
+        $("customerState")
+            ?.value
+            .trim();
+
+
+    const email =
+        $("customerEmail")
+            ?.value
+            .trim();
+
+
+    if (!name) {
+
+        return "Please enter your name.";
+
+    }
+
+
+    if (
+        !/^[6-9]\d{9}$/
+            .test(mobile)
+    ) {
+
+        return "Enter a valid 10-digit mobile number.";
+
+    }
+
+
+    if (
+        email &&
+        !/^\S+@\S+\.\S+$/
+            .test(email)
+    ) {
+
+        return "Enter a valid email address.";
+
+    }
+
+
+    if (!address) {
+
+        return "Please enter your delivery address.";
+
+    }
+
+
+    if (!town) {
+
+        return "Please enter your village/town or area.";
+
+    }
+
+
+    if (!district) {
+
+        return "Please enter your district.";
+
+    }
+
+
+    if (!state) {
+
+        return "Please enter your state.";
+
+    }
+
+
+    if (
+        !/^\d{6}$/
+            .test(pin)
+    ) {
+
+        return "Enter a valid 6-digit PIN code.";
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   ORDER PAYLOAD
+   ========================================================= */
+
+function payload() {
+
+    return {
+
+        user_id:
+            session?.user?.id ||
+            null,
+
+
+        customer: {
+
+            full_name:
+                $("customerName")
+                    ?.value
+                    .trim() ||
+                "",
+
+            mobile:
+                $("customerMobile")
+                    ?.value
+                    .trim() ||
+                "",
+
+            email:
+                $("customerEmail")
+                    ?.value
+                    .trim() ||
+                ""
+
+        },
+
+
+        delivery: {
+
+            address_line:
+                $("customerAddress")
+                    ?.value
+                    .trim() ||
+                "",
+
+            area:
+                $("customerTown")
+                    ?.value
+                    .trim() ||
+                "",
+
+            landmark:
+                "",
+
+            city:
+                $("customerTown")
+                    ?.value
+                    .trim() ||
+                "",
+
+            district:
+                $("customerDistrict")
+                    ?.value
+                    .trim() ||
+                "",
+
+            state:
+                $("customerState")
+                    ?.value
+                    .trim() ||
+                "",
+
+            pincode:
+                $("customerPin")
+                    ?.value
+                    .trim() ||
+                "",
+
+            latitude:
+                coords.latitude,
+
+            longitude:
+                coords.longitude
+
+        },
+
+
+        items:
+            cart.map(
+                item => {
+
+                    const product =
+                        CONFIG.products
+                            .find(
+                                product =>
+                                    product.id ===
+                                    item.productId
+                            );
+
+
+                    return {
+
+                        product_id:
+                            item.productId,
+
+                        variant_size:
+                            `${item.size}g`,
+
+                        quantity:
+                            Number(
+                                item.quantity
+                            ),
+
+                        unit_price:
+                            Number(
+                                product
+                                    ?.prices
+                                    ?.[item.size]
+                            )
+
+                    };
+
+                }
+            )
+
+    };
+
+}
+
+
+/* =========================================================
+   SAVE ADDRESS
+   ========================================================= */
+
+async function maybeSaveAddress(
+    payloadData
+) {
+
+    if (
+        !session ||
+        !$("swaadyaSaveAddress")
+            ?.checked
+    ) {
+
+        return;
+
+    }
+
+
+    const result =
+        await supabase
+            .from("addresses")
+            .insert({
+
+                user_id:
+                    session.user.id,
+
+                label:
+                    "Home",
+
+                full_name:
+                    payloadData
+                        .customer
+                        .full_name,
+
+                mobile:
+                    payloadData
+                        .customer
+                        .mobile,
+
+                address_line:
+                    payloadData
+                        .delivery
+                        .address_line,
+
+                area:
+                    payloadData
+                        .delivery
+                        .area,
+
+                landmark:
+                    payloadData
+                        .delivery
+                        .landmark,
+
+                city:
+                    payloadData
+                        .delivery
+                        .city,
+
+                district:
+                    payloadData
+                        .delivery
+                        .district,
+
+                state:
+                    payloadData
+                        .delivery
+                        .state,
+
+                pincode:
+                    payloadData
+                        .delivery
+                        .pincode,
+
+                latitude:
+                    payloadData
+                        .delivery
+                        .latitude,
+
+                longitude:
+                    payloadData
+                        .delivery
+                        .longitude,
+
+                is_default:
+                    addresses.length ===
+                    0
+
+            });
+
+
+    if (
+        result.error
+    ) {
+
+        throw result.error;
+
+    }
+
+}
+
+
+/* =========================================================
+   CURRENT LOCATION
+   ========================================================= */
+
+function location() {
+
+    const status =
+        $("swaadyaLocationStatus");
+
+
+    if (
+        !navigator.geolocation
+    ) {
+
+        if (status) {
+
+            status.textContent =
+                "Location is unavailable. Enter your address manually.";
+
+        }
+
+        return;
+
+    }
+
+
+    const button =
+        $("swaadyaCurrentLocationBtn");
+
+
+    if (button) {
+
+        button.disabled =
+            true;
+
+        button.textContent =
+            "Getting location…";
+
+    }
+
+
+    navigator
+        .geolocation
+        .getCurrentPosition(
+
+            position => {
+
+                coords = {
+
+                    latitude:
+                        position.coords.latitude,
+
+                    longitude:
+                        position.coords.longitude
+
+                };
+
+
+                if (status) {
+
+                    status.textContent =
+                        "Location selected ✓";
+
+                }
+
+
+                if (button) {
+
+                    button.disabled =
+                        false;
+
+                    button.textContent =
+                        "📍 Use my current location";
+
+                }
+
+            },
+
+
+            () => {
+
+                if (status) {
+
+                    status.textContent =
+                        "Location permission was not granted. Manual address entry remains available.";
+
+                }
+
+
+                if (button) {
+
+                    button.disabled =
+                        false;
+
+                    button.textContent =
+                        "📍 Use my current location";
+
+                }
+
+            },
+
+
+            {
+
+                enableHighAccuracy:
+                    true,
+
+                timeout:
+                    12000,
+
+                maximumAge:
+                    0
+
+            }
+
+        );
+
+}
+
+
+/* =========================================================
+   MAP PICKER
+   ========================================================= */
+
+async function mapPicker() {
+
+    try {
+
+        if (!window.L) {
+
+            await new Promise(
+                (
+                    resolve,
+                    reject
+                ) => {
+
+                    const css =
+                        document
+                            .createElement(
+                                "link"
+                            );
+
+
+                    css.rel =
+                        "stylesheet";
+
+
+                    css.href =
+                        "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+
+
+                    document.head
+                        .appendChild(
+                            css
+                        );
+
+
+                    const script =
+                        document
+                            .createElement(
+                                "script"
+                            );
+
+
+                    script.src =
+                        "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+
+
+                    script.onload =
+                        resolve;
+
+
+                    script.onerror =
+                        reject;
+
+
+                    document.head
+                        .appendChild(
+                            script
+                        );
+
+                }
+            );
+
+        }
+
+
+        $("swaadyaMapModal")
+            .classList
+            .add("open");
+
+
+        const defaultCoordinates =
+            coords.latitude != null
+                ? [
+                    coords.latitude,
+                    coords.longitude
+                ]
+                : [
+                    26.9124,
+                    75.7873
                 ];
 
 
-            if (
-                value ===
-                "XX"
-            ) {
+        if (!map) {
 
-                return total;
-
-            }
-
-
-            return (
-                total +
-                Number(value) *
-                item.quantity
-            );
-
-        },
-        0
-    );
-
-}
-
-
-function getShippingCharge(subtotal) {
-    return subtotal >= CONFIG.freeShippingThreshold ? 0 : CONFIG.shippingMin;
-}
-
-function formatShipping(subtotal) {
-    const shipping = getShippingCharge(subtotal);
-    return shipping === 0 ? "FREE" : formatPrice(shipping);
-}
-
-/* =========================================================
-   CART RENDER
-   ========================================================= */
-
-function renderCart() {
-
-    $("cartCount")
-        .textContent =
-        getCartQuantity();
-
-
-    const items =
-        $("cartItems");
-
-
-    if (
-        cart.length === 0
-    ) {
-
-        items.innerHTML = `
-
-            <div class="cart-empty">
-
-                Your cart is empty.
-
-                <br><br>
-
-                <a
-                    href="#shop"
-                    class="btn btn-primary"
-                    onclick="closeCart()"
-                >
-                    Shop Spices
-                </a>
-
-            </div>
-
-        `;
-
-
-        $("cartFooter")
-            .innerHTML =
-            "";
-
-
-        return;
-
-    }
-
-
-    items.innerHTML =
-        cart
-        .map(item => {
-
-
-            const product =
-                CONFIG.products.find(
-                    product =>
-                        product.id ===
-                        item.productId
+            map =
+                L.map(
+                    "swaadyaMap"
+                )
+                .setView(
+                    defaultCoordinates,
+                    13
                 );
 
 
-            if (!product) {
-                return "";
-            }
+            L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+                    maxZoom:
+                        19,
+
+                    attribution:
+                        "© OpenStreetMap contributors"
+                }
+            )
+            .addTo(
+                map
+            );
 
 
-            return `
-
-                <div
-                    class="cart-item"
-                >
-
-
-                    <div class="cart-thumbnail">
-                        <img src="${product.image}" alt="${product.name}" onerror="this.onerror=null; this.style.display='none'; this.parentElement.textContent='S';">
-                    </div>
-
-
-                    <div>
-
-                        <div
-                            class="cart-item-name"
-                        >
-                            ${product.name}
-                        </div>
+            marker =
+                L.marker(
+                    defaultCoordinates,
+                    {
+                        draggable:
+                            true
+                    }
+                )
+                .addTo(
+                    map
+                );
 
 
-                        <div
-                            class="cart-item-meta"
-                        >
-                            ${item.size}g •
-                            ${formatPrice(
-                                product.prices[
-                                    item.size
-                                ]
-                            )}
-                        </div>
+            marker.on(
+                "dragend",
+                () => {
+
+                    const point =
+                        marker.getLatLng();
 
 
-                        <div
-                            class="quantity-controls"
-                        >
+                    mapCoords = {
 
-                            <button
-                                class="quantity-button"
-                                onclick="
-                                    changeQuantity(
-                                        '${item.key}',
-                                        -1
-                                    )
-                                "
-                            >
-                                −
-                            </button>
+                        latitude:
+                            point.lat,
 
+                        longitude:
+                            point.lng
 
-                            <strong>
-                                ${item.quantity}
-                            </strong>
+                    };
 
+                }
+            );
 
-                            <button
-                                class="quantity-button"
-                                onclick="
-                                    changeQuantity(
-                                        '${item.key}',
-                                        1
-                                    )
-                                "
-                            >
-                                +
-                            </button>
+        } else {
 
-                        </div>
-
-                    </div>
+            map.setView(
+                defaultCoordinates,
+                13
+            );
 
 
-                    <button
-                        class="remove-button"
-                        onclick="
-                            removeCartItem(
-                                '${item.key}'
-                            )
-                        "
-                    >
-                        Remove
-                    </button>
+            marker.setLatLng(
+                defaultCoordinates
+            );
+
+        }
 
 
-                </div>
+        mapCoords = {
 
-            `;
+            latitude:
+                defaultCoordinates[0],
 
-        })
-        .join("");
+            longitude:
+                defaultCoordinates[1]
 
-
-    const total =
-        getCartTotal();
-
-
-    $("cartFooter")
-        .innerHTML = `
-
-            <div class="cart-total-line">
-                <span>Subtotal</span>
-                <span>${total > 0 ? formatPrice(total) : "₹XX"}</span>
-            </div>
-            <div class="cart-total-line">
-                <span>Shipping</span>
-                <span>${formatShipping(total)}</span>
-            </div>
-            <div class="cart-total-line">
-                <span>Total</span>
-                <span>${total > 0 ? formatPrice(total + getShippingCharge(total)) : "₹XX"}</span>
-            </div>
+        };
 
 
-            <button
-                class="
-                    btn
-                    btn-primary
-                    btn-block
-                "
-                onclick="
-                    openCheckout()
-                "
-            >
-                Checkout
-            </button>
+        setTimeout(
+            () => {
+
+                map.invalidateSize();
+
+            },
+            100
+        );
 
 
-            <p
-                style="
-                    margin-top:8px;
-                    color:var(--muted);
-                    font-size:10px;
-                    text-align:center;
-                "
-            >
-                Shipping charges are
-                configured separately.
-            </p>
+    } catch (error) {
 
-        `;
+        console.error(
+            error
+        );
+
+
+        const status =
+            $("swaadyaLocationStatus");
+
+
+        if (status) {
+
+            status.textContent =
+                "Map is unavailable. Use GPS or enter the address manually.";
+
+        }
+
+    }
 
 }
 
 
 /* =========================================================
-   CHANGE QUANTITY
+   CLOSE MAP
    ========================================================= */
 
-function changeQuantity(
-    key,
-    amount
-) {
+function closeMap() {
 
-    const item =
-        cart.find(
-            item =>
-                item.key === key
+    $("swaadyaMapModal")
+        ?.classList
+        .remove(
+            "open"
         );
 
+}
 
-    if (!item) {
-        return;
+
+/* =========================================================
+   CONFIRM MAP LOCATION
+   ========================================================= */
+
+function confirmMap() {
+
+    if (mapCoords) {
+
+        coords = {
+            ...mapCoords
+        };
+
     }
 
 
-    item.quantity +=
-        amount;
+    const status =
+        $("swaadyaLocationStatus");
 
 
     if (
-        item.quantity <= 0
+        status &&
+        coords.latitude != null
     ) {
 
-        cart =
-            cart.filter(
-                item =>
-                    item.key !== key
-            );
+        status.textContent =
+            `Location selected ✓ (${coords.latitude.toFixed(5)}, ${coords.longitude.toFixed(5)})`;
 
     }
 
 
-    saveCart();
+    closeMap();
 
 }
 
 
 /* =========================================================
-   REMOVE CART ITEM
+   BUSY STATE
    ========================================================= */
 
-function removeCartItem(
-    key
+function busyState(
+    value,
+    label
 ) {
 
-    cart =
-        cart.filter(
-            item =>
-                item.key !== key
+    busy =
+        value;
+
+
+    const button =
+        $("swaadyaCheckoutSubmit");
+
+
+    if (!button) {
+
+        return;
+
+    }
+
+
+    button.disabled =
+        value;
+
+
+    button.textContent =
+        value
+            ? label
+            : (
+                SWAADYA_BACKEND
+                    .paymentMode ===
+                "demo"
+                    ? "Place Demo Order"
+                    : "Pay Securely"
+            );
+
+}
+
+
+/* =========================================================
+   RAZORPAY
+   ========================================================= */
+
+async function razor(
+    payloadData
+) {
+
+    busyState(
+        true,
+        "Creating payment…"
+    );
+
+
+    const result =
+        await supabase
+            .functions
+            .invoke(
+                SWAADYA_BACKEND
+                    .createOrderFunction,
+                {
+                    body:
+                        payloadData
+                }
+            );
+
+
+    if (
+        result.error
+    ) {
+
+        throw result.error;
+
+    }
+
+
+    if (
+        !result.data?.order_id ||
+        !result.data?.amount
+    ) {
+
+        throw new Error(
+            "Invalid payment order response"
         );
 
+    }
 
-    saveCart();
+
+    if (
+        !window.Razorpay
+    ) {
+
+        throw new Error(
+            "Payment gateway is unavailable."
+        );
+
+    }
 
 
-    showToast(
-        "Item removed"
+    return new Promise(
+        (
+            resolve,
+            reject
+        ) => {
+
+            const options = {
+
+                key:
+                    result.data.key_id,
+
+                amount:
+                    result.data.amount,
+
+                currency:
+                    result.data.currency ||
+                    "INR",
+
+                name:
+                    "Swaadya",
+
+                description:
+                    "The Taste of Real Spices",
+
+                order_id:
+                    result.data.order_id,
+
+
+                prefill: {
+
+                    name:
+                        payloadData
+                            .customer
+                            .full_name,
+
+                    email:
+                        payloadData
+                            .customer
+                            .email,
+
+                    contact:
+                        payloadData
+                            .customer
+                            .mobile
+
+                },
+
+
+                theme: {
+
+                    color:
+                        "#234d38"
+
+                },
+
+
+                modal: {
+
+                    ondismiss:
+                        () => {
+
+                            busyState(
+                                false
+                            );
+
+
+                            reject(
+                                new Error(
+                                    "Payment was not completed."
+                                )
+                            );
+
+                        }
+
+                },
+
+
+                handler:
+                    async response => {
+
+                        try {
+
+                            busyState(
+                                true,
+                                "Verifying payment…"
+                            );
+
+
+                            const verification =
+                                await supabase
+                                    .functions
+                                    .invoke(
+                                        SWAADYA_BACKEND
+                                            .verifyPaymentFunction,
+                                        {
+                                            body: {
+
+                                                ...response,
+
+                                                checkout:
+                                                    payloadData
+
+                                            }
+                                        }
+                                    );
+
+
+                            if (
+                                verification.error ||
+                                !verification
+                                    .data
+                                    ?.verified
+                            ) {
+
+                                throw (
+                                    verification.error ||
+                                    new Error(
+                                        "Payment verification failed"
+                                    )
+                                );
+
+                            }
+
+
+                            $("orderResult")
+                                .innerHTML = `
+
+                                    <strong>
+                                        Order:
+                                    </strong>
+
+                                    #
+                                    ${esc(
+                                        verification
+                                            .data
+                                            .order
+                                            .order_number ||
+                                        "SW-PENDING"
+                                    )}
+
+                                    <br>
+
+                                    <strong>
+                                        Amount Paid:
+                                    </strong>
+
+                                    ${formatPrice(
+                                        Number(
+                                            verification
+                                                .data
+                                                .order
+                                                .total
+                                        )
+                                    )}
+
+                                    <br>
+
+                                    <strong>
+                                        Payment ID:
+                                    </strong>
+
+                                    ${esc(
+                                        response
+                                            .razorpay_payment_id
+                                    )}
+
+                                    <br>
+
+                                    <strong>
+                                        Order Status:
+                                    </strong>
+
+                                    Confirmed
+
+                                    <br><br>
+
+                                    Thank you for ordering from Swaadya.
+
+                                `;
+
+
+                            cart =
+                                [];
+
+
+                            saveCart();
+
+
+                            $("checkoutForm")
+                                .reset();
+
+
+                            $("customerState")
+                                .value =
+                                "Rajasthan";
+
+
+                            closeCheckout();
+
+
+                            $("successModal")
+                                .classList
+                                .add(
+                                    "open"
+                                );
+
+
+                            $("overlay")
+                                .classList
+                                .add(
+                                    "active"
+                                );
+
+
+                            resolve(
+                                verification.data
+                            );
+
+
+                        } catch (error) {
+
+                            busyState(
+                                false
+                            );
+
+
+                            showToast(
+                                msg(
+                                    error,
+                                    "Payment could not be verified. Your cart has been kept so you can retry."
+                                )
+                            );
+
+
+                            reject(
+                                error
+                            );
+
+                        }
+
+                    }
+
+            };
+
+
+            try {
+
+                new window.Razorpay(
+                    options
+                ).open();
+
+            } catch (error) {
+
+                busyState(
+                    false
+                );
+
+
+                reject(
+                    error
+                );
+
+            }
+
+        }
     );
 
 }
 
 
 /* =========================================================
-   CART OPEN / CLOSE
+   DEMO ORDER
    ========================================================= */
 
-function openCart() {
+function demo(
+    payloadData
+) {
 
-    $("cartDrawer")
-        .classList.add("open");
+    const subtotal =
+        getCartTotal();
+
+
+    const total =
+        subtotal +
+        getShippingCharge(
+            subtotal
+        );
+
+
+    const orderId =
+        "SW" +
+        Date.now()
+            .toString()
+            .slice(-8);
+
+
+    $("orderResult")
+        .innerHTML = `
+
+            <strong>
+                Order ID:
+            </strong>
+
+            ${orderId}
+
+            <br>
+
+            <strong>
+                Customer:
+            </strong>
+
+            ${esc(
+                payloadData
+                    .customer
+                    .full_name
+            )}
+
+            <br>
+
+            <strong>
+                Items:
+            </strong>
+
+            ${getCartQuantity()}
+
+            <br>
+
+            <strong>
+                Total:
+            </strong>
+
+            ${formatPrice(total)}
+
+            <br>
+
+            <strong>
+                Delivery:
+            </strong>
+
+            ${esc(
+                payloadData
+                    .delivery
+                    .address_line
+            )},
+
+            ${esc(
+                payloadData
+                    .delivery
+                    .area
+            )},
+
+            ${esc(
+                payloadData
+                    .delivery
+                    .district
+            )},
+
+            ${esc(
+                payloadData
+                    .delivery
+                    .state
+            )}
+
+            -
+
+            ${esc(
+                payloadData
+                    .delivery
+                    .pincode
+            )}
+
+            <br><br>
+
+            This is a demo/test order.
+
+        `;
+
+
+    cart =
+        [];
+
+
+    saveCart();
+
+
+    $("checkoutForm")
+        .reset();
+
+
+    $("customerState")
+        .value =
+        "Rajasthan";
+
+
+    closeCheckout();
+
+
+    $("successModal")
+        .classList
+        .add(
+            "open"
+        );
+
 
     $("overlay")
-        .classList.add("active");
-
-}
-
-
-function closeCart() {
-
-    $("cartDrawer")
-        .classList.remove("open");
-
-    $("overlay")
-        .classList.remove("active");
+        .classList
+        .add(
+            "active"
+        );
 
 }
 
 
 /* =========================================================
-   CHECKOUT
+   CHECKOUT SUBMIT
    ========================================================= */
 
-function openCheckout() {
+async function submit(
+    event
+) {
 
-    if (
-        cart.length === 0
-    ) {
+    event.preventDefault();
+
+    event.stopImmediatePropagation();
+
+
+    if (busy) {
+
+        return;
+
+    }
+
+
+    const validation =
+        validate();
+
+
+    if (validation) {
+
+        showToast(
+            validation
+        );
+
+        return;
+
+    }
+
+
+    if (!cart.length) {
 
         showToast(
             "Your cart is empty"
@@ -4662,857 +6119,274 @@ function openCheckout() {
     }
 
 
-    closeCart();
+    const payloadData =
+        payload();
 
 
-    const quantity =
-        getCartQuantity();
+    try {
 
-
-    const total =
-        getCartTotal();
-
-
-    $("checkoutSummary")
-        .innerHTML = `
-
-            <div class="cart-total-line"><span>Total Items</span><span>${quantity}</span></div>
-            <div class="cart-total-line"><span>Subtotal</span><span>${total > 0 ? formatPrice(total) : "₹XX"}</span></div>
-            <div class="cart-total-line"><span>Shipping</span><span>${formatShipping(total)}</span></div>
-            <div class="cart-total-line"><span>Total</span><span>${total > 0 ? formatPrice(total + getShippingCharge(total)) : "₹XX"}</span></div>
-
-        `;
-
-
-    $("checkoutModal")
-        .classList.add("open");
-
-    $("overlay")
-        .classList.add("active");
-
-}
-
-
-function closeCheckout() {
-
-    $("checkoutModal")
-        .classList.remove("open");
-
-    $("overlay")
-        .classList.remove("active");
-
-}
-
-
-/* =========================================================
-   CHECKOUT VALIDATION
-   ========================================================= */
-
-$("checkoutForm")
-.addEventListener(
-    "submit",
-    function(event) {
-
-        event.preventDefault();
-
-
-        const name =
-            $("customerName")
-            .value
-            .trim();
-
-
-        const mobile =
-            $("customerMobile")
-            .value
-            .trim();
-
-
-        const pin =
-            $("customerPin")
-            .value
-            .trim();
+        await maybeSaveAddress(
+            payloadData
+        );
 
 
         if (
-            !name
+            SWAADYA_BACKEND
+                .paymentMode ===
+            "demo"
         ) {
 
-            showToast(
-                "Please enter your name"
+            demo(
+                payloadData
             );
 
-            return;
+        } else {
+
+            await razor(
+                payloadData
+            );
 
         }
 
 
-        if (
-            !/^[6-9]\d{9}$/.test(
-                mobile
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        showToast(
+            msg(
+                error,
+                "We could not start the payment. Your cart has been kept."
             )
-        ) {
+        );
 
-            showToast(
-                "Enter a valid 10-digit mobile number"
-            );
 
-            return;
+        busyState(
+            false
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   OVERRIDE EXISTING OPEN CHECKOUT
+   ========================================================= */
+
+const oldOpen =
+    window.openCheckout;
+
+
+window.openCheckout =
+    function () {
+
+        if (oldOpen) {
+
+            oldOpen();
 
         }
 
 
-        if (
-            !/^\d{6}$/.test(
-                pin
-            )
-        ) {
+        fillProfile();
 
-            showToast(
-                "Enter a valid 6-digit PIN code"
+        renderAddresses();
+
+        busyState(
+            false
+        );
+
+    };
+
+
+/* =========================================================
+   INITIALIZE ON PAGE LOAD
+   ========================================================= */
+
+window.addEventListener(
+    "load",
+    async function () {
+
+        /*
+         * Checkout submit.
+         */
+
+        const form =
+            $("checkoutForm");
+
+
+        if (form) {
+
+            form.addEventListener(
+                "submit",
+                submit,
+                true
             );
-
-            return;
 
         }
 
 
-        const orderId =
-            "SW" +
-            Date.now()
-            .toString()
-            .slice(-8);
-
-
-        const total =
-            getCartTotal();
-
-
-        const shipping = getShippingCharge(total);
-        const grandTotal = total + shipping;
-        const totalText =
-            total > 0
-            ? formatPrice(grandTotal)
-            : "₹XX";
-
-
-        $("orderResult")
-            .innerHTML = `
-
-                <strong>
-                    Order ID:
-                </strong>
-                ${orderId}
-
-                <br>
-
-                <strong>
-                    Customer:
-                </strong>
-                ${escapeHTML(name)}
-
-                <br>
-
-                <strong>
-                    Items:
-                </strong>
-                ${getCartQuantity()}
-
-                <br>
-
-                <strong>
-                    Total:
-                </strong>
-                ${totalText}
-
-                <br>
-
-                <strong>
-                    Delivery:
-                </strong>
-                ${escapeHTML(
-                    $("customerAddress").value
-                )},
-                ${escapeHTML(
-                    $("customerTown").value
-                )},
-                ${escapeHTML(
-                    $("customerDistrict").value
-                )},
-                ${escapeHTML(
-                    $("customerState").value
-                )}
-                -
-                ${escapeHTML(pin)}
-
-                <br><br>
-
-                <span>
-                    We'll prepare your order and
-                    share delivery updates with you.
-                    This is a demo/test order until
-                    a real backend and payment system
-                    are connected.
-                </span>
-
-            `;
-
-
-        cart = [];
-
-
-        saveCart();
-
-
-        $("checkoutForm")
-            .reset();
-
-
-        closeCheckout();
-
-
-        $("successModal")
-            .classList.add("open");
-
-        $("overlay")
-            .classList.add("active");
-
-
-    }
-);
-
-
-/* =========================================================
-   SUCCESS CLOSE
-   ========================================================= */
-
-function closeSuccess() {
-
-    $("successModal")
-        .classList.remove("open");
-
-    $("overlay")
-        .classList.remove("active");
-
-}
-
-
-/* =========================================================
-   PRODUCT DETAILS
-   ========================================================= */
-
-function showProductDetails(
-    productId
-) {
-
-    const product =
-        CONFIG.products.find(
-            item =>
-                item.id ===
-                productId
-        );
-
-
-    if (!product) {
-        return;
-    }
-
-
-    $("infoModalTitle")
-        .textContent =
-        product.name;
-
-
-    $("infoModalBody")
-        .innerHTML = `
-
-            <div
-                class="product-detail"
-            >
-
-
-                <div
-                    class="
-                        detail-visual
-                        product-image
-                        ${product.imageClass}
-                    "
-                >
-
-                    <img
-                        class="product-real-image"
-                        src="${product.image}"
-                        alt="${product.name}"
-                        onerror="this.onerror=null; this.style.display='none'; this.parentElement.classList.add('image-fallback');"
-                    >
-
-                </div>
-
-
-                <div class="detail-content">
-
-                    <h3>
-                        ${product.name}
-                    </h3>
-
-
-                    <p>
-                        ${product.shortDescription}
-                    </p>
-
-
-                    <ul class="detail-list">
-
-                        <li>
-                            <strong>
-                                Ingredients:
-                            </strong>
-                            ${product.ingredients}
-                        </li>
-
-                        <li>
-                            <strong>
-                                Available Sizes:
-                            </strong>
-                            250g and 500g
-                        </li>
-
-                        <li>
-                            <strong>
-                                Storage:
-                            </strong>
-                            ${product.storage}
-                        </li>
-
-                        <li>
-                            <strong>
-                                Preparation:
-                            </strong>
-                            Freshly prepared /
-                            processed in small batches.
-                        </li>
-
-                        <li>
-                            <strong>Shelf Life:</strong>
-                            ${CONFIG.shelfLife}
-                        </li>
-
-                    </ul>
-
-
-                    <div style="margin-top:20px; display:flex; gap:10px; align-items:end; flex-wrap:wrap;">
-                        <div>
-                            <label class="field-label" for="detail-size-${product.id}">SIZE</label>
-                            <select class="size-select" id="detail-size-${product.id}" onchange="updateDetailSelection('${product.id}')">
-                                <option value="250">250g</option>
-                                <option value="500">500g</option>
-                            </select>
-                        </div>
-                        <div>
-                            <div class="field-label">PRICE</div>
-                            <div class="product-price" id="detail-price-${product.id}">${formatPrice(product.prices[250])}</div>
-                        </div>
-                        <button class="btn btn-primary" onclick="addDetailToCart('${product.id}')">Add to Cart</button>
-                    </div>
-
-                </div>
-
-
-            </div>
-
-
-            <div
-                style="
-                    margin-top:25px;
-                    padding:18px;
-                    background:var(--cream-100);
-                    border-radius:12px;
-                    color:var(--muted);
-                    font-size:12px;
-                "
-            >
-
-                <strong
-                    style="color:var(--green-700)"
-                >
-                    Product Information
-                </strong>
-
-                <br><br>
-
-                Net Quantity: <span id="detailNetQuantity">250g</span>
-
-                <br>
-
-                Shelf Life: ${CONFIG.shelfLife}
-
-                <br>
-
-                Manufacturer/Packer/Business Address: ${CONFIG.manufacturerAddress}
-
-            </div>
-
-        `;
-
-
-    $("infoModal")
-        .classList.add("open");
-
-    $("overlay")
-        .classList.add("active");
-
-}
-
-
-function updateDetailSelection(productId) {
-    const product = CONFIG.products.find(item => item.id === productId);
-    const select = $("detail-size-" + productId);
-    const net = $("detailNetQuantity");
-    const price = $("detail-price-" + productId);
-    if (!product || !select) return;
-    if (net) net.textContent = select.value + "g";
-    if (price) price.textContent = formatPrice(product.prices[select.value]);
-}
-
-function addDetailToCart(productId) {
-    const select = $("detail-size-" + productId);
-    addToCart(productId, select ? select.value : "250");
-    closeInfoModal();
-}
-
-/* =========================================================
-   INFO MODAL
-   ========================================================= */
-
-function closeInfoModal() {
-
-    $("infoModal")
-        .classList.remove("open");
-
-    $("overlay")
-        .classList.remove("active");
-
-}
-
-
-/* =========================================================
-   POLICIES
-   ========================================================= */
-
-const POLICY_CONTENT = {
-
-
-    "Privacy Policy": `
-
-        <p>
-            This website may collect information such as
-            customer name, phone number, email address,
-            delivery address and order information.
-        </p>
-
-        <br>
-
-        <p>
-            This information is intended to be used for
-            processing orders, delivery, customer support
-            and transaction communication.
-        </p>
-
-        <br>
-
-        <p>
-            This policy is an editable basic template.
-            It should be reviewed and updated for the
-            actual business, technologies used and
-            applicable legal requirements before launch.
-        </p>
-
-    `,
-
-
-    "Terms & Conditions": `
-
-        <p>
-            Product descriptions, prices, availability and
-            delivery areas should be confirmed before
-            accepting a live order.
-        </p>
-
-        <br>
-
-        <p>
-            Orders are subject to product availability
-            and the selected payment method.
-        </p>
-
-        <br>
-
-        <p>
-            This page is an editable basic template and
-            should be reviewed for the actual business
-            before launch.
-        </p>
-
-    `,
-
-
-    "Shipping & Delivery": `
-
-        <p>
-            We currently plan to serve customers in
-            Jaipur, Rajasthan and selected serviceable
-            locations. Delivery availability and charges
-            may vary by PIN code.
-        </p>
-
-        <br>
-
-        <p>
-            <strong>
-                Local Shipping:
-            </strong>
-            ₹50–₹70
-        </p>
-
-        <p>
-            <strong>
-                Free Shipping Above:
-            </strong>
-            ₹500
-        </p>
-
-        <br>
-
-        <p>
-            Orders below ₹500: applicable local shipping charge (default ₹50). Orders of ₹500 or more: free shipping.
-        </p>
-
-    `,
-
-
-    "Refund / Cancellation": `
-
-        <p>
-            Refund and cancellation rules should be
-            finalized based on the actual order process,
-            payment gateway, product type and applicable
-            requirements.
-        </p>
-
-        <br>
-
-        <p>
-            This is an editable placeholder and should
-            be reviewed before launch.
-        </p>
-
-    `
-
-};
-
-
-function openPolicy(
-    title
-) {
-
-    $("infoModalTitle")
-        .textContent =
-        title;
-
-
-    $("infoModalBody")
-        .innerHTML =
-        POLICY_CONTENT[
-            title
-        ] ||
-        "<p>Information will be added.</p>";
-
-
-    $("infoModal")
-        .classList.add("open");
-
-    $("overlay")
-        .classList.add("active");
-
-}
-
-
-/* =========================================================
-   TOAST
-   ========================================================= */
-
-let toastTimer;
-
-
-function showToast(
-    message
-) {
-
-    const toast =
-        $("toast");
-
-
-    toast.textContent =
-        message;
-
-
-    toast.classList.add(
-        "show"
-    );
-
-
-    clearTimeout(
-        toastTimer
-    );
-
-
-    toastTimer =
-        setTimeout(
-            () => {
-
-                toast.classList.remove(
-                    "show"
-                );
-
-            },
-            2200
-        );
-
-}
-
-
-/* =========================================================
-   ESCAPE HTML
-   ========================================================= */
-
-function escapeHTML(
-    value
-) {
-
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
-
-
-/* =========================================================
-   MOBILE MENU
-   ========================================================= */
-
-$("mobileMenuButton")
-.addEventListener(
-    "click",
-    function() {
-
-        const nav =
-            $("mobileNav");
-
-
-        const open =
-            nav.classList.toggle(
-                "open"
-            );
-
-
-        this.setAttribute(
-            "aria-expanded",
-            String(open)
-        );
-
-    }
-);
-
-
-document
-    .querySelectorAll(
-        "#mobileNav a"
-    )
-    .forEach(
-        link => {
-
-            link.addEventListener(
+        /*
+         * Current location.
+         */
+
+        $("swaadyaCurrentLocationBtn")
+            ?.addEventListener(
                 "click",
-                function() {
+                location
+            );
 
-                    $("mobileNav")
-                        .classList
-                        .remove(
-                            "open"
+
+        /*
+         * Map.
+         */
+
+        $("swaadyaMapLocationBtn")
+            ?.addEventListener(
+                "click",
+                mapPicker
+            );
+
+
+        $("swaadyaCloseMap")
+            ?.addEventListener(
+                "click",
+                closeMap
+            );
+
+
+        $("swaadyaCancelMap")
+            ?.addEventListener(
+                "click",
+                closeMap
+            );
+
+
+        $("swaadyaConfirmMap")
+            ?.addEventListener(
+                "click",
+                confirmMap
+            );
+
+
+        /* =================================================
+           LOGOUT
+           ================================================= */
+
+        $("swaadyaLogoutBtn")
+            ?.addEventListener(
+                "click",
+                async function () {
+
+                    const button =
+                        $("swaadyaLogoutBtn");
+
+
+                    if (button) {
+
+                        button.disabled =
+                            true;
+
+                    }
+
+
+                    const result =
+                        await supabase
+                            .auth
+                            .signOut();
+
+
+                    if (button) {
+
+                        button.disabled =
+                            false;
+
+                    }
+
+
+                    if (
+                        result.error
+                    ) {
+
+                        showToast(
+                            msg(
+                                result.error,
+                                "Could not log out."
+                            )
                         );
 
-                    $("mobileMenuButton")
-                        .setAttribute(
-                            "aria-expanded",
-                            "false"
-                        );
+                        return;
+
+                    }
+
+
+                    /*
+                     * Clear local authentication state.
+                     */
+
+                    session =
+                        null;
+
+                    profile =
+                        null;
+
+                    addresses =
+                        [];
+
+                    isAdmin =
+                        false;
+
+
+                    /*
+                     * Hide Admin immediately.
+                     */
+
+                    const adminButton =
+                        ensureAdminButton();
+
+
+                    if (adminButton) {
+
+                        adminButton.style.display =
+                            "none";
+
+                    }
+
+
+                    /*
+                     * Update header.
+                     */
+
+                    header();
+
+
+                    showToast(
+                        "Logged out successfully"
+                    );
 
                 }
             );
 
-        }
-    );
+
+        /* =================================================
+           INITIAL USER LOAD
+           ================================================= */
+
+        await loadUser();
 
 
-/* =========================================================
-   CART EVENTS
-   ========================================================= */
+        /*
+         * Fill checkout profile if available.
+         */
 
-$("cartButton")
-    .addEventListener(
-        "click",
-        openCart
-    );
+        fillProfile();
 
+    }
+);
 
-$("closeCart")
-    .addEventListener(
-        "click",
-        closeCart
-    );
-
-
-$("overlay")
-    .addEventListener(
-        "click",
-        function() {
-
-            closeCart();
-
-            closeCheckout();
-
-            closeSuccess();
-
-            closeInfoModal();
-
-        }
-    );
-
-
-/* =========================================================
-   ESC KEY
-   ========================================================= */
-
-document
-    .addEventListener(
-        "keydown",
-        function(event) {
-
-            if (
-                event.key ===
-                "Escape"
-            ) {
-
-                closeCart();
-
-                closeCheckout();
-
-                closeSuccess();
-
-                closeInfoModal();
-
-            }
-
-        }
-    );
-
-
-/* =========================================================
-   CONFIG → CONTACT / SOCIAL
-   ========================================================= */
-
-$("contactEmail")
-    .textContent =
-    CONFIG.email;
-
-
-$("contactWhatsApp")
-    .textContent =
-    CONFIG.whatsapp;
-
-
-const instagramURL =
-    "https://instagram.com/" +
-    CONFIG.instagram;
-
-
-$("instagramLink")
-    .href =
-    instagramURL;
-
-
-$("instagramLink")
-    .textContent =
-    "Follow @" +
-    CONFIG.instagram;
-
-
-$("footerInstagram")
-    .href =
-    instagramURL;
-
-
-/* =========================================================
-   INITIALIZE
-   ========================================================= */
-
-renderProducts();
-
-renderCart();
-
-
-/* =========================================================
-   END
-   ========================================================= */
-
-</script>
-
-
-<script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
-<script type="module">
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-const SWAADYA_BACKEND={supabaseUrl:"https://qogtlsrtigcnzkpbhdna.supabase.co",supabaseAnonKey:"sb_publishable_9RnptVmME1ZHWL_Hiy5mOg_QNekZoeU",paymentMode:"razorpay-test",createOrderFunction:"create-razorpay-order",verifyPaymentFunction:"verify-razorpay-payment"};
-const supabase=createClient(SWAADYA_BACKEND.supabaseUrl,SWAADYA_BACKEND.supabaseAnonKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});window.swaadyaSupabase=supabase;
-let session=null,profile=null,addresses=[],coords={latitude:null,longitude:null},map=null,marker=null,mapCoords=null,busy=false;
-const $=id=>document.getElementById(id), esc=v=>window.escapeHTML?window.escapeHTML(v??""):String(v??"");
-function msg(e,f="Something went wrong. Please try again."){console.error("Swaadya:",e);const m=String(e?.message||"");if(/invalid login credentials|invalid credentials/i.test(m))return"Email or password is incorrect.";if(/email not confirmed/i.test(m))return"Please verify your email before logging in.";if(/network|fetch/i.test(m))return"Network error. Please check your connection and try again.";return f}
-function header(){const logged=!!session,links=$("swaadyaAuthLinks"),acct=$("swaadyaAccountBtn"),logout=$("swaadyaLogoutBtn"),name=$("swaadyaAccountName");if(links)links.style.display=logged?"none":"flex";if(acct)acct.style.display=logged?"inline-flex":"none";if(logout)logout.style.display=logged?"inline-flex":"none";if(name)name.textContent=profile?.full_name?`Hi, ${profile.full_name.trim().split(/\s+/)[0]}`:"Account"}
-async function loadUser(){try{const r=await supabase.auth.getSession();session=r.data.session;if(session){const p=await supabase.from("profiles").select("id,full_name,mobile,email").eq("id",session.user.id).maybeSingle();if(p.error)throw p.error;profile=p.data||{full_name:session.user.user_metadata?.full_name||"",mobile:session.user.user_metadata?.mobile||"",email:session.user.email||""};const a=await supabase.from("addresses").select("id,label,full_name,mobile,address_line,area,landmark,city,district,state,pincode,latitude,longitude,is_default").eq("user_id",session.user.id).order("is_default",{ascending:false}).order("created_at",{ascending:false});if(a.error)throw a.error;addresses=a.data||[]}else{profile=null;addresses=[]}header()}catch(e){console.error(e);session=null;profile=null;addresses=[];header()}}
-supabase.auth.onAuthStateChange((_e,s)=>{session=s;loadUser()});
-function fillProfile(){if(!profile)return;if($("customerName")&&!$("customerName").value)$("customerName").value=profile.full_name||"";if($("customerMobile")&&!$("customerMobile").value)$("customerMobile").value=profile.mobile||"";if($("customerEmail")&&!$("customerEmail").value)$("customerEmail").value=profile.email||session?.user?.email||"";$("swaadyaSaveAddressWrap")?.style.setProperty("display",session?"flex":"none")}
-function renderAddresses(){const b=$("swaadyaSavedAddresses");if(!b)return;if(!session){b.innerHTML='<div class="swaadya-address-meta">Already have an account? <a href="login.html" style="color:var(--green-700);font-weight:800">Login</a> to use saved addresses.</div>';return}if(!addresses.length){b.innerHTML='<div class="swaadya-address-meta">No saved addresses yet. Enter a new delivery address below.</div>';return}b.innerHTML=addresses.map(a=>`<label class="swaadya-address-option"><input type="radio" name="swaadyaSavedAddress" value="${esc(a.id)}"><span><span class="swaadya-address-title">${esc(a.label||"Saved Address")}${a.is_default?" • Default":""}</span><br><span class="swaadya-address-meta">${esc(a.full_name)} • ${esc(a.mobile)}<br>${esc(a.address_line)}, ${esc(a.area)}, ${esc(a.city)}, ${esc(a.state)} - ${esc(a.pincode)}</span></span></label>`).join("");b.querySelectorAll("input[name=swaadyaSavedAddress]").forEach(i=>i.addEventListener("change",()=>applyAddress(addresses.find(a=>a.id===i.value))))}
-function applyAddress(a){if(!a)return;const v={customerName:a.full_name,customerMobile:a.mobile,customerAddress:a.address_line,customerTown:a.area||a.city,customerDistrict:a.district,customerState:a.state,customerPin:a.pincode};Object.entries(v).forEach(([id,x])=>{const e=$(id);if(e)e.value=x||""});coords={latitude:a.latitude??null,longitude:a.longitude??null};if($("swaadyaLocationStatus"))$("swaadyaLocationStatus").textContent=a.latitude!=null?"Saved location selected ✓":"Saved address selected."}
-function validate(){const n=$("customerName")?.value.trim(),m=$("customerMobile")?.value.trim(),p=$("customerPin")?.value.trim(),a=$("customerAddress")?.value.trim(),t=$("customerTown")?.value.trim(),d=$("customerDistrict")?.value.trim(),s=$("customerState")?.value.trim(),e=$("customerEmail")?.value.trim();if(!n)return"Please enter your name.";if(!/^[6-9]\d{9}$/.test(m))return"Enter a valid 10-digit mobile number.";if(e&&!/^\S+@\S+\.\S+$/.test(e))return"Enter a valid email address.";if(!a)return"Please enter your delivery address.";if(!t)return"Please enter your village/town or area.";if(!d)return"Please enter your district.";if(!s)return"Please enter your state.";if(!/^\d{6}$/.test(p))return"Enter a valid 6-digit PIN code.";return null}
-function payload(){return{user_id:session?.user?.id||null,customer:{full_name:$("customerName")?.value.trim()||"",mobile:$("customerMobile")?.value.trim()||"",email:$("customerEmail")?.value.trim()||""},delivery:{address_line:$("customerAddress")?.value.trim()||"",area:$("customerTown")?.value.trim()||"",landmark:"",city:$("customerTown")?.value.trim()||"",district:$("customerDistrict")?.value.trim()||"",state:$("customerState")?.value.trim()||"",pincode:$("customerPin")?.value.trim()||"",latitude:coords.latitude,longitude:coords.longitude},items:cart.map(i=>{const p=CONFIG.products.find(x=>x.id===i.productId);return{product_id:i.productId,variant_size:`${i.size}g`,quantity:Number(i.quantity),unit_price:Number(p?.prices?.[i.size])}})}}
-async function maybeSaveAddress(p){if(!session||!$("swaadyaSaveAddress")?.checked)return;const {error}=await supabase.from("addresses").insert({user_id:session.user.id,label:"Home",full_name:p.customer.full_name,mobile:p.customer.mobile,address_line:p.delivery.address_line,area:p.delivery.area,landmark:p.delivery.landmark,city:p.delivery.city,district:p.delivery.district,state:p.delivery.state,pincode:p.delivery.pincode,latitude:p.delivery.latitude,longitude:p.delivery.longitude,is_default:addresses.length===0});if(error)throw error}
-function location(){if(!navigator.geolocation){$("swaadyaLocationStatus").textContent="Location is unavailable. Enter your address manually.";return}const b=$("swaadyaCurrentLocationBtn");b.disabled=true;b.textContent="Getting location…";navigator.geolocation.getCurrentPosition(p=>{coords={latitude:p.coords.latitude,longitude:p.coords.longitude};$("swaadyaLocationStatus").textContent="Location selected ✓";b.disabled=false;b.textContent="📍 Use my current location"},()=>{$("swaadyaLocationStatus").textContent="Location permission was not granted. Manual address entry remains available.";b.disabled=false;b.textContent="📍 Use my current location"},{enableHighAccuracy:true,timeout:12000,maximumAge:0})}
-async function mapPicker(){try{if(!window.L){await new Promise((ok,no)=>{const c=document.createElement("link");c.rel="stylesheet";c.href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";document.head.appendChild(c);const j=document.createElement("script");j.src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";j.onload=ok;j.onerror=no;document.head.appendChild(j)})}$("swaadyaMapModal").classList.add("open");const d=coords.latitude!=null?[coords.latitude,coords.longitude]:[26.9124,75.7873];if(!map){map=L.map("swaadyaMap").setView(d,13);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors"}).addTo(map);marker=L.marker(d,{draggable:true}).addTo(map);marker.on("dragend",()=>{const p=marker.getLatLng();mapCoords={latitude:p.lat,longitude:p.lng}})}else{map.setView(d,13);marker.setLatLng(d)}mapCoords={latitude:d[0],longitude:d[1]};setTimeout(()=>map.invalidateSize(),100)}catch(e){console.error(e);$("swaadyaLocationStatus").textContent="Map is unavailable. Use GPS or enter the address manually."}}
-function closeMap(){$("swaadyaMapModal").classList.remove("open")}
-function confirmMap(){if(mapCoords)coords={...mapCoords};if($("swaadyaLocationStatus")&&coords.latitude!=null)$("swaadyaLocationStatus").textContent=`Location selected ✓ (${coords.latitude.toFixed(5)}, ${coords.longitude.toFixed(5)})`;closeMap()}
-function busyState(v,label){busy=v;const b=$("swaadyaCheckoutSubmit");if(b){b.disabled=v;b.textContent=v?label:(SWAADYA_BACKEND.paymentMode==="demo"?"Place Demo Order":"Pay Securely")}}
-async function razor(payload){busyState(true,"Creating payment…");const r=await supabase.functions.invoke(SWAADYA_BACKEND.createOrderFunction,{body:payload});if(r.error)throw r.error;if(!r.data?.order_id||!r.data?.amount)throw new Error("Invalid payment order response");if(!window.Razorpay)throw new Error("Payment gateway is unavailable.");return new Promise((resolve,reject)=>{const o={key:r.data.key_id,amount:r.data.amount,currency:r.data.currency||"INR",name:"Swaadya",description:"The Taste of Real Spices",order_id:r.data.order_id,prefill:{name:payload.customer.full_name,email:payload.customer.email,contact:payload.customer.mobile},theme:{color:"#234d38"},modal:{ondismiss:()=>{busyState(false);reject(new Error("Payment was not completed."))}},handler:async resp=>{try{busyState(true,"Verifying payment…");const v=await supabase.functions.invoke(SWAADYA_BACKEND.verifyPaymentFunction,{body:{...resp,checkout:payload}});if(v.error||!v.data?.verified)throw v.error||new Error("Payment verification failed");$("orderResult").innerHTML=`<strong>Order:</strong> #${esc(v.data.order.order_number||"SW-PENDING")}<br><strong>Amount Paid:</strong> ${formatPrice(Number(v.data.order.total))}<br><strong>Payment ID:</strong> ${esc(resp.razorpay_payment_id)}<br><strong>Order Status:</strong> Confirmed<br><br>Thank you for ordering from Swaadya.`;cart=[];saveCart();$("checkoutForm").reset();$("customerState").value="Rajasthan";closeCheckout();$("successModal").classList.add("open");$("overlay").classList.add("active");resolve(v.data)}catch(e){busyState(false);showToast(msg(e,"Payment could not be verified. Your cart has been kept so you can retry."));reject(e)}}};try{new window.Razorpay(o).open()}catch(e){busyState(false);reject(e)}})}
-function demo(p){const total=getCartTotal()+getShippingCharge(getCartTotal()),id="SW"+Date.now().toString().slice(-8);$("orderResult").innerHTML=`<strong>Order ID:</strong> ${id}<br><strong>Customer:</strong> ${esc(p.customer.full_name)}<br><strong>Items:</strong> ${getCartQuantity()}<br><strong>Total:</strong> ${formatPrice(total)}<br><strong>Delivery:</strong> ${esc(p.delivery.address_line)}, ${esc(p.delivery.area)}, ${esc(p.delivery.district)}, ${esc(p.delivery.state)} - ${esc(p.delivery.pincode)}<br><br>This is a demo/test order.`;cart=[];saveCart();$("checkoutForm").reset();$("customerState").value="Rajasthan";closeCheckout();$("successModal").classList.add("open");$("overlay").classList.add("active")}
-async function submit(e){e.preventDefault();e.stopImmediatePropagation();if(busy)return;const v=validate();if(v){showToast(v);return}if(!cart.length){showToast("Your cart is empty");return}const p=payload();try{await maybeSaveAddress(p);if(SWAADYA_BACKEND.paymentMode==="demo")demo(p);else await razor(p)}catch(x){console.error(x);showToast(msg(x,"We could not start the payment. Your cart has been kept."));busyState(false)}}
-const oldOpen=window.openCheckout;window.openCheckout=function(){if(oldOpen)oldOpen();fillProfile();renderAddresses();busyState(false)};
-window.addEventListener("load",async()=>{const f=$("checkoutForm");if(f)f.addEventListener("submit",submit,true);$("swaadyaCurrentLocationBtn")?.addEventListener("click",location);$("swaadyaMapLocationBtn")?.addEventListener("click",mapPicker);$("swaadyaCloseMap")?.addEventListener("click",closeMap);$("swaadyaCancelMap")?.addEventListener("click",closeMap);$("swaadyaConfirmMap")?.addEventListener("click",confirmMap);$("swaadyaLogoutBtn")?.addEventListener("click",async()=>{const b=$("swaadyaLogoutBtn");b.disabled=true;const r=await supabase.auth.signOut();b.disabled=false;if(r.error)showToast(msg(r.error,"Could not log out."));else{session=null;profile=null;addresses=[];header();showToast("Logged out successfully")}});await loadUser();fillProfile()});
 </script>
 
 
