@@ -1,0 +1,2031 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<meta
+    name="theme-color"
+    content="#234d38"
+>
+
+<title>
+    Create Account | SWAADYA
+</title>
+
+
+<style>
+
+    :root {
+
+        --green-900: #173a29;
+        --green-800: #1d432f;
+        --green-700: #234d38;
+        --green-600: #32684a;
+
+        --gold-600: #c9942f;
+        --gold-500: #d9a640;
+        --gold-300: #efd58e;
+
+        --cream-50: #fffdf8;
+        --cream-100: #fbf7ef;
+        --cream-200: #f5eee1;
+
+        --ink: #20241f;
+        --muted: #69726b;
+        --white: #ffffff;
+        --border: #e7dfd1;
+
+        --shadow:
+            0 25px 75px
+            rgba(25, 45, 33, 0.16);
+
+        --radius: 24px;
+    }
+
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+
+    html {
+        min-height: 100%;
+    }
+
+
+    body {
+
+        min-height: 100vh;
+
+        background:
+            var(--cream-100);
+
+        color:
+            var(--ink);
+
+        font-family:
+            Inter,
+            Poppins,
+            Lato,
+            Arial,
+            sans-serif;
+
+        line-height: 1.6;
+    }
+
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+
+    button,
+    input {
+        font: inherit;
+    }
+
+
+    button {
+        -webkit-tap-highlight-color:
+            transparent;
+    }
+
+
+    /* =====================================================
+       MAIN LAYOUT
+       ===================================================== */
+
+    .auth-page {
+
+        min-height: 100vh;
+
+        display: grid;
+
+        grid-template-columns:
+            minmax(300px, 0.9fr)
+            minmax(460px, 1.1fr);
+    }
+
+
+    /* =====================================================
+       BRAND
+       ===================================================== */
+
+    .brand-panel {
+
+        position: relative;
+
+        min-height: 100vh;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        padding: 48px;
+
+        overflow: hidden;
+
+        background:
+            radial-gradient(
+                circle at 80% 15%,
+                rgba(217, 166, 64, 0.14),
+                transparent 28%
+            ),
+            linear-gradient(
+                145deg,
+                var(--green-900),
+                var(--green-700)
+            );
+
+        color: #ffffff;
+    }
+
+
+    .brand-panel::before,
+    .brand-panel::after {
+
+        content: "";
+
+        position: absolute;
+
+        width: 440px;
+        height: 440px;
+
+        border:
+            1px solid
+            rgba(239, 213, 142, 0.16);
+
+        border-radius: 50%;
+
+        pointer-events: none;
+    }
+
+
+    .brand-panel::before {
+
+        top: -190px;
+        right: -180px;
+    }
+
+
+    .brand-panel::after {
+
+        bottom: -240px;
+        left: -230px;
+    }
+
+
+    .brand-content {
+
+        position: relative;
+
+        z-index: 2;
+
+        width: 100%;
+
+        max-width: 460px;
+    }
+
+
+    .brand-mark {
+
+        width: 60px;
+        height: 60px;
+
+        display: grid;
+        place-items: center;
+
+        border-radius: 17px;
+
+        background:
+            var(--gold-500);
+
+        color:
+            var(--green-900);
+
+        font:
+            800 29px Georgia,
+            "Times New Roman",
+            serif;
+
+        box-shadow:
+            0 15px 40px
+            rgba(0, 0, 0, 0.2);
+
+        margin-bottom: 28px;
+    }
+
+
+    .brand-name {
+
+        font:
+            800 clamp(42px, 6vw, 72px) / 0.95
+            Georgia,
+            "Times New Roman",
+            serif;
+
+        letter-spacing:
+            0.025em;
+    }
+
+
+    .tagline {
+
+        margin-top: 16px;
+
+        color:
+            var(--gold-300);
+
+        font-size: 13px;
+
+        font-weight: 900;
+
+        letter-spacing:
+            0.18em;
+
+        text-transform:
+            uppercase;
+    }
+
+
+    .brand-copy {
+
+        max-width: 390px;
+
+        margin-top: 30px;
+
+        color:
+            rgba(255, 255, 255, 0.76);
+
+        font-size: 15px;
+
+        line-height: 1.8;
+    }
+
+
+    /* =====================================================
+       FORM PANEL
+       ===================================================== */
+
+    .form-panel {
+
+        min-height: 100vh;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        padding: 32px;
+    }
+
+
+    .auth-card {
+
+        width:
+            min(560px, 100%);
+
+        background:
+            var(--white);
+
+        border:
+            1px solid
+            var(--border);
+
+        border-radius:
+            var(--radius);
+
+        box-shadow:
+            var(--shadow);
+
+        padding:
+            clamp(28px, 5vw, 48px);
+    }
+
+
+    .back-link {
+
+        display:
+            inline-flex;
+
+        align-items:
+            center;
+
+        gap: 8px;
+
+        margin-bottom:
+            30px;
+
+        color:
+            var(--green-700);
+
+        font-size: 13px;
+
+        font-weight: 900;
+
+        transition:
+            0.2s ease;
+    }
+
+
+    .back-link:hover {
+
+        color:
+            var(--green-900);
+
+        transform:
+            translateX(-2px);
+    }
+
+
+    .eyebrow {
+
+        color:
+            var(--green-700);
+
+        font-size: 11px;
+
+        font-weight: 900;
+
+        letter-spacing:
+            0.18em;
+
+        text-transform:
+            uppercase;
+    }
+
+
+    .title {
+
+        margin-top:
+            8px;
+
+        color:
+            var(--green-900);
+
+        font:
+            800 clamp(30px, 4vw, 42px) / 1.08
+            Georgia,
+            "Times New Roman",
+            serif;
+    }
+
+
+    .subtitle {
+
+        margin-top:
+            12px;
+
+        color:
+            var(--muted);
+
+        font-size:
+            14px;
+
+        line-height:
+            1.7;
+
+        max-width:
+            490px;
+    }
+
+
+    /* =====================================================
+       FORM
+       ===================================================== */
+
+    .form {
+
+        display:
+            grid;
+
+        gap:
+            17px;
+
+        margin-top:
+            28px;
+    }
+
+
+    .grid {
+
+        display:
+            grid;
+
+        grid-template-columns:
+            1fr 1fr;
+
+        gap:
+            17px;
+    }
+
+
+    .field {
+
+        display:
+            grid;
+
+        gap:
+            7px;
+    }
+
+
+    .full {
+
+        grid-column:
+            1 / -1;
+    }
+
+
+    .label {
+
+        color:
+            var(--green-900);
+
+        font-size:
+            12px;
+
+        font-weight:
+            900;
+
+        letter-spacing:
+            0.03em;
+    }
+
+
+    .input {
+
+        width:
+            100%;
+
+        border:
+            1px solid
+            var(--border);
+
+        border-radius:
+            12px;
+
+        background:
+            var(--cream-50);
+
+        color:
+            var(--ink);
+
+        padding:
+            13px 14px;
+
+        outline:
+            none;
+
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease;
+    }
+
+
+    .input:hover {
+
+        background:
+            #ffffff;
+    }
+
+
+    .input:focus {
+
+        background:
+            #ffffff;
+
+        border-color:
+            var(--gold-500);
+
+        box-shadow:
+            0 0 0 4px
+            rgba(217, 166, 64, 0.13);
+    }
+
+
+    .input::placeholder {
+
+        color:
+            #a1a7a2;
+    }
+
+
+    .hint {
+
+        color:
+            var(--muted);
+
+        font-size:
+            11px;
+
+        line-height:
+            1.5;
+    }
+
+
+    /* =====================================================
+       BUTTON
+       ===================================================== */
+
+    .primary {
+
+        width:
+            100%;
+
+        border:
+            0;
+
+        border-radius:
+            12px;
+
+        padding:
+            14px 18px;
+
+        background:
+            var(--green-700);
+
+        color:
+            #ffffff;
+
+        font-size:
+            14px;
+
+        font-weight:
+            900;
+
+        cursor:
+            pointer;
+
+        transition:
+            background 0.2s ease,
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+
+    .primary:hover {
+
+        background:
+            var(--green-800);
+
+        transform:
+            translateY(-1px);
+
+        box-shadow:
+            0 10px 24px
+            rgba(35, 77, 56, 0.18);
+    }
+
+
+    .primary:active {
+
+        transform:
+            translateY(0);
+    }
+
+
+    .primary:disabled {
+
+        opacity:
+            0.6;
+
+        cursor:
+            wait;
+
+        transform:
+            none;
+
+        box-shadow:
+            none;
+    }
+
+
+    /* =====================================================
+       LINKS
+       ===================================================== */
+
+    .links {
+
+        display:
+            flex;
+
+        justify-content:
+            center;
+
+        margin-top:
+            19px;
+    }
+
+
+    .link {
+
+        border:
+            0;
+
+        background:
+            none;
+
+        color:
+            var(--green-700);
+
+        font-size:
+            13px;
+
+        font-weight:
+            900;
+
+        cursor:
+            pointer;
+
+        padding:
+            0;
+    }
+
+
+    .link:hover {
+
+        color:
+            var(--green-900);
+
+        text-decoration:
+            underline;
+    }
+
+
+    /* =====================================================
+       MESSAGES
+       ===================================================== */
+
+    .message {
+
+        margin-top:
+            18px;
+
+        padding:
+            12px 14px;
+
+        border-radius:
+            11px;
+
+        font-size:
+            13px;
+
+        font-weight:
+            700;
+
+        line-height:
+            1.55;
+    }
+
+
+    .message[hidden] {
+
+        display:
+            none;
+    }
+
+
+    .message.error {
+
+        background:
+            #fff0ee;
+
+        color:
+            #8b2f27;
+
+        border:
+            1px solid
+            #f0c7c1;
+    }
+
+
+    .message.success {
+
+        background:
+            #eef8f0;
+
+        color:
+            #28623b;
+
+        border:
+            1px solid
+            #c9e3cf;
+    }
+
+
+    .legal {
+
+        margin-top:
+            22px;
+
+        color:
+            #7b827d;
+
+        font-size:
+            11px;
+
+        line-height:
+            1.7;
+
+        text-align:
+            center;
+    }
+
+
+    /* =====================================================
+       MOBILE BRAND
+       ===================================================== */
+
+    .mobile-brand {
+
+        display:
+            none;
+
+        align-items:
+            center;
+
+        gap:
+            10px;
+
+        margin-bottom:
+            26px;
+
+        color:
+            var(--green-900);
+
+        font:
+            800 25px Georgia,
+            "Times New Roman",
+            serif;
+    }
+
+
+    .mobile-brand span {
+
+        width:
+            38px;
+
+        height:
+            38px;
+
+        display:
+            grid;
+
+        place-items:
+            center;
+
+        border-radius:
+            10px;
+
+        background:
+            var(--gold-500);
+
+        color:
+            var(--green-900);
+
+        font-size:
+            19px;
+    }
+
+
+    /* =====================================================
+       MOBILE
+       ===================================================== */
+
+    @media (max-width: 800px) {
+
+        .auth-page {
+            display:
+                block;
+        }
+
+
+        .brand-panel {
+            display:
+                none;
+        }
+
+
+        .form-panel {
+
+            min-height:
+                100vh;
+
+            padding:
+                18px;
+        }
+
+
+        .auth-card {
+
+            padding:
+                28px 22px;
+        }
+
+
+        .mobile-brand {
+
+            display:
+                flex;
+        }
+
+
+        .grid {
+
+            grid-template-columns:
+                1fr;
+        }
+
+
+        .full {
+
+            grid-column:
+                auto;
+        }
+    }
+
+
+    @media (max-width: 390px) {
+
+        .form-panel {
+
+            padding:
+                12px;
+        }
+
+
+        .auth-card {
+
+            border-radius:
+                18px;
+
+            padding:
+                24px 18px;
+        }
+
+
+        .title {
+
+            font-size:
+                30px;
+        }
+    }
+
+</style>
+
+
+</head>
+
+<body>
+
+<div class="auth-page">
+
+
+<!-- =====================================================
+     BRAND PANEL
+     ===================================================== -->
+
+<aside class="brand-panel">
+
+    <div class="brand-content">
+
+        <div class="brand-mark">
+            S
+        </div>
+
+
+        <div class="brand-name">
+            SWAADYA
+        </div>
+
+
+        <div class="tagline">
+            The Taste of Real Spices
+        </div>
+
+
+        <p class="brand-copy">
+
+            Create your Swaadya account once
+            and make future orders easier with
+            saved customer details and delivery
+            addresses.
+
+        </p>
+
+    </div>
+
+</aside>
+
+
+
+<!-- =====================================================
+     FORM
+     ===================================================== -->
+
+<main class="form-panel">
+
+    <section class="auth-card">
+
+
+        <!-- Mobile Logo -->
+
+        <a
+            class="mobile-brand"
+            href="index.html"
+        >
+
+            <span>
+                S
+            </span>
+
+            SWAADYA
+
+        </a>
+
+
+        <!-- Back -->
+
+        <a
+            class="back-link"
+            href="index.html"
+        >
+
+            ← Back to Swaadya
+
+        </a>
+
+
+        <div class="eyebrow">
+            Customer Account
+        </div>
+
+
+        <h1 class="title">
+            Create your Swaadya account
+        </h1>
+
+
+        <p class="subtitle">
+
+            Save your details, manage your addresses
+            and make your next order easier.
+
+        </p>
+
+
+        <div
+            id="authMessage"
+            class="message"
+            hidden
+        ></div>
+
+
+        <!-- =================================================
+             SIGNUP FORM
+             ================================================= -->
+
+        <form
+            id="signupForm"
+            class="form"
+            novalidate
+        >
+
+
+            <div class="grid">
+
+
+                <!-- FULL NAME -->
+
+                <div class="field full">
+
+                    <label
+                        class="label"
+                        for="fullName"
+                    >
+                        Full Name
+                    </label>
+
+
+                    <input
+                        class="input"
+                        id="fullName"
+                        name="fullName"
+                        type="text"
+                        autocomplete="name"
+                        placeholder="Enter your full name"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- MOBILE -->
+
+                <div class="field">
+
+                    <label
+                        class="label"
+                        for="mobile"
+                    >
+                        Mobile Number
+                    </label>
+
+
+                    <input
+                        class="input"
+                        id="mobile"
+                        name="mobile"
+                        type="tel"
+                        inputmode="numeric"
+                        maxlength="10"
+                        autocomplete="tel"
+                        placeholder="10-digit mobile number"
+                        required
+                    >
+
+
+                    <span class="hint">
+
+                        Enter your 10-digit Indian
+                        mobile number.
+
+                    </span>
+
+                </div>
+
+
+
+                <!-- EMAIL -->
+
+                <div class="field">
+
+                    <label
+                        class="label"
+                        for="email"
+                    >
+                        Email Address
+                    </label>
+
+
+                    <input
+                        class="input"
+                        id="email"
+                        name="email"
+                        type="email"
+                        autocomplete="email"
+                        placeholder="you@example.com"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- PASSWORD -->
+
+                <div class="field">
+
+                    <label
+                        class="label"
+                        for="password"
+                    >
+                        Password
+                    </label>
+
+
+                    <input
+                        class="input"
+                        id="password"
+                        name="password"
+                        type="password"
+                        autocomplete="new-password"
+                        minlength="8"
+                        placeholder="Create a password"
+                        required
+                    >
+
+
+                    <span class="hint">
+
+                        Minimum 8 characters.
+
+                    </span>
+
+                </div>
+
+
+
+                <!-- CONFIRM PASSWORD -->
+
+                <div class="field">
+
+                    <label
+                        class="label"
+                        for="confirmPassword"
+                    >
+                        Confirm Password
+                    </label>
+
+
+                    <input
+                        class="input"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type="password"
+                        autocomplete="new-password"
+                        minlength="8"
+                        placeholder="Confirm your password"
+                        required
+                    >
+
+                </div>
+
+
+            </div>
+
+
+            <button
+                class="primary"
+                id="submitButton"
+                type="submit"
+            >
+
+                Create Account
+
+            </button>
+
+
+        </form>
+
+
+        <div class="links">
+
+            <button
+                class="link"
+                id="showLogin"
+                type="button"
+            >
+
+                Already have an account? Login
+
+            </button>
+
+        </div>
+
+
+        <p class="legal">
+
+            Your password is securely handled by
+            Supabase Authentication and is never
+            stored in the Swaadya customer profile.
+
+        </p>
+
+
+    </section>
+
+</main>
+```
+
+</div>
+
+<!-- =========================================================
+     SUPABASE + SIGNUP JAVASCRIPT
+     Everything is contained inside signup.html.
+     No auth.js required.
+     ========================================================= -->
+
+<script type="module">
+
+    import {
+        createClient
+    } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+
+    /* =====================================================
+       SUPABASE CONFIGURATION
+       ===================================================== */
+
+    const SUPABASE_URL =
+        "https://qogtlsrtigcnzkpbhdna.supabase.co";
+
+    const SUPABASE_ANON_KEY =
+        "sb_publishable_9RnptVmME1ZHWL_Hiy5mOg_QNekZoeU";
+
+
+    const supabase =
+        createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY,
+            {
+                auth: {
+
+                    persistSession:
+                        true,
+
+                    autoRefreshToken:
+                        true,
+
+                    detectSessionInUrl:
+                        true,
+
+                    flowType:
+                        "pkce"
+
+                }
+            }
+        );
+
+
+    /* =====================================================
+       HELPERS
+       ===================================================== */
+
+    const $ = (id) =>
+        document.getElementById(id);
+
+
+    function showMessage(
+        type,
+        message
+    ){
+
+        const element =
+            $("authMessage");
+
+
+        if (!element) return;
+
+
+        element.className =
+            `message ${type}`;
+
+
+        element.textContent =
+            message;
+
+
+        element.hidden =
+            !message;
+
+    }
+
+
+    function clearMessage(){
+
+        const element =
+            $("authMessage");
+
+
+        if (!element) return;
+
+
+        element.textContent =
+            "";
+
+        element.hidden =
+            true;
+
+        element.className =
+            "message";
+
+    }
+
+
+    function setButtonLoading(
+        button,
+        loading,
+        loadingText
+    ){
+
+        if (!button) return;
+
+
+        if (
+            !button.dataset.originalText
+        ){
+
+            button.dataset.originalText =
+                button.textContent;
+
+        }
+
+
+        button.disabled =
+            loading;
+
+
+        button.textContent =
+            loading
+                ? loadingText
+                : button.dataset.originalText;
+
+    }
+
+
+    function validEmail(
+        email
+    ){
+
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+            .test(email);
+
+    }
+
+
+    function validIndianMobile(
+        mobile
+    ){
+
+        return /^[6-9]\d{9}$/
+            .test(mobile);
+
+    }
+
+
+    /* =====================================================
+       RETURN URL
+       ===================================================== */
+
+    function getNextPage(){
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        const next =
+            params.get("next");
+
+
+        if (!next){
+
+            return "index.html";
+
+        }
+
+
+        try{
+
+            const url =
+                new URL(
+                    next,
+                    window.location.href
+                );
+
+
+            if (
+                url.origin ===
+                window.location.origin
+            ){
+
+                return url.href;
+
+            }
+
+        }catch(error){
+
+            console.warn(
+                "Invalid return URL.",
+                error
+            );
+
+        }
+
+
+        return "index.html";
+
+    }
+
+
+    function goHome(){
+
+        window.location.href =
+            getNextPage();
+
+    }
+
+
+    /* =====================================================
+       FRIENDLY ERROR HANDLING
+       ===================================================== */
+
+    function friendlyError(
+        error
+    ){
+
+        const raw =
+            String(
+                error?.message || ""
+            ).toLowerCase();
+
+
+        if (
+            raw.includes(
+                "user already registered"
+            )
+        ){
+
+            return (
+                "An account with this email already exists. " +
+                "Please login instead."
+            );
+
+        }
+
+
+        if (
+            raw.includes(
+                "password"
+            )
+        ){
+
+            return (
+                "Password does not meet the required " +
+                "security requirements."
+            );
+
+        }
+
+
+        if (
+            raw.includes(
+                "network"
+            ) ||
+            raw.includes(
+                "fetch"
+            )
+        ){
+
+            return (
+                "Network connection failed. " +
+                "Please check your internet connection " +
+                "and try again."
+            );
+
+        }
+
+
+        if (
+            raw.includes(
+                "rate limit"
+            ) ||
+            raw.includes(
+                "too many"
+            )
+        ){
+
+            return (
+                "Too many attempts. Please wait a little " +
+                "and try again."
+            );
+
+        }
+
+
+        return (
+            "We could not create your account. " +
+            "Please check your details and try again."
+        );
+
+    }
+
+
+    /* =====================================================
+       SIGNUP
+       ===================================================== */
+
+    async function handleSignup(
+        event
+    ){
+
+        event.preventDefault();
+
+
+        clearMessage();
+
+
+        const name =
+            $("fullName")
+                .value
+                .trim();
+
+
+        const mobile =
+            $("mobile")
+                .value
+                .replace(/\D/g, "");
+
+
+        const email =
+            $("email")
+                .value
+                .trim()
+                .toLowerCase();
+
+
+        const password =
+            $("password")
+                .value;
+
+
+        const confirmPassword =
+            $("confirmPassword")
+                .value;
+
+
+        const button =
+            $("submitButton");
+
+
+        /* =========================================
+           VALIDATION
+           ========================================= */
+
+
+        if (!name){
+
+            showMessage(
+                "error",
+                "Please enter your full name."
+            );
+
+            $("fullName").focus();
+
+            return;
+
+        }
+
+
+        if (
+            !validIndianMobile(
+                mobile
+            )
+        ){
+
+            showMessage(
+                "error",
+                "Please enter a valid Indian mobile number."
+            );
+
+            $("mobile").focus();
+
+            return;
+
+        }
+
+
+        if (
+            !validEmail(
+                email
+            )
+        ){
+
+            showMessage(
+                "error",
+                "Please enter a valid email address."
+            );
+
+            $("email").focus();
+
+            return;
+
+        }
+
+
+        if (
+            password.length < 8
+        ){
+
+            showMessage(
+                "error",
+                "Password must contain at least 8 characters."
+            );
+
+            $("password").focus();
+
+            return;
+
+        }
+
+
+        if (
+            password !==
+            confirmPassword
+        ){
+
+            showMessage(
+                "error",
+                "Passwords do not match."
+            );
+
+            $("confirmPassword").focus();
+
+            return;
+
+        }
+
+
+        /* =========================================
+           START REQUEST
+           ========================================= */
+
+        setButtonLoading(
+            button,
+            true,
+            "Creating Account..."
+        );
+
+
+        try{
+
+            /*
+             * Supabase Authentication
+             *
+             * Password is handled by Supabase.
+             * It is NOT stored in profiles.
+             */
+
+            const {
+                data,
+                error
+            } =
+                await supabase.auth
+                    .signUp({
+
+                        email:
+                            email,
+
+                        password:
+                            password,
+
+                        options: {
+
+                            data: {
+
+                                full_name:
+                                    name,
+
+                                mobile:
+                                    mobile
+
+                            }
+
+                        }
+
+                    });
+
+
+            if (error){
+
+                throw error;
+
+            }
+
+
+            /* =====================================
+               SESSION AVAILABLE
+               ===================================== */
+
+            if (
+                data?.user &&
+                data?.session
+            ){
+
+                /*
+                 * Create/update the customer's profile.
+                 *
+                 * RLS should allow the authenticated
+                 * user to insert/update only their own
+                 * profile.
+                 */
+
+                const {
+                    error:
+                        profileError
+                } =
+                    await supabase
+                        .from("profiles")
+                        .upsert(
+
+                            {
+
+                                id:
+                                    data.user.id,
+
+                                full_name:
+                                    name,
+
+                                mobile:
+                                    mobile,
+
+                                email:
+                                    email
+
+                            },
+
+                            {
+
+                                onConflict:
+                                    "id"
+
+                            }
+
+                        );
+
+
+                if (profileError){
+
+                    console.error(
+                        "[Swaadya Profile]",
+                        profileError
+                    );
+
+
+                    /*
+                     * Authentication itself succeeded.
+                     * Do not tell the customer to create
+                     * another account.
+                     */
+
+                    showMessage(
+                        "success",
+                        "Your account was created successfully. Redirecting..."
+                    );
+
+
+                    setTimeout(
+                        goHome,
+                        700
+                    );
+
+
+                    return;
+
+                }
+
+
+                showMessage(
+                    "success",
+                    "Account created successfully. Redirecting..."
+                );
+
+
+                setTimeout(
+                    goHome,
+                    500
+                );
+
+
+                return;
+
+            }
+
+
+            /* =====================================
+               EMAIL CONFIRMATION REQUIRED
+               ===================================== */
+
+            if (data?.user){
+
+                showMessage(
+                    "success",
+                    "Account created successfully. Please check your email to verify your account before logging in."
+                );
+
+
+                setTimeout(
+                    () => {
+
+                        const next =
+                            encodeURIComponent(
+                                getNextPage()
+                            );
+
+
+                        window.location.href =
+                            `login.html?next=${next}`;
+
+                    },
+                    1600
+                );
+
+
+                return;
+
+            }
+
+
+            /*
+             * Defensive fallback.
+             */
+
+            showMessage(
+                "success",
+                "Your account request was received. Please check your email and continue."
+            );
+
+
+        }catch(error){
+
+            console.error(
+                "[Swaadya Signup]",
+                error
+            );
+
+
+            showMessage(
+                "error",
+                friendlyError(error)
+            );
+
+
+        }finally{
+
+            setButtonLoading(
+                button,
+                false,
+                "Create Account"
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       LOGIN NAVIGATION
+       ===================================================== */
+
+    $("showLogin")
+        .addEventListener(
+            "click",
+            () => {
+
+                const next =
+                    encodeURIComponent(
+                        getNextPage()
+                    );
+
+
+                window.location.href =
+                    `login.html?next=${next}`;
+
+            }
+        );
+
+
+    /* =====================================================
+       MOBILE NUMBER INPUT
+       ===================================================== */
+
+    $("mobile")
+        .addEventListener(
+            "input",
+            event => {
+
+                event.target.value =
+                    event.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 10);
+
+            }
+        );
+
+
+    /* =====================================================
+       PASSWORD CONFIRMATION
+       ===================================================== */
+
+    $("confirmPassword")
+        .addEventListener(
+            "input",
+            () => {
+
+                const password =
+                    $("password").value;
+
+                const confirm =
+                    $("confirmPassword").value;
+
+
+                if (
+                    confirm &&
+                    password !== confirm
+                ){
+
+                    $("confirmPassword")
+                        .setCustomValidity(
+                            "Passwords do not match."
+                        );
+
+                }else{
+
+                    $("confirmPassword")
+                        .setCustomValidity("");
+
+                }
+
+            }
+        );
+
+
+    /* =====================================================
+       SIGNUP FORM
+       ===================================================== */
+
+    $("signupForm")
+        .addEventListener(
+            "submit",
+            handleSignup
+        );
+
+
+    /* =====================================================
+       CHECK EXISTING SESSION
+       ===================================================== */
+
+    async function checkExistingSession(){
+
+        try{
+
+            const {
+                data
+            } =
+                await supabase.auth
+                    .getSession();
+
+
+            if (data?.session){
+
+                goHome();
+
+            }
+
+        }catch(error){
+
+            console.warn(
+                "Could not check Supabase session.",
+                error
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       AUTH STATE
+       ===================================================== */
+
+    supabase.auth.onAuthStateChange(
+        (
+            event,
+            session
+        ) => {
+
+            if (
+                session &&
+                event ===
+                "SIGNED_IN"
+            ){
+
+                goHome();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       START
+       ===================================================== */
+
+    checkExistingSession();
+
+</script>
+
+</body>
+
+</html>
