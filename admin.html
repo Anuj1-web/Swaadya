@@ -5005,122 +5005,227 @@
         }
 
 
-        /* =========================================================
-           7. SESSION / ADMIN AUTHORIZATION
-           ========================================================= */
+/* =========================================================
+   7. SESSION / ADMIN AUTHORIZATION
+   ========================================================= */
 
-        async function getSession() {
+async function getSession() {
 
-            const {
-                data,
-                error
-            } =
-                await supabaseClient.auth.getSession();
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth.getSession();
 
-            if (error) {
-                throw error;
-            }
+    if (error) {
+        throw error;
+    }
 
-            return data.session;
-
-        }
-
-
-        async function loadCurrentAdmin() {
-
-            const session =
-                await getSession();
-
-            if (!session) {
-
-                window.location.href =
-                    "login.html";
-
-                return false;
-
-            }
+    return data.session;
+}
 
 
-            STATE.user =
-                session.user;
+/* =========================================================
+   LOAD CURRENT ADMIN
+   ========================================================= */
+
+async function loadCurrentAdmin() {
+
+    const session =
+        await getSession();
 
 
-            /*
-             * IMPORTANT:
-             *
-             * This frontend check is NOT the security boundary.
-             *
-             * Supabase RLS must independently enforce the admin role.
-             */
+    /* ---------------------------------------------------------
+       USER NOT LOGGED IN
+       --------------------------------------------------------- */
 
-            const {
-                data: profile,
-                error
-            } =
-                await supabaseClient
-                    .from("profiles")
-                    .select(
-                        "id,full_name,mobile,email,role,created_at,updated_at"
-                    )
-                    .eq(
-                        "id",
-                        session.user.id
-                    )
-                    .maybeSingle();
+    if (!session) {
+
+        window.location.href =
+            "login.html";
+
+        return false;
+    }
 
 
-            if (error) {
+    /* ---------------------------------------------------------
+       STORE AUTH USER
+       --------------------------------------------------------- */
 
-                throw error;
-
-            }
-
-
-            if (
-                !profile ||
-                profile.role !== "admin"
-            ) {
-
-                hideBoot();
-
-                alert(
-                    "You do not have permission to access the Swaadya admin panel."
-                );
-
-                window.location.href =
-                    "index.html";
-
-                return false;
-
-            }
+    STATE.user =
+        session.user;
 
 
-            STATE.profile =
-                profile;
+    /* =========================================================
+       ADMIN AUTHORIZATION
+
+       Admin access is determined by the authenticated
+       user's UUID existing in:
+
+           admin_users
+
+       Table structure:
+
+           user_id
+           email
+           created_at
+
+       We DO NOT use:
+
+           profiles.role
+
+       for admin authorization anymore.
+       ========================================================= */
+
+    const {
+        data: adminUser,
+        error
+    } =
+        await supabaseClient
+
+            .from("admin_users")
+
+            .select(
+                "user_id,email,created_at"
+            )
+
+            .eq(
+                "user_id",
+                session.user.id
+            )
+
+            .maybeSingle();
 
 
-            updateAdminIdentity();
+    /* ---------------------------------------------------------
+       DATABASE ERROR
+       --------------------------------------------------------- */
 
-            return true;
+    if (error) {
 
-        }
+        console.error(
+            "Admin authorization error:",
+            error
+        );
+
+        throw error;
+    }
 
 
-        function updateAdminIdentity() {
+    /* =========================================================
+       USER IS NOT AN ADMIN
+       ========================================================= */
 
-            const name =
-                STATE.profile?.full_name ||
-                STATE.user?.email ||
-                "Administrator";
+    if (!adminUser) {
 
-            $("#adminName").textContent =
-                name;
+        hideBoot();
 
-            $("#adminAvatar").textContent =
-                initials(name);
+        alert(
+            "You do not have permission to access the Swaadya admin panel."
+        );
 
-        }
+        window.location.href =
+            "index.html";
 
+        return false;
+    }
+
+
+    /* =========================================================
+       ADMIN VERIFIED
+       ========================================================= */
+
+    STATE.profile = {
+
+        id:
+            adminUser.user_id,
+
+        email:
+            adminUser.email ||
+            session.user.email ||
+            "",
+
+        full_name:
+            session.user.user_metadata?.full_name ||
+            session.user.user_metadata?.name ||
+            adminUser.email ||
+            session.user.email ||
+            "Administrator",
+
+        created_at:
+            adminUser.created_at
+
+    };
+
+
+    /* ---------------------------------------------------------
+       UPDATE ADMIN HEADER
+       --------------------------------------------------------- */
+
+    updateAdminIdentity();
+
+
+    return true;
+}
+
+
+/* =========================================================
+   UPDATE ADMIN IDENTITY
+   ========================================================= */
+
+function updateAdminIdentity() {
+
+    const name =
+        STATE.profile?.full_name ||
+        STATE.profile?.email ||
+        STATE.user?.email ||
+        "Administrator";
+
+
+    const email =
+        STATE.profile?.email ||
+        STATE.user?.email ||
+        "";
+
+
+    const adminName =
+        $("#adminName");
+
+    const adminAvatar =
+        $("#adminAvatar");
+
+
+    if (adminName) {
+
+        adminName.textContent =
+            name;
+    }
+
+
+    if (adminAvatar) {
+
+        adminAvatar.textContent =
+            initials(name);
+    }
+
+
+    /*
+     * If your admin.html contains an element
+     * with id="adminEmail", populate it too.
+     *
+     * If it does not exist, nothing happens.
+     */
+
+    const adminEmail =
+        $("#adminEmail");
+
+    if (adminEmail) {
+
+        adminEmail.textContent =
+            email;
+    }
+
+}
 
         /* =========================================================
            8. BOOT
