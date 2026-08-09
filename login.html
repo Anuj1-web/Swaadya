@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#234d38">
+    <title>Login | SWAADYA</title>
+
+
+<style>
+    :root {
+        --green-900: #173a29;
+        --green-800: #1d432f;
+        --green-700: #234d38;
+        --green-600: #32684a;
+
+        --gold-600: #c9942f;
+        --gold-500: #d9a640;
+        --gold-300: #efd58e;
+
+        --cream-50: #fffdf8;
+        --cream-100: #fbf7ef;
+        --cream-200: #f5eee1;
+
+        --ink: #20241f;
+        --muted: #69726b;
+        --white: #ffffff;
+        --border: #e7dfd1;
+
+        --shadow: 0 25px 75px rgba(25, 45, 33, 0.16);
+        --radius: 24px;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    html {
+        min-height: 100%;
+    }
+
+    body {
+        min-height: 100vh;
+        background: var(--cream-100);
+        color: var(--ink);
+        font-family:
+            Inter,
+            Poppins,
+            Lato,
+            Arial,
+            sans-serif;
+        line-height: 1.6;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    button,
+    input {
+        font: inherit;
+    }
+
+    button {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .auth-page {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns:
+            minmax(300px, 0.9fr)
+            minmax(420px, 1.1fr);
+    }
+
+    /* =========================================
+       BRAND PANEL
+       ========================================= */
+
+    .brand-panel {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 48px;
+        overflow: hidden;
+
+        background:
+            radial-gradient(
+                circle at 80% 15%,
+                rgba(217, 166, 64, 0.14),
+                transparent 28%
+            ),
+            linear-gradient(
+                145deg,
+                var(--green-900),
+                var(--green-700)
+            );
+
+        color: #ffffff;
+    }
+
+    .brand-panel::before,
+    .brand-panel::after {
+        content: "";
+        position: absolute;
+
+        width: 440px;
+        height: 440px;
+
+        border: 1px solid rgba(239, 213, 142, 0.16);
+        border-radius: 50%;
+
+        pointer-events: none;
+    }
+
+    .brand-panel::before {
+        top: -190px;
+        right: -180px;
+    }
+
+    .brand-panel::after {
+        bottom: -240px;
+        left: -230px;
+    }
+
+    .brand-content {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        max-width: 460px;
+    }
+
+    .brand-mark {
+        width: 60px;
+        height: 60px;
+
+        display: grid;
+        place-items: center;
+
+        border-radius: 17px;
+
+        background: var(--gold-500);
+        color: var(--green-900);
+
+        font:
+            800 29px Georgia,
+            "Times New Roman",
+            serif;
+
+        box-shadow:
+            0 15px 40px rgba(0, 0, 0, 0.2);
+
+        margin-bottom: 28px;
+    }
+
+    .brand-name {
+        font:
+            800 clamp(42px, 6vw, 72px) / 0.95 Georgia,
+            "Times New Roman",
+            serif;
+
+        letter-spacing: 0.025em;
+    }
+
+    .tagline {
+        margin-top: 16px;
+
+        color: var(--gold-300);
+
+        font-size: 13px;
+        font-weight: 900;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+    }
+
+    .brand-copy {
+        max-width: 390px;
+        margin-top: 30px;
+
+        color: rgba(255, 255, 255, 0.76);
+
+        font-size: 15px;
+        line-height: 1.8;
+    }
+
+    /* =========================================
+       FORM PANEL
+       ========================================= */
+
+    .form-panel {
+        min-height: 100vh;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 32px;
+    }
+
+    .auth-card {
+        width: min(470px, 100%);
+
+        background: var(--white);
+
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+
+        box-shadow: var(--shadow);
+
+        padding: clamp(28px, 5vw, 48px);
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+
+        margin-bottom: 30px;
+
+        color: var(--green-700);
+
+        font-size: 13px;
+        font-weight: 900;
+
+        transition: 0.2s ease;
+    }
+
+    .back-link:hover {
+        color: var(--green-900);
+        transform: translateX(-2px);
+    }
+
+    .eyebrow {
+        color: var(--green-700);
+
+        font-size: 11px;
+        font-weight: 900;
+
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+    }
+
+    .title {
+        margin-top: 8px;
+
+        color: var(--green-900);
+
+        font:
+            800 clamp(30px, 4vw, 42px) / 1.08 Georgia,
+            "Times New Roman",
+            serif;
+    }
+
+    .subtitle {
+        margin-top: 12px;
+
+        color: var(--muted);
+
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    /* =========================================
+       FORM
+       ========================================= */
+
+    .form {
+        display: grid;
+        gap: 17px;
+        margin-top: 28px;
+    }
+
+    .field {
+        display: grid;
+        gap: 7px;
+    }
+
+    .label {
+        color: var(--green-900);
+
+        font-size: 12px;
+        font-weight: 900;
+
+        letter-spacing: 0.03em;
+    }
+
+    .input {
+        width: 100%;
+
+        border: 1px solid var(--border);
+        border-radius: 12px;
+
+        background: var(--cream-50);
+
+        color: var(--ink);
+
+        padding: 13px 14px;
+
+        outline: none;
+
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .input:hover {
+        background: #ffffff;
+    }
+
+    .input:focus {
+        background: #ffffff;
+
+        border-color: var(--gold-500);
+
+        box-shadow:
+            0 0 0 4px rgba(217, 166, 64, 0.13);
+    }
+
+    .input::placeholder {
+        color: #a1a7a2;
+    }
+
+    .primary {
+        width: 100%;
+
+        border: 0;
+        border-radius: 12px;
+
+        padding: 14px 18px;
+
+        background: var(--green-700);
+        color: #ffffff;
+
+        font-size: 14px;
+        font-weight: 900;
+
+        cursor: pointer;
+
+        transition:
+            background 0.2s ease,
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .primary:hover {
+        background: var(--green-800);
+
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 10px 24px rgba(35, 77, 56, 0.18);
+    }
+
+    .primary:active {
+        transform: translateY(0);
+    }
+
+    .primary:disabled {
+        opacity: 0.6;
+        cursor: wait;
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* =========================================
+       LINKS
+       ========================================= */
+
+    .links {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 14px;
+
+        flex-wrap: wrap;
+
+        margin-top: 19px;
+    }
+
+    .link {
+        border: 0;
+        padding: 0;
+
+        background: none;
+
+        color: var(--green-700);
+
+        font-size: 13px;
+        font-weight: 900;
+
+        cursor: pointer;
+    }
+
+    .link:hover {
+        color: var(--green-900);
+        text-decoration: underline;
+    }
+
+    /* =========================================
+       MESSAGES
+       ========================================= */
+
+    .message {
+        margin-top: 18px;
+
+        padding: 12px 14px;
+
+        border-radius: 11px;
+
+        font-size: 13px;
+        font-weight: 700;
+
+        line-height: 1.55;
+    }
+
+    .message[hidden] {
+        display: none;
+    }
+
+    .message.error {
+        background: #fff0ee;
+        color: #8b2f27;
+        border: 1px solid #f0c7c1;
+    }
+
+    .message.success {
+        background: #eef8f0;
+        color: #28623b;
+        border: 1px solid #c9e3cf;
+    }
+
+    .legal {
+        margin-top: 22px;
+
+        color: #7b827d;
+
+        font-size: 11px;
+        line-height: 1.7;
+
+        text-align: center;
+    }
+
+    /* =========================================
+       MOBILE BRAND
+       ========================================= */
+
+    .mobile-brand {
+        display: none;
+
+        align-items: center;
+        gap: 10px;
+
+        margin-bottom: 26px;
+
+        color: var(--green-900);
+
+        font:
+            800 25px Georgia,
+            "Times New Roman",
+            serif;
+    }
+
+    .mobile-brand span {
+        width: 38px;
+        height: 38px;
+
+        display: grid;
+        place-items: center;
+
+        border-radius: 10px;
+
+        background: var(--gold-500);
+
+        color: var(--green-900);
+
+        font-size: 19px;
+    }
+
+    /* =========================================
+       MOBILE
+       ========================================= */
+
+    @media (max-width: 800px) {
+        .auth-page {
+            display: block;
+        }
+
+        .brand-panel {
+            display: none;
+        }
+
+        .form-panel {
+            min-height: 100vh;
+            padding: 18px;
+        }
+
+        .auth-card {
+            padding: 28px 22px;
+        }
+
+        .mobile-brand {
+            display: flex;
+        }
+    }
+
+    @media (max-width: 390px) {
+        .form-panel {
+            padding: 12px;
+        }
+
+        .auth-card {
+            border-radius: 18px;
+            padding: 24px 18px;
+        }
+
+        .title {
+            font-size: 30px;
+        }
+
+        .links {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+
+</head>
+
+<body>
+
+<div class="auth-page">
+
+
+<!-- =========================================
+     LEFT BRAND PANEL
+     ========================================= -->
+
+<aside class="brand-panel">
+
+    <div class="brand-content">
+
+        <div class="brand-mark">
+            S
+        </div>
+
+        <div class="brand-name">
+            SWAADYA
+        </div>
+
+        <div class="tagline">
+            The Taste of Real Spices
+        </div>
+
+        <p class="brand-copy">
+            Sign in to save your delivery details,
+            manage your addresses and make your
+            next Swaadya order easier.
+        </p>
+
+    </div>
+
+</aside>
+
+
+<!-- =========================================
+     RIGHT FORM PANEL
+     ========================================= -->
+
+<main class="form-panel">
+
+    <section class="auth-card">
+
+        <!-- Mobile Brand -->
+
+        <a
+            class="mobile-brand"
+            href="index.html"
+        >
+            <span>S</span>
+            SWAADYA
+        </a>
+
+
+        <!-- Back -->
+
+        <a
+            class="back-link"
+            href="index.html"
+        >
+            ← Back to Swaadya
+        </a>
+
+
+        <!-- =====================================
+             LOGIN CARD
+             ===================================== -->
+
+        <div id="loginCard">
+
+            <div class="eyebrow">
+                Customer Account
+            </div>
+
+            <h1 class="title">
+                Welcome back to Swaadya
+            </h1>
+
+            <p class="subtitle">
+                Login to access your saved details
+                and delivery addresses.
+            </p>
+
+
+            <div
+                id="authMessage"
+                class="message"
+                hidden
+            ></div>
+
+
+            <form
+                id="loginForm"
+                class="form"
+                novalidate
+            >
+
+                <div class="field">
+
+                    <label
+                        class="label"
+                        for="email"
+                    >
+                        Email Address
+                    </label>
+
+                    <input
+                        class="input"
+                        id="email"
+                        name="email"
+                        type="email"
+                        autocomplete="email"
+                        placeholder="you@example.com"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label
+                        class="label"
+                        for="password"
+                    >
+                        Password
+                    </label>
+
+                    <input
+                        class="input"
+                        id="password"
+                        name="password"
+                        type="password"
+                        autocomplete="current-password"
+                        placeholder="Enter your password"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    class="primary"
+                    id="submitButton"
+                    type="submit"
+                >
+                    Login
+                </button>
+
+            </form>
+
+
+            <div class="links">
+
+                <button
+                    class="link"
+                    id="showReset"
+                    type="button"
+                >
+                    Forgot your password?
+                </button>
+
+                <button
+                    class="link"
+                    id="showSignup"
+                    type="button"
+                >
+                    Create an account
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================
+             RESET PASSWORD CARD
+             ===================================== -->
+
+        <div id="resetCard" hidden>
+
+            <div class="eyebrow">
+                Password Recovery
+            </div>
+
+            <h1 class="title">
+                Forgot your password?
+            </h1>
+
+            <p class="subtitle">
+                Enter your email and we'll send
+                you a secure password reset link.
+            </p>
+
+
+            <div
+                id="resetMessage"
+                class="message"
+                hidden
+            ></div>
+
+
+            <form
+                id="resetForm"
+                class="form"
+                novalidate
+            >
+
+                <div class="field">
+
+                    <label
+                        class="label"
+                        for="resetEmail"
+                    >
+                        Email Address
+                    </label>
+
+                    <input
+                        class="input"
+                        id="resetEmail"
+                        name="resetEmail"
+                        type="email"
+                        autocomplete="email"
+                        placeholder="you@example.com"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    class="primary"
+                    id="resetButton"
+                    type="submit"
+                >
+                    Send Reset Link
+                </button>
+
+            </form>
+
+
+            <div class="links">
+
+                <button
+                    class="link"
+                    id="backToLogin"
+                    type="button"
+                >
+                    ← Back to Login
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <p class="legal">
+            Your account credentials are securely
+            handled by Supabase Authentication.
+            Swaadya does not store your password
+            in its customer profile.
+        </p>
+
+    </section>
+
+</main>
+
+
+</div>
+
+<!-- =====================================================
+     SUPABASE + LOGIN JAVASCRIPT
+     Everything is contained in THIS FILE.
+     No auth.js required.
+     ===================================================== -->
+
+<script type="module">
+
+    import {
+        createClient
+    } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+
+    /* =====================================================
+       SUPABASE CONFIGURATION
+       ===================================================== */
+
+    const SUPABASE_URL =
+        "https://qogtlsrtigcnzkpbhdna.supabase.co";
+
+    const SUPABASE_ANON_KEY =
+        "sb_publishable_9RnptVmME1ZHWL_Hiy5mOg_QNekZoeU";
+
+
+    const supabase =
+        createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY,
+            {
+                auth: {
+                    persistSession: true,
+                    autoRefreshToken: true,
+                    detectSessionInUrl: true,
+                    flowType: "pkce"
+                }
+            }
+        );
+
+
+    /* =====================================================
+       HELPERS
+       ===================================================== */
+
+    const $ = (id) =>
+        document.getElementById(id);
+
+
+    function showMessage(
+        type,
+        message,
+        target = "authMessage"
+    ){
+
+        const element = $(target);
+
+        if (!element) return;
+
+        element.className =
+            `message ${type}`;
+
+        element.textContent =
+            message;
+
+        element.hidden =
+            !message;
+    }
+
+
+    function clearMessage(
+        target = "authMessage"
+    ){
+
+        const element = $(target);
+
+        if (!element) return;
+
+        element.textContent = "";
+        element.hidden = true;
+        element.className = "message";
+    }
+
+
+    function setButtonLoading(
+        button,
+        loading,
+        loadingText
+    ){
+
+        if (!button) return;
+
+        if (!button.dataset.originalText){
+
+            button.dataset.originalText =
+                button.textContent;
+
+        }
+
+        button.disabled =
+            loading;
+
+        button.textContent =
+            loading
+                ? loadingText
+                : button.dataset.originalText;
+
+    }
+
+
+    function isValidEmail(email){
+
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+            .test(email);
+
+    }
+
+
+    function getNextPage(){
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+        const next =
+            params.get("next");
+
+
+        /*
+         * Only allow same-origin destinations.
+         * This prevents the login page becoming
+         * an open redirect.
+         */
+
+        if (!next){
+
+            return "index.html";
+
+        }
+
+
+        try{
+
+            const url =
+                new URL(
+                    next,
+                    window.location.href
+                );
+
+
+            if (
+                url.origin ===
+                window.location.origin
+            ){
+
+                return url.href;
+
+            }
+
+        }catch(error){
+
+            console.warn(
+                "Invalid return URL.",
+                error
+            );
+
+        }
+
+
+        return "index.html";
+
+    }
+
+
+    function goAfterLogin(){
+
+        window.location.href =
+            getNextPage();
+
+    }
+
+
+    /* =====================================================
+       FRIENDLY SUPABASE ERROR MESSAGES
+       ===================================================== */
+
+    function getFriendlyError(error){
+
+        const raw =
+            String(
+                error?.message || ""
+            ).toLowerCase();
+
+
+        if (
+            raw.includes(
+                "invalid login credentials"
+            )
+        ){
+
+            return "Email or password is incorrect.";
+
+        }
+
+
+        if (
+            raw.includes(
+                "email not confirmed"
+            )
+        ){
+
+            return "Please verify your email before logging in.";
+
+        }
+
+
+        if (
+            raw.includes(
+                "too many requests"
+            ) ||
+            raw.includes(
+                "rate limit"
+            )
+        ){
+
+            return "Too many attempts. Please wait a little and try again.";
+
+        }
+
+
+        if (
+            raw.includes(
+                "network"
+            ) ||
+            raw.includes(
+                "fetch"
+            )
+        ){
+
+            return "Network connection failed. Please try again.";
+
+        }
+
+
+        return "We could not complete the request. Please try again.";
+
+    }
+
+
+    /* =====================================================
+       CHECK EXISTING SESSION
+       ===================================================== */
+
+    async function checkExistingSession(){
+
+        try{
+
+            const {
+                data,
+                error
+            } =
+                await supabase.auth.getSession();
+
+
+            if (error){
+
+                console.warn(
+                    "Session check failed:",
+                    error.message
+                );
+
+                return;
+
+            }
+
+
+            if (data?.session){
+
+                goAfterLogin();
+
+            }
+
+        }catch(error){
+
+            console.warn(
+                "Supabase session check failed.",
+                error
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       LOGIN
+       ===================================================== */
+
+    async function handleLogin(event){
+
+        event.preventDefault();
+
+
+        const email =
+            $("email")
+                .value
+                .trim();
+
+
+        const password =
+            $("password")
+                .value;
+
+
+        const button =
+            $("submitButton");
+
+
+        clearMessage();
+
+
+        if (!email){
+
+            showMessage(
+                "error",
+                "Please enter your email address."
+            );
+
+            return;
+
+        }
+
+
+        if (!isValidEmail(email)){
+
+            showMessage(
+                "error",
+                "Please enter a valid email address."
+            );
+
+            return;
+
+        }
+
+
+        if (!password){
+
+            showMessage(
+                "error",
+                "Please enter your password."
+            );
+
+            return;
+
+        }
+
+
+        setButtonLoading(
+            button,
+            true,
+            "Logging in..."
+        );
+
+
+        try{
+
+            const {
+                data,
+                error
+            } =
+                await supabase.auth
+                    .signInWithPassword({
+
+                        email:
+                            email,
+
+                        password:
+                            password
+
+                    });
+
+
+            if (error){
+
+                throw error;
+
+            }
+
+
+            if (!data?.session){
+
+                showMessage(
+                    "success",
+                    "Login successful. Please wait..."
+                );
+
+                return;
+
+            }
+
+
+            showMessage(
+                "success",
+                "Login successful. Redirecting..."
+            );
+
+
+            setTimeout(
+                goAfterLogin,
+                350
+            );
+
+
+        }catch(error){
+
+            console.error(
+                "[Swaadya Login]",
+                error
+            );
+
+
+            showMessage(
+                "error",
+                getFriendlyError(error)
+            );
+
+
+        }finally{
+
+            setButtonLoading(
+                button,
+                false,
+                "Login"
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       PASSWORD RESET
+       ===================================================== */
+
+    async function handlePasswordReset(event){
+
+        event.preventDefault();
+
+
+        const email =
+            $("resetEmail")
+                .value
+                .trim();
+
+
+        const button =
+            $("resetButton");
+
+
+        clearMessage(
+            "resetMessage"
+        );
+
+
+        if (!email){
+
+            showMessage(
+                "error",
+                "Please enter your email address.",
+                "resetMessage"
+            );
+
+            return;
+
+        }
+
+
+        if (!isValidEmail(email)){
+
+            showMessage(
+                "error",
+                "Please enter a valid email address.",
+                "resetMessage"
+            );
+
+            return;
+
+        }
+
+
+        setButtonLoading(
+            button,
+            true,
+            "Sending..."
+        );
+
+
+        try{
+
+            /*
+             * The user will return to login.html
+             * after completing the password reset.
+             */
+
+            const redirectUrl =
+                new URL(
+                    "login.html",
+                    window.location.href
+                ).href;
+
+
+            const {
+                error
+            } =
+                await supabase.auth
+                    .resetPasswordForEmail(
+
+                        email,
+
+                        {
+                            redirectTo:
+                                redirectUrl
+                        }
+
+                    );
+
+
+            if (error){
+
+                throw error;
+
+            }
+
+
+            /*
+             * Do not reveal whether an account exists.
+             */
+
+            showMessage(
+                "success",
+                "If an account exists for that email, you will receive a password reset link shortly.",
+                "resetMessage"
+            );
+
+
+        }catch(error){
+
+            console.error(
+                "[Swaadya Password Reset]",
+                error
+            );
+
+
+            /*
+             * Same customer-facing response
+             * to avoid unnecessary account enumeration.
+             */
+
+            showMessage(
+                "success",
+                "If an account exists for that email, you will receive a password reset link shortly.",
+                "resetMessage"
+            );
+
+        }finally{
+
+            setButtonLoading(
+                button,
+                false,
+                "Send Reset Link"
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       NAVIGATION
+       ===================================================== */
+
+    $("showSignup")
+        .addEventListener(
+            "click",
+            () => {
+
+                const next =
+                    encodeURIComponent(
+                        getNextPage()
+                    );
+
+
+                window.location.href =
+                    `signup.html?next=${next}`;
+
+            }
+        );
+
+
+    $("showReset")
+        .addEventListener(
+            "click",
+            () => {
+
+                clearMessage();
+
+                $("loginCard").hidden =
+                    true;
+
+                $("resetCard").hidden =
+                    false;
+
+                $("resetEmail").focus();
+
+            }
+        );
+
+
+    $("backToLogin")
+        .addEventListener(
+            "click",
+            () => {
+
+                clearMessage(
+                    "resetMessage"
+                );
+
+                $("resetCard").hidden =
+                    true;
+
+                $("loginCard").hidden =
+                    false;
+
+                $("email").focus();
+
+            }
+        );
+
+
+    /* =====================================================
+       FORM EVENTS
+       ===================================================== */
+
+    $("loginForm")
+        .addEventListener(
+            "submit",
+            handleLogin
+        );
+
+
+    $("resetForm")
+        .addEventListener(
+            "submit",
+            handlePasswordReset
+        );
+
+
+    /* =====================================================
+       SUPABASE AUTH STATE
+       ===================================================== */
+
+    supabase.auth.onAuthStateChange(
+        (event, session) => {
+
+            if (
+                session &&
+                (
+                    event ===
+                    "SIGNED_IN"
+                )
+            ){
+
+                goAfterLogin();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       START
+       ===================================================== */
+
+    checkExistingSession();
+
+</script>
+
+</body>
+</html>
