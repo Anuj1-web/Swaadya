@@ -3930,30 +3930,48 @@ function ensureAdminButton() {
    CHECK ADMIN
    =========================================================
 
-   Admin authorization is based on:
+   FINAL ADMIN VERIFICATION
+
+   The logged-in user's Supabase Auth UUID must match:
 
        admin_users.user_id
-       =
-       session.user.id
 
-   If the logged-in user's UUID exists in the
-   admin_users table, the Admin button is displayed.
+   AND:
+
+       admin_users.role = "admin"
+
+   Only when BOTH conditions match will the Admin
+   button be displayed.
+
+   IMPORTANT:
+   We intentionally select ONLY columns that are
+   required by this check.
+
+   The admin_users table does NOT have an email column,
+   so we must NOT request email or created_at here.
 
    ========================================================= */
 
-async function checkAdmin(
-    user
-) {
+async function checkAdmin(user) {
 
-    isAdmin =
-        false;
+    /*
+     * Always start from a safe state.
+     */
+    isAdmin = false;
 
 
+    /*
+     * Make sure the Admin button exists.
+     */
     const adminButton =
         ensureAdminButton();
 
 
     if (!adminButton) {
+
+        console.warn(
+            "Swaadya: Admin button could not be found or created."
+        );
 
         return false;
 
@@ -3961,19 +3979,23 @@ async function checkAdmin(
 
 
     /*
-     * Always hide it first.
+     * Always hide Admin first.
+     *
+     * It will only be shown after successful
+     * database verification.
      */
-
     adminButton.style.display =
         "none";
 
 
     /*
-     * If nobody is logged in,
-     * they cannot be an admin.
+     * No logged-in user = definitely not admin.
      */
+    if (!user || !user.id) {
 
-    if (!user) {
+        console.log(
+            "Swaadya: No logged-in user. Admin hidden."
+        );
 
         return false;
 
@@ -3982,29 +4004,47 @@ async function checkAdmin(
 
     try {
 
+        /*
+         * =================================================
+         * ADMIN DATABASE CHECK
+         * =================================================
+         *
+         * We ONLY request:
+         *
+         *     user_id
+         *     role
+         *
+         * because these are the columns required
+         * for authorization.
+         *
+         * DO NOT add email here.
+         */
         const result =
             await supabase
                 .from("admin_users")
                 .select(
-                    "user_id,email,created_at"
+                    "user_id,role"
                 )
                 .eq(
                     "user_id",
                     user.id
                 )
+                .eq(
+                    "role",
+                    "admin"
+                )
                 .maybeSingle();
 
 
         /*
-         * Database error.
+         * =================================================
+         * DATABASE ERROR
+         * =================================================
          */
-
-        if (
-            result.error
-        ) {
+        if (result.error) {
 
             console.error(
-                "Swaadya: Admin check failed:",
+                "Swaadya: Admin database check failed:",
                 result.error
             );
 
@@ -4023,26 +4063,45 @@ async function checkAdmin(
 
 
         /*
-         * If a matching admin_users row exists,
-         * the logged-in user is an admin.
+         * =================================================
+         * SUCCESSFUL ADMIN MATCH
+         * =================================================
+         *
+         * Both conditions have already been checked
+         * by Supabase:
+         *
+         *     user_id = user.id
+         *     role = admin
+         *
+         * We additionally verify the returned values
+         * in JavaScript as a second safety check.
          */
-
         if (
             result.data &&
-            result.data.user_id === user.id
+            result.data.user_id === user.id &&
+            result.data.role === "admin"
         ) {
 
             isAdmin =
                 true;
 
 
+            /*
+             * Show Admin button.
+             */
             adminButton.style.display =
                 "inline-flex";
 
 
             console.log(
-                "Swaadya: Admin verified:",
-                user.email
+                "Swaadya: Admin verified successfully.",
+                {
+                    user_id:
+                        user.id,
+
+                    role:
+                        result.data.role
+                }
             );
 
 
@@ -4052,9 +4111,10 @@ async function checkAdmin(
 
 
         /*
-         * Normal user.
+         * =================================================
+         * USER EXISTS BUT IS NOT ADMIN
+         * =================================================
          */
-
         isAdmin =
             false;
 
@@ -4063,11 +4123,20 @@ async function checkAdmin(
             "none";
 
 
+        console.log(
+            "Swaadya: User is not an admin.",
+            user.id
+        );
+
+
         return false;
 
 
     } catch (error) {
 
+        /*
+         * Unexpected error.
+         */
         console.error(
             "Swaadya: Admin check unavailable:",
             error
