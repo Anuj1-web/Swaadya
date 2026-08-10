@@ -5027,7 +5027,7 @@ async function getSession() {
 
 /* =========================================================
    LOAD CURRENT ADMIN
-   ========================================================= */
+========================================================= */
 
 async function loadCurrentAdmin() {
 
@@ -5045,6 +5045,7 @@ async function loadCurrentAdmin() {
             "login.html";
 
         return false;
+
     }
 
 
@@ -5059,22 +5060,29 @@ async function loadCurrentAdmin() {
     /* =========================================================
        ADMIN AUTHORIZATION
 
-       Admin access is determined by the authenticated
-       user's UUID existing in:
+       Admin access is determined ONLY by:
 
-           admin_users
+           admin_users.user_id
+           =
+           authenticated user's UUID
 
-       Table structure:
+       AND:
 
-           user_id
-           email
-           created_at
+           admin_users.role
+           =
+           "admin"
 
-       We DO NOT use:
+       We intentionally DO NOT use:
 
            profiles.role
 
-       for admin authorization anymore.
+       We also DO NOT request:
+
+           email
+           created_at
+
+       because those columns are not part of the
+       admin_users table being used.
        ========================================================= */
 
     const {
@@ -5086,12 +5094,17 @@ async function loadCurrentAdmin() {
             .from("admin_users")
 
             .select(
-                "user_id,email,created_at"
+                "user_id,role"
             )
 
             .eq(
                 "user_id",
                 session.user.id
+            )
+
+            .eq(
+                "role",
+                "admin"
             )
 
             .maybeSingle();
@@ -5104,11 +5117,12 @@ async function loadCurrentAdmin() {
     if (error) {
 
         console.error(
-            "Admin authorization error:",
+            "Swaadya: Admin authorization error:",
             error
         );
 
         throw error;
+
     }
 
 
@@ -5116,7 +5130,11 @@ async function loadCurrentAdmin() {
        USER IS NOT AN ADMIN
        ========================================================= */
 
-    if (!adminUser) {
+    if (
+        !adminUser ||
+        adminUser.user_id !== session.user.id ||
+        adminUser.role !== "admin"
+    ) {
 
         hideBoot();
 
@@ -5128,32 +5146,81 @@ async function loadCurrentAdmin() {
             "index.html";
 
         return false;
+
     }
 
 
     /* =========================================================
        ADMIN VERIFIED
+       =========================================================
+
+       IMPORTANT:
+
+       admin_users is used ONLY for authorization.
+
+       Profile information is loaded separately from
+       profiles and is NOT used to decide whether the
+       user is an admin.
+       ========================================================= */
+
+    const {
+        data: profile,
+        error: profileError
+    } =
+        await supabaseClient
+
+            .from("profiles")
+
+            .select(
+                "id,full_name,mobile,email"
+            )
+
+            .eq(
+                "id",
+                session.user.id
+            )
+
+            .maybeSingle();
+
+
+    /* ---------------------------------------------------------
+       PROFILE IS OPTIONAL
+       --------------------------------------------------------- */
+
+    if (profileError) {
+
+        console.warn(
+            "Swaadya: Admin profile could not be loaded:",
+            profileError
+        );
+
+    }
+
+
+    /* =========================================================
+       BUILD ADMIN PROFILE
        ========================================================= */
 
     STATE.profile = {
 
         id:
-            adminUser.user_id,
-
-        email:
-            adminUser.email ||
-            session.user.email ||
-            "",
+            session.user.id,
 
         full_name:
+            profile?.full_name ||
             session.user.user_metadata?.full_name ||
             session.user.user_metadata?.name ||
-            adminUser.email ||
-            session.user.email ||
             "Administrator",
 
-        created_at:
-            adminUser.created_at
+        mobile:
+            profile?.mobile ||
+            session.user.user_metadata?.mobile ||
+            "",
+
+        email:
+            profile?.email ||
+            session.user.email ||
+            ""
 
     };
 
@@ -5165,9 +5232,25 @@ async function loadCurrentAdmin() {
     updateAdminIdentity();
 
 
-    return true;
-}
+    /* ---------------------------------------------------------
+       CONFIRM SUCCESS
+       --------------------------------------------------------- */
 
+    console.log(
+        "Swaadya: Admin authorization successful.",
+        {
+            user_id:
+                adminUser.user_id,
+
+            role:
+                adminUser.role
+        }
+    );
+
+
+    return true;
+
+}
 
 /* =========================================================
    UPDATE ADMIN IDENTITY
