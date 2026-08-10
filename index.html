@@ -10534,6 +10534,762 @@ syncSwaadyaLegacyCart();
 
 updateSwaadyaCartCount();
 
+/* =========================================================
+   SWAADYA CHECKOUT COMPATIBILITY PATCH
+   ---------------------------------------------------------
+   Add this block immediately BEFORE the existing:
+   
+
+   This patch does NOT replace the existing checkout/payment
+   system. It only restores missing UI wiring.
+   ========================================================= */
+
+(function () {
+
+    "use strict";
+
+    /* -----------------------------------------------------
+       1. SAFE ELEMENT HELPER
+       ----------------------------------------------------- */
+
+    const getEl = (id) =>
+        document.getElementById(id);
+
+
+    /* -----------------------------------------------------
+       2. OPEN EXISTING CHECKOUT MODAL
+       -----------------------------------------------------
+       Important:
+       We directly open the existing checkoutModal.
+       We do NOT call another openCheckout() function,
+       preventing recursive/competing checkout handlers.
+       ----------------------------------------------------- */
+
+    window.openCheckout = function () {
+
+        const checkoutModal =
+            getEl("checkoutModal");
+
+        if (!checkoutModal) {
+
+            console.error(
+                "Swaadya: checkoutModal was not found."
+            );
+
+            return;
+        }
+
+
+        /* Cart must contain something */
+
+        if (
+            typeof cart !== "undefined" &&
+            Array.isArray(cart) &&
+            cart.length === 0
+        ) {
+
+            if (
+                typeof showToast === "function"
+            ) {
+                showToast(
+                    "Your cart is empty."
+                );
+            }
+
+            return;
+        }
+
+
+        /* -------------------------------------------------
+           Open the EXISTING checkout modal
+           ------------------------------------------------- */
+
+        checkoutModal.classList.add("open");
+
+
+        /* -------------------------------------------------
+           Keep existing overlay behaviour if present
+           ------------------------------------------------- */
+
+        const overlay =
+            getEl("overlay");
+
+        if (overlay) {
+            overlay.classList.add("active");
+        }
+
+
+        /* -------------------------------------------------
+           Existing profile/address functions
+           ------------------------------------------------- */
+
+        try {
+
+            if (
+                typeof fillProfile ===
+                "function"
+            ) {
+                fillProfile();
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "Swaadya: fillProfile failed:",
+                error
+            );
+
+        }
+
+
+        try {
+
+            if (
+                typeof renderAddresses ===
+                "function"
+            ) {
+                renderAddresses();
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "Swaadya: renderAddresses failed:",
+                error
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           Existing checkout summary
+           ------------------------------------------------- */
+
+        try {
+
+            if (
+                typeof renderCheckoutSummary ===
+                "function"
+            ) {
+                renderCheckoutSummary();
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "Swaadya: checkout summary refresh failed:",
+                error
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           Existing busy state
+           ------------------------------------------------- */
+
+        try {
+
+            if (
+                typeof busyState ===
+                "function"
+            ) {
+                busyState(false);
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "Swaadya: busyState failed:",
+                error
+            );
+
+        }
+
+    };
+
+
+    /* -----------------------------------------------------
+       3. CLOSE EXISTING CHECKOUT MODAL
+       -----------------------------------------------------
+       Uses the same existing checkoutModal.
+       ----------------------------------------------------- */
+
+    window.closeCheckout = function () {
+
+        const checkoutModal =
+            getEl("checkoutModal");
+
+        if (checkoutModal) {
+
+            checkoutModal.classList.remove(
+                "open"
+            );
+
+        }
+
+
+        const overlay =
+            getEl("overlay");
+
+        if (overlay) {
+
+            overlay.classList.remove(
+                "active"
+            );
+
+        }
+
+
+        try {
+
+            if (
+                typeof busyState ===
+                "function"
+            ) {
+                busyState(false);
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "Swaadya: busyState close failed:",
+                error
+            );
+
+        }
+
+    };
+
+
+    /* -----------------------------------------------------
+       4. ADD DELIVERY INSTRUCTIONS TO EXISTING PAYLOAD
+       -----------------------------------------------------
+       We DO NOT replace payload().
+       We wrap the existing function and simply append
+       delivery instructions to its existing result.
+       ----------------------------------------------------- */
+
+    if (
+        typeof window.payload ===
+        "function"
+    ) {
+
+        const originalPayload =
+            window.payload;
+
+        window.payload = function () {
+
+            const data =
+                originalPayload.apply(
+                    this,
+                    arguments
+                );
+
+
+            if (
+                data &&
+                data.delivery
+            ) {
+
+                const instructions =
+                    getEl(
+                        "deliveryInstructions"
+                    )?.value
+                        ?.trim() || "";
+
+
+                data.delivery
+                    .delivery_instructions =
+                    instructions;
+
+            }
+
+
+            return data;
+
+        };
+
+    }
+
+
+    /* -----------------------------------------------------
+       5. RAZORPAY SDK SAFETY LOADER
+       -----------------------------------------------------
+       If the existing page has already loaded Razorpay,
+       nothing happens.
+
+       If it hasn't, load it once.
+
+       This does NOT create a second Razorpay payment flow.
+       ----------------------------------------------------- */
+
+    function ensureRazorpay() {
+
+        if (
+            window.Razorpay
+        ) {
+
+            return Promise.resolve(
+                window.Razorpay
+            );
+
+        }
+
+
+        /* Prevent duplicate script loading */
+
+        const existingScript =
+            document.querySelector(
+                'script[data-swaadya-razorpay="true"]'
+            );
+
+
+        if (existingScript) {
+
+            return new Promise(
+                (resolve, reject) => {
+
+                    const timeout =
+                        setTimeout(
+                            () => {
+
+                                reject(
+                                    new Error(
+                                        "Razorpay SDK loading timed out."
+                                    )
+                                );
+
+                            },
+                            15000
+                        );
+
+
+                    const check =
+                        setInterval(
+                            () => {
+
+                                if (
+                                    window.Razorpay
+                                ) {
+
+                                    clearInterval(
+                                        check
+                                    );
+
+                                    clearTimeout(
+                                        timeout
+                                    );
+
+                                    resolve(
+                                        window.Razorpay
+                                    );
+
+                                }
+
+                            },
+                            100
+                        );
+
+                }
+            );
+
+        }
+
+
+        return new Promise(
+            (resolve, reject) => {
+
+                const script =
+                    document.createElement(
+                        "script"
+                    );
+
+
+                script.src =
+                    "https://checkout.razorpay.com/v1/checkout.js";
+
+
+                script.async =
+                    true;
+
+
+                script.dataset.swaadyaRazorpay =
+                    "true";
+
+
+                script.onload =
+                    function () {
+
+                        if (
+                            window.Razorpay
+                        ) {
+
+                            resolve(
+                                window.Razorpay
+                            );
+
+                        } else {
+
+                            reject(
+                                new Error(
+                                    "Razorpay SDK loaded but Razorpay is unavailable."
+                                )
+                            );
+
+                        }
+
+                    };
+
+
+                script.onerror =
+                    function () {
+
+                        reject(
+                            new Error(
+                                "Unable to load Razorpay SDK."
+                            )
+                        );
+
+                    };
+
+
+                document.head.appendChild(
+                    script
+                );
+
+            }
+        );
+
+    }
+
+
+    /* -----------------------------------------------------
+       6. START RAZORPAY SDK LOADING
+       -----------------------------------------------------
+       We only prepare the SDK.
+
+       Your EXISTING razor(payloadData) function remains
+       responsible for actually creating/opening payment.
+       ----------------------------------------------------- */
+
+    ensureRazorpay()
+        .then(() => {
+
+            console.log(
+                "Swaadya: Razorpay SDK ready."
+            );
+
+        })
+        .catch(
+            error => {
+
+                console.warn(
+                    "Swaadya: Razorpay SDK:",
+                    error.message
+                );
+
+            }
+        );
+
+
+    /* -----------------------------------------------------
+       7. CHECKOUT FORM SAFETY
+       -----------------------------------------------------
+       Do NOT attach another submit handler.
+       Your existing checkout/payment submit handler
+       should remain the only one.
+       ----------------------------------------------------- */
+
+    const checkoutForm =
+        getEl(
+            "checkoutForm"
+        );
+
+
+    if (checkoutForm) {
+
+        checkoutForm.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key ===
+                    "Enter"
+                ) {
+
+                    const tag =
+                        event.target?.tagName
+                            ?.toLowerCase();
+
+
+                    /*
+                     * Prevent accidental form submission
+                     * from pressing Enter inside text fields.
+                     *
+                     * The actual Pay Securely button remains
+                     * responsible for payment submission.
+                     */
+
+                    if (
+                        tag === "input" &&
+                        event.target.type !==
+                            "submit"
+                    ) {
+
+                        event.preventDefault();
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* -----------------------------------------------------
+       8. CHECKOUT BUTTON SAFETY
+       -----------------------------------------------------
+       We use event delegation instead of attaching a second
+       click handler directly to the button.
+
+       This makes the patch compatible with the dynamically
+       rendered cart.
+       ----------------------------------------------------- */
+
+    document.addEventListener(
+        "click",
+        function (event) {
+
+            const button =
+                event.target.closest(
+                    "#proceedToCheckout"
+                );
+
+
+            if (!button) {
+                return;
+            }
+
+
+            /*
+             * If the existing cart code already calls
+             * window.openCheckout(), we don't need to
+             * duplicate that action here.
+             *
+             * This section intentionally does nothing.
+             */
+
+        }
+    );
+
+
+    /* -----------------------------------------------------
+       9. MAP / ADDRESS BUTTONS
+       -----------------------------------------------------
+       Only connect buttons if they are not already connected
+       by the existing system.
+       ----------------------------------------------------- */
+
+    const currentLocationButton =
+        getEl(
+            "swaadyaCurrentLocationBtn"
+        );
+
+
+    if (
+        currentLocationButton &&
+        !currentLocationButton.dataset.swaadyaWired
+    ) {
+
+        currentLocationButton.dataset.swaadyaWired =
+            "true";
+
+
+        currentLocationButton.addEventListener(
+            "click",
+            function () {
+
+                try {
+
+                    if (
+                        typeof location ===
+                        "function"
+                    ) {
+                        location();
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "Swaadya: location failed:",
+                        error
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    const mapLocationButton =
+        getEl(
+            "swaadyaMapLocationBtn"
+        );
+
+
+    if (
+        mapLocationButton &&
+        !mapLocationButton.dataset.swaadyaWired
+    ) {
+
+        mapLocationButton.dataset.swaadyaWired =
+            "true";
+
+
+        mapLocationButton.addEventListener(
+            "click",
+            function () {
+
+                try {
+
+                    if (
+                        typeof mapPicker ===
+                        "function"
+                    ) {
+                        mapPicker();
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "Swaadya: map picker failed:",
+                        error
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* -----------------------------------------------------
+       10. MAP CLOSE / CONFIRM BUTTONS
+       ----------------------------------------------------- */
+
+    const closeMapButton =
+        getEl(
+            "swaadyaCloseMap"
+        );
+
+
+    if (
+        closeMapButton &&
+        !closeMapButton.dataset.swaadyaWired
+    ) {
+
+        closeMapButton.dataset.swaadyaWired =
+            "true";
+
+
+        closeMapButton.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    typeof closeMap ===
+                    "function"
+                ) {
+                    closeMap();
+                }
+
+            }
+        );
+
+    }
+
+
+    const cancelMapButton =
+        getEl(
+            "swaadyaCancelMap"
+        );
+
+
+    if (
+        cancelMapButton &&
+        !cancelMapButton.dataset.swaadyaWired
+    ) {
+
+        cancelMapButton.dataset.swaadyaWired =
+            "true";
+
+
+        cancelMapButton.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    typeof closeMap ===
+                    "function"
+                ) {
+                    closeMap();
+                }
+
+            }
+        );
+
+    }
+
+
+    const confirmMapButton =
+        getEl(
+            "swaadyaConfirmMap"
+        );
+
+
+    if (
+        confirmMapButton &&
+        !confirmMapButton.dataset.swaadyaWired
+    ) {
+
+        confirmMapButton.dataset.swaadyaWired =
+            "true";
+
+
+        confirmMapButton.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    typeof confirmMap ===
+                    "function"
+                ) {
+                    confirmMap();
+                }
+
+            }
+        );
+
+    }
+
+
+    /* -----------------------------------------------------
+       11. FINAL STATUS
+       ----------------------------------------------------- */
+
+    console.log(
+        "Swaadya: checkout compatibility patch loaded."
+    );
+
+})();
+
+
 </script>
 
 
