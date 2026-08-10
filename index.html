@@ -2247,6 +2247,438 @@ ul {
 
 /* SWAADYA ACCOUNT / LOCATION EXTENSION */
 .swaadya-account-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}.swaadya-account-btn,.swaadya-auth-link{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;border:1px solid var(--border);border-radius:11px;background:var(--white);color:var(--green-700);font-size:12px;font-weight:800;white-space:nowrap;transition:var(--transition)}.swaadya-account-btn:hover,.swaadya-auth-link:hover{border-color:var(--gold-600);transform:translateY(-2px)}.swaadya-auth-links{display:flex;align-items:center;gap:7px}.swaadya-auth-link.signup{background:var(--green-700);border-color:var(--green-700);color:#fff}.swaadya-account-name{max-width:110px;overflow:hidden;text-overflow:ellipsis}.swaadya-checkout-extra{grid-column:1/-1;padding:16px;background:var(--cream-100);border:1px solid var(--border);border-radius:13px}.swaadya-checkout-extra h3{margin-bottom:10px;color:var(--green-700);font-family:Georgia,serif;font-size:18px;font-weight:500}.swaadya-address-list{display:grid;gap:8px;margin-bottom:12px}.swaadya-address-option{display:flex;align-items:flex-start;gap:10px;padding:11px;border:1px solid var(--border);border-radius:10px;background:#fff;cursor:pointer}.swaadya-address-meta{font-size:11px;color:var(--muted);line-height:1.5}.swaadya-address-title{font-size:12px;font-weight:900;color:var(--green-700)}.swaadya-location-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.swaadya-location-btn{min-height:38px;padding:0 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--green-700);font-size:12px;font-weight:800}.swaadya-location-status{margin-top:8px;font-size:11px;color:var(--muted)}.swaadya-save-address{display:flex;align-items:center;gap:8px;margin-top:10px;color:var(--muted);font-size:12px}.swaadya-map-modal{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(12,24,17,.55)}.swaadya-map-modal.open{display:flex}.swaadya-map-box{width:min(900px,100%);height:min(680px,90vh);display:flex;flex-direction:column;overflow:hidden;background:#fff;border-radius:18px;box-shadow:var(--shadow-lg)}.swaadya-map-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}.swaadya-map-head h3{color:var(--green-700);font-family:Georgia,serif;font-size:20px;font-weight:500}#swaadyaMap{flex:1;min-height:300px}.swaadya-map-foot{display:flex;justify-content:flex-end;gap:8px;padding:12px;border-top:1px solid var(--border)}@media(max-width:900px){.navbar{gap:10px}.swaadya-account-btn{padding:0 10px}.swaadya-account-name{max-width:80px}}@media(max-width:768px){.swaadya-account-actions{gap:5px}.swaadya-auth-links{gap:4px}.swaadya-auth-link,.swaadya-account-btn{min-height:36px;padding:0 9px;font-size:11px}.swaadya-auth-link.signup{display:none}.swaadya-checkout-extra{padding:12px}.swaadya-location-row{flex-direction:column}.swaadya-location-btn{width:100%}}
+/* =========================================================
+   SWAADYA — PREMIUM PRODUCT DETAILS
+   ========================================================= */
+
+.swaadya-detail-layout {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr);
+    gap: 28px;
+    align-items: stretch;
+}
+
+
+/* IMAGE */
+
+.swaadya-detail-image {
+    min-height: 430px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--cream-100, #f5f0e7);
+    border: 1px solid var(--border, #e4ded2);
+}
+
+
+.swaadya-detail-image img {
+    width: 100%;
+    height: 100%;
+    min-height: 430px;
+    object-fit: cover;
+    display: block;
+}
+
+
+.swaadya-detail-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 430px;
+
+    display: grid;
+    place-items: center;
+
+    font-family: Georgia, serif;
+    font-size: 32px;
+    font-weight: 800;
+
+    color: var(--green-700, #234d38);
+}
+
+
+/* CONTENT */
+
+.swaadya-detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+.swaadya-detail-badge {
+    display: inline-flex;
+    width: max-content;
+
+    padding: 6px 10px;
+    border-radius: 999px;
+
+    background: rgba(35, 77, 56, 0.09);
+
+    color: var(--green-700, #234d38);
+
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+}
+
+
+.swaadya-detail-heading h2 {
+    margin: 9px 0 8px;
+
+    color: var(--green-900, #173a29);
+
+    font-family: Georgia, serif;
+
+    font-size: clamp(26px, 4vw, 36px);
+    line-height: 1.1;
+}
+
+
+.swaadya-detail-heading p {
+    margin: 0;
+
+    color: var(--muted, #706d66);
+
+    line-height: 1.75;
+    font-size: 14px;
+}
+
+
+/* SECTION */
+
+.swaadya-detail-section {
+    display: grid;
+    gap: 11px;
+}
+
+
+.swaadya-detail-section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    color: var(--green-900, #173a29);
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
+
+.swaadya-detail-section-title span:last-child {
+    color: var(--muted, #777);
+    font-size: 11px;
+}
+
+
+/* VARIANTS */
+
+.swaadya-detail-variants {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(145px, 1fr)
+    );
+
+    gap: 10px;
+}
+
+
+.swaadya-detail-variant {
+    appearance: none;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 13px;
+
+    border: 1px solid var(--border, #ddd6c9);
+
+    border-radius: 13px;
+
+    background: #fff;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        transform .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease,
+        background .18s ease;
+}
+
+
+.swaadya-detail-variant:hover:not(:disabled) {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 22px rgba(0,0,0,.07);
+}
+
+
+.swaadya-detail-variant.selected {
+    border-color: var(--green-700, #234d38);
+
+    background: rgba(35, 77, 56, .055);
+
+    box-shadow:
+        0 0 0 2px rgba(35,77,56,.08);
+}
+
+
+.swaadya-detail-variant:disabled {
+    opacity: .48;
+    cursor: not-allowed;
+}
+
+
+.swaadya-detail-variant span {
+    display: grid;
+    gap: 3px;
+}
+
+
+.swaadya-detail-variant span strong {
+    color: var(--green-900, #173a29);
+}
+
+
+.swaadya-detail-variant small {
+    color: var(--muted, #777);
+
+    font-size: 10px;
+}
+
+
+.detail-variant-price {
+    color: var(--green-700, #234d38);
+
+    white-space: nowrap;
+}
+
+
+/* SUMMARY */
+
+.swaadya-detail-summary {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    border: 1px solid var(--border, #ddd6c9);
+
+    border-radius: 15px;
+
+    overflow: hidden;
+
+    background: var(--cream-50, #faf8f3);
+}
+
+
+.swaadya-detail-summary > div {
+    padding: 14px;
+
+    display: grid;
+    gap: 4px;
+
+    border-right:
+        1px solid var(--border, #ddd6c9);
+}
+
+
+.swaadya-detail-summary > div:last-child {
+    border-right: 0;
+}
+
+
+.swaadya-detail-summary span {
+    color: var(--muted, #777);
+
+    font-size: 10px;
+
+    text-transform: uppercase;
+
+    letter-spacing: .8px;
+}
+
+
+.swaadya-detail-summary strong {
+    color: var(--green-900, #173a29);
+
+    font-size: 14px;
+}
+
+
+/* QUANTITY */
+
+.swaadya-detail-quantity-row {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+}
+
+
+.swaadya-detail-quantity-row > span {
+    color: var(--green-900, #173a29);
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
+
+.swaadya-quantity-control {
+    display: flex;
+
+    align-items: center;
+
+    border: 1px solid var(--border, #ddd6c9);
+
+    border-radius: 11px;
+
+    overflow: hidden;
+
+    background: #fff;
+}
+
+
+.swaadya-quantity-control button {
+    width: 38px;
+    height: 38px;
+
+    border: 0;
+
+    background: transparent;
+
+    color: var(--green-900, #173a29);
+
+    font-size: 20px;
+
+    cursor: pointer;
+}
+
+
+.swaadya-quantity-control button:hover {
+    background: var(--cream-100, #f5f0e7);
+}
+
+
+.swaadya-quantity-control input {
+    width: 45px;
+    height: 38px;
+
+    border: 0;
+
+    border-left: 1px solid var(--border, #ddd6c9);
+    border-right: 1px solid var(--border, #ddd6c9);
+
+    text-align: center;
+
+    font-weight: 800;
+
+    outline: none;
+}
+
+
+/* ADD BUTTON */
+
+.swaadya-detail-add {
+    width: 100%;
+
+    min-height: 52px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 9px;
+
+    border: 0;
+
+    border-radius: 13px;
+
+    background:
+        var(--green-700, #234d38);
+
+    color: white;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 24px rgba(35,77,56,.18);
+
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease;
+}
+
+
+.swaadya-detail-add:hover:not(:disabled) {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 30px rgba(35,77,56,.25);
+}
+
+
+.swaadya-detail-add:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+    .swaadya-detail-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+
+    .swaadya-detail-image,
+    .swaadya-detail-image img,
+    .swaadya-detail-placeholder {
+        min-height: 260px;
+        height: 260px;
+    }
+
+
+    .swaadya-detail-summary {
+        grid-template-columns: 1fr;
+    }
+
+
+    .swaadya-detail-summary > div {
+        border-right: 0;
+        border-bottom:
+            1px solid var(--border, #ddd6c9);
+    }
+
+
+    .swaadya-detail-summary > div:last-child {
+        border-bottom: 0;
+    }
+
+
+    .swaadya-detail-variants {
+        grid-template-columns: 1fr;
+    }
+
+}
 </style>
 </head>
 
@@ -6507,49 +6939,25 @@ window.addEventListener(
 
     }
 );
+
+
 /* =========================================================
-   SWAADYA DYNAMIC PRODUCT ENGINE — CORRECTED
+   SWAADYA PRODUCT DETAILS + UNIFIED CART ENGINE
    ========================================================= */
 
-window.SWAADYA_PRODUCTS = [];
-window.SWAADYA_VARIANTS = [];
-
-
 /* =========================================================
-   IMAGE URL
+   GLOBAL PRODUCT STATE
    ========================================================= */
 
-function getSwaadyaProductImage(product) {
+window.SWAADYA_PRODUCTS =
+    window.SWAADYA_PRODUCTS || [];
 
-    if (!product) {
-        return "";
-    }
-
-    if (
-        product.image_url &&
-        /^https?:\/\//i.test(product.image_url)
-    ) {
-        return product.image_url;
-    }
-
-    if (product.image_path) {
-
-        const result =
-            supabase.storage
-                .from("product-images")
-                .getPublicUrl(
-                    product.image_path
-                );
-
-        return result?.data?.publicUrl || "";
-    }
-
-    return "";
-}
+window.SWAADYA_VARIANTS =
+    window.SWAADYA_VARIANTS || [];
 
 
 /* =========================================================
-   ESCAPE HTML
+   HTML ESCAPE
    ========================================================= */
 
 function escapeSwaadyaHTML(value) {
@@ -6560,6 +6968,7 @@ function escapeSwaadyaHTML(value) {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
+
 }
 
 
@@ -6577,11 +6986,61 @@ function formatSwaadyaPrice(price) {
                 maximumFractionDigits: 2
             }
         );
+
 }
 
 
 /* =========================================================
-   GET VARIANTS
+   PRODUCT IMAGE
+   ========================================================= */
+
+function getSwaadyaProductImage(product) {
+
+    if (!product) {
+
+        return "";
+
+    }
+
+
+    if (
+        product.image_url &&
+        /^https?:\/\//i.test(
+            product.image_url
+        )
+    ) {
+
+        return product.image_url;
+
+    }
+
+
+    if (product.image_path) {
+
+        const result =
+            supabase
+                .storage
+                .from("product-images")
+                .getPublicUrl(
+                    product.image_path
+                );
+
+
+        return (
+            result?.data?.publicUrl ||
+            ""
+        );
+
+    }
+
+
+    return "";
+
+}
+
+
+/* =========================================================
+   GET PRODUCT VARIANTS
    ========================================================= */
 
 function getSwaadyaVariants(productId) {
@@ -6589,18 +7048,712 @@ function getSwaadyaVariants(productId) {
     return window.SWAADYA_VARIANTS
         .filter(
             variant =>
-                String(variant.product_id) ===
+                String(
+                    variant.product_id
+                ) ===
                 String(productId)
         )
         .filter(
             variant =>
                 variant.is_active !== false
         );
+
 }
 
 
 /* =========================================================
-   PRODUCT DETAILS
+   =========================================================
+   UNIFIED CART SYSTEM
+   =========================================================
+   ========================================================= */
+
+/*
+   IMPORTANT
+
+   Your checkout code expects:
+
+       cart
+
+   with:
+
+       productId
+       variantId
+       size
+       quantity
+
+   Therefore this engine synchronizes:
+
+       localStorage
+       window.cart
+       existing checkout cart
+*/
+
+
+function getSwaadyaCart() {
+
+    try {
+
+        const stored =
+            JSON.parse(
+                localStorage.getItem(
+                    "swaadya_cart"
+                ) || "[]"
+            );
+
+
+        return Array.isArray(
+            stored
+        )
+            ? stored
+            : [];
+
+
+    } catch {
+
+        return [];
+
+    }
+
+}
+
+
+/* =========================================================
+   SAVE CART
+   ========================================================= */
+
+function saveSwaadyaCart(
+    newCart
+) {
+
+    const safeCart =
+        Array.isArray(newCart)
+            ? newCart
+            : [];
+
+
+    localStorage.setItem(
+        "swaadya_cart",
+        JSON.stringify(
+            safeCart
+        )
+    );
+
+
+    /*
+       VERY IMPORTANT:
+
+       Synchronize with the checkout
+       cart variable.
+
+       Your checkout payload() uses:
+
+           cart.map(...)
+
+       so this must stay synchronized.
+    */
+
+    window.cart =
+        safeCart;
+
+
+    /*
+       If the original page already
+       has a global cart variable,
+       try to synchronize it too.
+    */
+
+    try {
+
+        if (
+            typeof cart !==
+            "undefined"
+        ) {
+
+            cart =
+                safeCart;
+
+        }
+
+    } catch {
+
+
+    }
+
+
+    updateSwaadyaCartCount();
+
+
+    /*
+       Update existing cart drawer
+       if your page already has one.
+    */
+
+    if (
+        typeof window.updateCartUI ===
+        "function"
+    ) {
+
+        try {
+
+            window.updateCartUI();
+
+        } catch (error) {
+
+            console.warn(
+                "Swaadya updateCartUI error:",
+                error
+            );
+
+        }
+
+    }
+
+
+    if (
+        typeof window.renderCart ===
+        "function"
+    ) {
+
+        try {
+
+            window.renderCart();
+
+        } catch (error) {
+
+            console.warn(
+                "Swaadya renderCart error:",
+                error
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   INITIALIZE GLOBAL CART
+   ========================================================= */
+
+function initializeSwaadyaCart() {
+
+    const storedCart =
+        getSwaadyaCart();
+
+
+    window.cart =
+        storedCart;
+
+
+    try {
+
+        if (
+            typeof cart !==
+            "undefined"
+        ) {
+
+            cart =
+                storedCart;
+
+        }
+
+    } catch {
+
+
+    }
+
+
+    updateSwaadyaCartCount();
+
+}
+
+
+/* =========================================================
+   CART QUANTITY
+   ========================================================= */
+
+function getSwaadyaCartQuantity() {
+
+    const cart =
+        getSwaadyaCart();
+
+
+    return cart.reduce(
+        (
+            total,
+            item
+        ) => {
+
+            return total +
+                Number(
+                    item.quantity || 0
+                );
+
+        },
+        0
+    );
+
+}
+
+
+/* =========================================================
+   CART TOTAL
+   ========================================================= */
+
+function getSwaadyaCartTotal() {
+
+    const cart =
+        getSwaadyaCart();
+
+
+    return cart.reduce(
+        (
+            total,
+            item
+        ) => {
+
+            return total +
+                (
+                    Number(
+                        item.price || 0
+                    ) *
+                    Number(
+                        item.quantity || 0
+                    )
+                );
+
+        },
+        0
+    );
+
+}
+
+
+/* =========================================================
+   CART COUNT
+   ========================================================= */
+
+function updateSwaadyaCartCount() {
+
+    const count =
+        getSwaadyaCartQuantity();
+
+
+    document
+        .querySelectorAll(
+            ".cart-count"
+        )
+        .forEach(
+            element => {
+
+                element.textContent =
+                    count;
+
+
+                element.style.display =
+                    count > 0
+                        ? "grid"
+                        : "none";
+
+            }
+        );
+
+
+    /*
+       Optional support for headers
+       using another cart count ID.
+    */
+
+    const countElement =
+        document.getElementById(
+            "cartCount"
+        );
+
+
+    if (countElement) {
+
+        countElement.textContent =
+            count;
+
+
+        countElement.style.display =
+            count > 0
+                ? "grid"
+                : "none";
+
+    }
+
+}
+
+
+/* =========================================================
+   ADD PRODUCT TO CART
+   ========================================================= */
+
+function addSwaadyaCartItem(
+    product,
+    variant,
+    quantity = 1
+) {
+
+    if (
+        !product ||
+        !variant
+    ) {
+
+        return false;
+
+    }
+
+
+    const stock =
+        Number(
+            variant.stock || 0
+        );
+
+
+    if (stock <= 0) {
+
+        showToast?.(
+            "This size is currently out of stock."
+        );
+
+        return false;
+
+    }
+
+
+    const cart =
+        getSwaadyaCart();
+
+
+    const productId =
+        String(
+            product.id
+        );
+
+
+    const variantId =
+        String(
+            variant.id
+        );
+
+
+    const existing =
+        cart.find(
+            item =>
+                String(
+                    item.productId
+                ) === productId &&
+                String(
+                    item.variantId
+                ) === variantId
+        );
+
+
+    if (existing) {
+
+        const newQuantity =
+            Number(
+                existing.quantity || 0
+            ) +
+            Number(
+                quantity
+            );
+
+
+        /*
+           Never allow cart quantity
+           to exceed current stock.
+        */
+
+        if (
+            newQuantity >
+            stock
+        ) {
+
+            existing.quantity =
+                stock;
+
+
+            showToast?.(
+                `Only ${stock} available.`
+            );
+
+        } else {
+
+            existing.quantity =
+                newQuantity;
+
+        }
+
+    } else {
+
+        cart.push({
+
+            productId:
+                product.id,
+
+            variantId:
+                variant.id,
+
+            productName:
+                product.name,
+
+            size:
+                variant.weight_grams ||
+                variant.size_label ||
+                "",
+
+            sizeLabel:
+                variant.size_label ||
+                (
+                    variant.weight_grams
+                        ? `${variant.weight_grams}g`
+                        : ""
+                ),
+
+            quantity:
+                Math.min(
+                    Number(quantity),
+                    stock
+                ),
+
+            price:
+                Number(
+                    variant.price || 0
+                ),
+
+            image:
+                getSwaadyaProductImage(
+                    product
+                )
+
+        });
+
+    }
+
+
+    saveSwaadyaCart(
+        cart
+    );
+
+
+    showSwaadyaCartToast(
+        `${product.name} added to cart`
+    );
+
+
+    return true;
+
+}
+
+
+/* =========================================================
+   REMOVE CART ITEM
+   ========================================================= */
+
+function removeSwaadyaCartItem(
+    productId,
+    variantId
+) {
+
+    const cart =
+        getSwaadyaCart()
+            .filter(
+                item =>
+                    !(
+                        String(
+                            item.productId
+                        ) ===
+                        String(productId) &&
+
+                        String(
+                            item.variantId
+                        ) ===
+                        String(variantId)
+                    )
+            );
+
+
+    saveSwaadyaCart(
+        cart
+    );
+
+}
+
+
+/* =========================================================
+   UPDATE CART ITEM QUANTITY
+   ========================================================= */
+
+function updateSwaadyaCartItemQuantity(
+    productId,
+    variantId,
+    quantity
+) {
+
+    const cart =
+        getSwaadyaCart();
+
+
+    const item =
+        cart.find(
+            item =>
+                String(
+                    item.productId
+                ) ===
+                String(productId) &&
+
+                String(
+                    item.variantId
+                ) ===
+                String(variantId)
+        );
+
+
+    if (!item) {
+
+        return;
+
+    }
+
+
+    const newQuantity =
+        Number(quantity);
+
+
+    if (
+        !Number.isFinite(
+            newQuantity
+        ) ||
+        newQuantity <= 0
+    ) {
+
+        removeSwaadyaCartItem(
+            productId,
+            variantId
+        );
+
+        return;
+
+    }
+
+
+    const variant =
+        window.SWAADYA_VARIANTS
+            .find(
+                variant =>
+                    String(
+                        variant.id
+                    ) ===
+                    String(variantId)
+            );
+
+
+    const stock =
+        Number(
+            variant?.stock || 0
+        );
+
+
+    item.quantity =
+        stock > 0
+            ? Math.min(
+                newQuantity,
+                stock
+            )
+            : newQuantity;
+
+
+    saveSwaadyaCart(
+        cart
+    );
+
+}
+
+
+/* =========================================================
+   CART TOAST
+   ========================================================= */
+
+function showSwaadyaCartToast(
+    message
+) {
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    if (!toast) {
+
+        return;
+
+    }
+
+
+    toast.textContent =
+        message;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    clearTimeout(
+        window.swaadyaToastTimer
+    );
+
+
+    window.swaadyaToastTimer =
+        setTimeout(
+            () => {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            1800
+        );
+
+}
+
+
+/* =========================================================
+   EXPOSE CART FUNCTIONS
+   ========================================================= */
+
+window.getSwaadyaCart =
+    getSwaadyaCart;
+
+window.saveSwaadyaCart =
+    saveSwaadyaCart;
+
+window.addSwaadyaCartItem =
+    addSwaadyaCartItem;
+
+window.removeSwaadyaCartItem =
+    removeSwaadyaCartItem;
+
+window.updateSwaadyaCartItemQuantity =
+    updateSwaadyaCartItemQuantity;
+
+window.getSwaadyaCartTotal =
+    getSwaadyaCartTotal;
+
+window.getSwaadyaCartQuantity =
+    getSwaadyaCartQuantity;
+
+
+/* =========================================================
+   =========================================================
+   IMPROVED PRODUCT DETAILS MODAL
+   =========================================================
    ========================================================= */
 
 function showSwaadyaProductDetails(
@@ -6610,12 +7763,17 @@ function showSwaadyaProductDetails(
     const product =
         window.SWAADYA_PRODUCTS.find(
             item =>
-                String(item.id) ===
+                String(
+                    item.id
+                ) ===
                 String(productId)
         );
 
+
     if (!product) {
+
         return;
+
     }
 
 
@@ -6625,10 +7783,24 @@ function showSwaadyaProductDetails(
         );
 
 
+    if (!variants.length) {
+
+        return;
+
+    }
+
+
+    const modal =
+        document.getElementById(
+            "infoModal"
+        );
+
+
     const title =
         document.getElementById(
             "infoModalTitle"
         );
+
 
     const body =
         document.getElementById(
@@ -6636,13 +7808,24 @@ function showSwaadyaProductDetails(
         );
 
 
-    if (!title || !body) {
+    if (
+        !modal ||
+        !title ||
+        !body
+    ) {
+
+        console.warn(
+            "Swaadya: Product details modal elements not found."
+        );
+
         return;
+
     }
 
 
     title.textContent =
-        product.name || "Product Details";
+        product.name ||
+        "Product Details";
 
 
     const image =
@@ -6652,195 +7835,790 @@ function showSwaadyaProductDetails(
 
 
     const description =
-        escapeSwaadyaHTML(
-            product.description ||
-            product.short_description ||
-            "Freshly prepared with carefully selected ingredients."
+        product.description ||
+        product.short_description ||
+        "Freshly prepared with carefully selected ingredients.";
+
+
+    const firstVariant =
+        variants[0];
+
+
+    const firstStock =
+        Number(
+            firstVariant.stock || 0
         );
 
 
+    /*
+       Create size cards.
+       This is much more useful than
+       simply displaying a text list.
+    */
+
     const variantsHTML =
-        variants.length
-            ? `
-                <div
-                    style="
-                        margin-top:18px;
-                        display:grid;
-                        gap:10px;
-                    "
-                >
+        variants
+            .map(
+                (
+                    variant,
+                    index
+                ) => {
 
-                    <strong
-                        style="
-                            color:var(--green-900);
-                        "
-                    >
-                        Available Sizes
-                    </strong>
+                    const size =
+                        variant.size_label ||
+                        (
+                            variant.weight_grams
+                                ? `${variant.weight_grams}g`
+                                : "Standard"
+                        );
 
-                    ${variants.map(
-                        variant => `
-                            <div
-                                style="
-                                    display:flex;
-                                    justify-content:space-between;
-                                    align-items:center;
-                                    gap:12px;
-                                    padding:11px 13px;
-                                    border:1px solid var(--border);
-                                    border-radius:10px;
-                                    background:var(--cream-50);
-                                "
-                            >
 
-                                <span>
+                    const price =
+                        Number(
+                            variant.price || 0
+                        );
+
+
+                    const stock =
+                        Number(
+                            variant.stock || 0
+                        );
+
+
+                    return `
+
+                        <button
+                            type="button"
+                            class="
+                                swaadya-detail-variant
+                                ${index === 0
+                                    ? "selected"
+                                    : ""}
+                            "
+                            data-detail-variant
+                            data-variant-id="${escapeSwaadyaHTML(
+                                String(
+                                    variant.id
+                                )
+                            )}"
+                            ${stock <= 0
+                                ? "disabled"
+                                : ""}
+                        >
+
+                            <span>
+
+                                <strong>
                                     ${escapeSwaadyaHTML(
-                                        variant.size_label ||
-                                        `${variant.weight_grams || 0}g`
-                                    )}
-                                </span>
-
-                                <strong
-                                    style="
-                                        color:var(--green-700);
-                                    "
-                                >
-                                    ${formatSwaadyaPrice(
-                                        variant.price
+                                        size
                                     )}
                                 </strong>
 
-                            </div>
-                        `
-                    ).join("")}
+                                <small>
+                                    ${
+                                        stock > 0
+                                            ? `${stock} available`
+                                            : "Out of stock"
+                                    }
+                                </small>
 
-                </div>
-            `
-            : "";
+                            </span>
+
+
+                            <strong class="detail-variant-price">
+
+                                ${formatSwaadyaPrice(
+                                    price
+                                )}
+
+                            </strong>
+
+                        </button>
+
+                    `;
+
+                }
+            )
+            .join("");
 
 
     body.innerHTML = `
 
-        <div
-            style="
-                display:grid;
-                gap:18px;
-            "
-        >
+        <div class="swaadya-detail-layout">
 
-            ${
-                image
-                    ? `
-                        <div
-                            style="
-                                width:100%;
-                                height:260px;
-                                overflow:hidden;
-                                border-radius:14px;
-                                background:var(--cream-100);
-                            "
-                        >
+
+            <!-- PRODUCT IMAGE -->
+
+            <div class="swaadya-detail-image">
+
+                ${
+                    image
+                        ? `
 
                             <img
-                                src="${escapeSwaadyaHTML(image)}"
-                                alt="${escapeSwaadyaHTML(product.name)}"
-                                style="
-                                    width:100%;
-                                    height:100%;
-                                    object-fit:cover;
-                                    display:block;
-                                "
+                                src="${escapeSwaadyaHTML(
+                                    image
+                                )}"
+                                alt="${escapeSwaadyaHTML(
+                                    product.name
+                                )}"
                             >
 
-                        </div>
-                    `
-                    : ""
-            }
+                        `
+                        : `
 
+                            <div class="swaadya-detail-placeholder">
 
-            <div>
+                                SWAADYA
 
-                <h3
-                    style="
-                        margin:0 0 9px;
-                        color:var(--green-900);
-                        font-family:Georgia,serif;
-                        font-size:26px;
-                    "
-                >
-                    ${escapeSwaadyaHTML(product.name)}
-                </h3>
+                            </div>
 
-
-                <p
-                    style="
-                        margin:0;
-                        color:var(--muted);
-                        line-height:1.7;
-                    "
-                >
-                    ${description}
-                </p>
+                        `
+                }
 
             </div>
 
 
-            ${variantsHTML}
+            <!-- PRODUCT INFORMATION -->
+
+            <div class="swaadya-detail-content">
+
+
+                <div class="swaadya-detail-heading">
+
+                    <span class="swaadya-detail-badge">
+                        SWAADYA
+                    </span>
+
+
+                    <h2>
+                        ${escapeSwaadyaHTML(
+                            product.name
+                        )}
+                    </h2>
+
+
+                    <p>
+                        ${escapeSwaadyaHTML(
+                            description
+                        )}
+                    </p>
+
+                </div>
+
+
+                <!-- SIZE -->
+
+                <div class="swaadya-detail-section">
+
+                    <div class="swaadya-detail-section-title">
+
+                        <span>
+                            Select Size
+                        </span>
+
+                        <span>
+                            ${variants.length} option${
+                                variants.length > 1
+                                    ? "s"
+                                    : ""
+                            }
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="swaadya-detail-variants"
+                    >
+
+                        ${variantsHTML}
+
+                    </div>
+
+                </div>
+
+
+                <!-- SELECTED PRODUCT -->
+
+                <div class="swaadya-detail-summary">
+
+                    <div>
+
+                        <span>
+                            Selected
+                        </span>
+
+                        <strong
+                            id="swaadyaDetailSelectedSize"
+                        >
+                            ${
+                                firstVariant.size_label ||
+                                (
+                                    firstVariant.weight_grams
+                                        ? `${firstVariant.weight_grams}g`
+                                        : "Standard"
+                                )
+                            }
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Price
+                        </span>
+
+                        <strong
+                            id="swaadyaDetailPrice"
+                        >
+                            ${formatSwaadyaPrice(
+                                firstVariant.price
+                            )}
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Stock
+                        </span>
+
+                        <strong
+                            id="swaadyaDetailStock"
+                        >
+                            ${
+                                firstStock > 0
+                                    ? `${firstStock} available`
+                                    : "Out of stock"
+                            }
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- QUANTITY -->
+
+                <div class="swaadya-detail-quantity-row">
+
+                    <span>
+                        Quantity
+                    </span>
+
+
+                    <div class="swaadya-quantity-control">
+
+                        <button
+                            type="button"
+                            id="swaadyaDetailMinus"
+                            aria-label="Decrease quantity"
+                        >
+                            −
+                        </button>
+
+
+                        <input
+                            type="number"
+                            id="swaadyaDetailQuantity"
+                            value="1"
+                            min="1"
+                            max="${Math.max(
+                                firstStock,
+                                1
+                            )}"
+                        >
+
+
+                        <button
+                            type="button"
+                            id="swaadyaDetailPlus"
+                            aria-label="Increase quantity"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACTION -->
+
+                <button
+                    type="button"
+                    id="swaadyaDetailAddButton"
+                    class="swaadya-detail-add"
+                    ${firstStock <= 0
+                        ? "disabled"
+                        : ""}
+                >
+
+                    <span>
+                        🛒
+                    </span>
+
+                    <span>
+                        ${
+                            firstStock > 0
+                                ? "Add to Cart"
+                                : "Out of Stock"
+                        }
+                    </span>
+
+                </button>
+
+
+            </div>
 
         </div>
+
     `;
 
+
+    /*
+       Modal opens here.
+    */
+
+    modal.classList.add(
+        "open"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    /* =====================================================
+       DETAILS MODAL STATE
+       ===================================================== */
+
+    let selectedVariant =
+        firstVariant;
+
+
+    let quantity =
+        1;
+
+
+    const variantButtons =
+        body.querySelectorAll(
+            "[data-detail-variant]"
+        );
+
+
+    const selectedSize =
+        document.getElementById(
+            "swaadyaDetailSelectedSize"
+        );
+
+
+    const selectedPrice =
+        document.getElementById(
+            "swaadyaDetailPrice"
+        );
+
+
+    const selectedStock =
+        document.getElementById(
+            "swaadyaDetailStock"
+        );
+
+
+    const quantityInput =
+        document.getElementById(
+            "swaadyaDetailQuantity"
+        );
+
+
+    const addButton =
+        document.getElementById(
+            "swaadyaDetailAddButton"
+        );
+
+
+    function updateDetailUI() {
+
+        const stock =
+            Number(
+                selectedVariant.stock || 0
+            );
+
+
+        const size =
+            selectedVariant.size_label ||
+            (
+                selectedVariant.weight_grams
+                    ? `${selectedVariant.weight_grams}g`
+                    : "Standard"
+            );
+
+
+        if (selectedSize) {
+
+            selectedSize.textContent =
+                size;
+
+        }
+
+
+        if (selectedPrice) {
+
+            selectedPrice.textContent =
+                formatSwaadyaPrice(
+                    selectedVariant.price
+                );
+
+        }
+
+
+        if (selectedStock) {
+
+            selectedStock.textContent =
+                stock > 0
+                    ? `${stock} available`
+                    : "Out of stock";
+
+        }
+
+
+        if (quantityInput) {
+
+            quantityInput.max =
+                Math.max(
+                    stock,
+                    1
+                );
+
+
+            quantity =
+                Math.min(
+                    quantity,
+                    Math.max(
+                        stock,
+                        1
+                    )
+                );
+
+
+            quantityInput.value =
+                quantity;
+
+        }
+
+
+        if (addButton) {
+
+            addButton.disabled =
+                stock <= 0;
+
+
+            addButton.innerHTML =
+                stock > 0
+
+                    ? `
+                        <span>🛒</span>
+                        <span>Add to Cart</span>
+                    `
+
+                    : `
+                        <span>×</span>
+                        <span>Out of Stock</span>
+                    `;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       VARIANT SELECTION
+       ===================================================== */
+
+    variantButtons.forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const variantId =
+                        button.dataset.variantId;
+
+
+                    const variant =
+                        variants.find(
+                            item =>
+                                String(
+                                    item.id
+                                ) ===
+                                String(
+                                    variantId
+                                )
+                        );
+
+
+                    if (!variant) {
+
+                        return;
+
+                    }
+
+
+                    selectedVariant =
+                        variant;
+
+
+                    variantButtons
+                        .forEach(
+                            item =>
+                                item.classList.remove(
+                                    "selected"
+                                )
+                        );
+
+
+                    button.classList.add(
+                        "selected"
+                    );
+
+
+                    quantity =
+                        1;
+
+
+                    updateDetailUI();
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       MINUS
+       ===================================================== */
+
+    document
+        .getElementById(
+            "swaadyaDetailMinus"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                quantity =
+                    Math.max(
+                        1,
+                        quantity - 1
+                    );
+
+
+                if (quantityInput) {
+
+                    quantityInput.value =
+                        quantity;
+
+                }
+
+            }
+        );
+
+
+    /* =====================================================
+       PLUS
+       ===================================================== */
+
+    document
+        .getElementById(
+            "swaadyaDetailPlus"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                const stock =
+                    Number(
+                        selectedVariant.stock || 0
+                    );
+
+
+                if (
+                    quantity <
+                    stock
+                ) {
+
+                    quantity++;
+
+                }
+
+
+                if (quantityInput) {
+
+                    quantityInput.value =
+                        quantity;
+
+                }
+
+            }
+        );
+
+
+    /* =====================================================
+       DIRECT QUANTITY INPUT
+       ===================================================== */
+
+    quantityInput
+        ?.addEventListener(
+            "input",
+            () => {
+
+                const stock =
+                    Number(
+                        selectedVariant.stock || 0
+                    );
+
+
+                let value =
+                    Number(
+                        quantityInput.value
+                    );
+
+
+                if (
+                    !Number.isFinite(
+                        value
+                    ) ||
+                    value < 1
+                ) {
+
+                    value = 1;
+
+                }
+
+
+                if (
+                    stock > 0 &&
+                    value > stock
+                ) {
+
+                    value =
+                        stock;
+
+                }
+
+
+                quantity =
+                    value;
+
+
+                quantityInput.value =
+                    value;
+
+            }
+        );
+
+
+    /* =====================================================
+       ADD FROM DETAILS
+       ===================================================== */
+
+    addButton
+        ?.addEventListener(
+            "click",
+            () => {
+
+                const success =
+                    addSwaadyaCartItem(
+                        product,
+                        selectedVariant,
+                        quantity
+                    );
+
+
+                if (success) {
+
+                    addButton.innerHTML = `
+
+                        <span>
+                            ✓
+                        </span>
+
+                        <span>
+                            Added to Cart
+                        </span>
+
+                    `;
+
+
+                    setTimeout(
+                        () => {
+
+                            closeSwaadyaProductDetails();
+
+                        },
+                        600
+                    );
+
+                }
+
+            }
+        );
+
+
+    updateDetailUI();
+
+}
+
+
+/* =========================================================
+   CLOSE DETAILS MODAL
+   ========================================================= */
+
+function closeSwaadyaProductDetails() {
 
     const modal =
         document.getElementById(
             "infoModal"
         );
 
-    if (modal) {
 
-        modal.classList.add("open");
+    if (!modal) {
 
-        modal.setAttribute(
-            "aria-hidden",
-            "false"
-        );
+        return;
 
     }
+
+
+    modal.classList.remove(
+        "open"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
 
 }
 
 
-/* =========================================================
-   CLOSE PRODUCT DETAILS
-   ========================================================= */
-
 window.closeInfoModal =
-    function () {
-
-        const modal =
-            document.getElementById(
-                "infoModal"
-            );
-
-        if (!modal) {
-            return;
-        }
-
-
-        modal.classList.remove(
-            "open"
-        );
-
-        modal.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-
-    };
+    closeSwaadyaProductDetails;
 
 
 /* =========================================================
-   CREATE PRODUCT CARD
+   =========================================================
+   PRODUCT CARD
+   =========================================================
    ========================================================= */
 
 function createSwaadyaProductCard(
@@ -6853,13 +8631,10 @@ function createSwaadyaProductCard(
         );
 
 
-    /*
-       If a product has no active variant,
-       don't display it.
-    */
-
     if (!variants.length) {
+
         return "";
+
     }
 
 
@@ -6889,39 +8664,36 @@ function createSwaadyaProductCard(
 
     const imageHTML =
         image
+
             ? `
+
                 <img
                     class="product-real-image"
-                    src="${escapeSwaadyaHTML(image)}"
+                    src="${escapeSwaadyaHTML(
+                        image
+                    )}"
                     alt="${productName}"
                     loading="lazy"
                     onerror="
                         this.style.display='none';
-                        this.parentElement.classList.add('image-fallback');
+                        this.parentElement.classList.add(
+                            'image-fallback'
+                        );
                     "
                 >
+
             `
+
             : `
+
                 <div
-                    style="
-                        font-family:Georgia,serif;
-                        color:var(--green-700);
-                        font-size:24px;
-                        font-weight:700;
-                    "
+                    class="product-image-fallback"
                 >
                     SWAADYA
                 </div>
+
             `;
 
-
-    /*
-       IMPORTANT:
-       Only the SIZE goes inside <option>.
-       PRICE is NOT placed inside the option.
-       This fixes:
-       "500g — ₹80"
-       */
 
     const variantsHTML =
         variants
@@ -6929,16 +8701,21 @@ function createSwaadyaProductCard(
                 variant => {
 
                     const size =
-                        escapeSwaadyaHTML(
-                            variant.size_label ||
-                            `${variant.weight_grams || 0}g`
+                        variant.size_label ||
+                        (
+                            variant.weight_grams
+                                ? `${variant.weight_grams}g`
+                                : "Standard"
                         );
 
 
                     return `
+
                         <option
                             value="${escapeSwaadyaHTML(
-                                String(variant.id)
+                                String(
+                                    variant.id
+                                )
                             )}"
                             data-price="${Number(
                                 variant.price || 0
@@ -6947,9 +8724,13 @@ function createSwaadyaProductCard(
                                 variant.stock || 0
                             )}"
                         >
-                            ${size}
+                            ${escapeSwaadyaHTML(
+                                size
+                            )}
                         </option>
+
                     `;
+
                 }
             )
             .join("");
@@ -6966,7 +8747,9 @@ function createSwaadyaProductCard(
         <article
             class="product-card"
             data-product-id="${escapeSwaadyaHTML(
-                String(product.id)
+                String(
+                    product.id
+                )
             )}"
         >
 
@@ -6981,17 +8764,17 @@ function createSwaadyaProductCard(
             <div class="product-body">
 
 
-                <h3 class="product-name">
+                <div class="product-title-row">
 
-                    ${productName}
+                    <h3 class="product-name">
+                        ${productName}
+                    </h3>
 
-                </h3>
+                </div>
 
 
                 <p class="product-description">
-
                     ${description}
-
                 </p>
 
 
@@ -7003,7 +8786,9 @@ function createSwaadyaProductCard(
                         <label
                             class="field-label"
                             for="variant-${escapeSwaadyaHTML(
-                                String(product.id)
+                                String(
+                                    product.id
+                                )
                             )}"
                         >
                             SELECT SIZE
@@ -7013,7 +8798,9 @@ function createSwaadyaProductCard(
                         <select
                             class="size-select"
                             id="variant-${escapeSwaadyaHTML(
-                                String(product.id)
+                                String(
+                                    product.id
+                                )
                             )}"
                             data-product-variant
                         >
@@ -7021,20 +8808,6 @@ function createSwaadyaProductCard(
                             ${variantsHTML}
 
                         </select>
-
-
-                        <div
-                            class="selected-net-quantity"
-                            data-product-weight
-                        >
-                            ${
-                                firstVariant.weight_grams
-                                    ? `${Number(
-                                        firstVariant.weight_grams
-                                    )}g`
-                                    : ""
-                            }
-                        </div>
 
                     </div>
 
@@ -7056,18 +8829,18 @@ function createSwaadyaProductCard(
                     class="product-stock"
                     data-product-stock
                 >
+
                     ${
                         firstStock > 0
                             ? `${firstStock} available`
                             : "Out of stock"
                     }
+
                 </div>
 
 
                 <div class="product-actions">
 
-
-                    <!-- DETAILS BUTTON -->
 
                     <button
                         type="button"
@@ -7077,8 +8850,6 @@ function createSwaadyaProductCard(
                         Details
                     </button>
 
-
-                    <!-- CART BUTTON -->
 
                     <button
                         type="button"
@@ -7090,7 +8861,7 @@ function createSwaadyaProductCard(
                                 : ""
                         }
                     >
-                        Add to Cart
+                        🛒 Add to Cart
                     </button>
 
 
@@ -7099,10 +8870,10 @@ function createSwaadyaProductCard(
 
             </div>
 
-
         </article>
 
     `;
+
 }
 
 
@@ -7119,7 +8890,9 @@ function renderSwaadyaProducts() {
 
 
     if (!grid) {
+
         return;
+
     }
 
 
@@ -7130,14 +8903,23 @@ function renderSwaadyaProducts() {
     if (!products.length) {
 
         grid.innerHTML = `
+
             <div class="products-empty">
-                <strong>No products available.</strong>
+
+                <strong>
+                    No products available.
+                </strong>
+
                 <br>
+
                 Please check back soon.
+
             </div>
+
         `;
 
         return;
+
     }
 
 
@@ -7153,12 +8935,17 @@ function renderSwaadyaProducts() {
     if (!html) {
 
         grid.innerHTML = `
+
             <div class="products-empty">
+
                 Products are currently unavailable.
+
             </div>
+
         `;
 
         return;
+
     }
 
 
@@ -7167,6 +8954,7 @@ function renderSwaadyaProducts() {
 
 
     attachSwaadyaProductEvents();
+
 }
 
 
@@ -7183,13 +8971,15 @@ function attachSwaadyaProductEvents() {
 
 
     if (!grid) {
+
         return;
+
     }
 
 
-    /* -----------------------------------------
+    /* =====================================================
        SIZE CHANGE
-       ----------------------------------------- */
+       ===================================================== */
 
     grid
         .querySelectorAll(
@@ -7215,7 +9005,9 @@ function attachSwaadyaProductEvents() {
 
 
                         if (!card) {
+
                             return;
+
                         }
 
 
@@ -7228,12 +9020,6 @@ function attachSwaadyaProductEvents() {
                         const stockElement =
                             card.querySelector(
                                 "[data-product-stock]"
-                            );
-
-
-                        const weightElement =
-                            card.querySelector(
-                                "[data-product-weight]"
                             );
 
 
@@ -7257,19 +9043,6 @@ function attachSwaadyaProductEvents() {
                             );
 
 
-                        const variant =
-                            window.SWAADYA_VARIANTS
-                                .find(
-                                    item =>
-                                        String(
-                                            item.id
-                                        ) ===
-                                        String(
-                                            option.value
-                                        )
-                                );
-
-
                         if (priceElement) {
 
                             priceElement.textContent =
@@ -7290,22 +9063,15 @@ function attachSwaadyaProductEvents() {
                         }
 
 
-                        if (weightElement) {
-
-                            weightElement.textContent =
-                                variant?.weight_grams
-                                    ? `${Number(
-                                        variant.weight_grams
-                                    )}g`
-                                    : "";
-
-                        }
-
-
                         if (addButton) {
 
                             addButton.disabled =
                                 stock <= 0;
+
+                            addButton.innerHTML =
+                                stock > 0
+                                    ? "🛒 Add to Cart"
+                                    : "Out of Stock";
 
                         }
 
@@ -7316,9 +9082,9 @@ function attachSwaadyaProductEvents() {
         );
 
 
-    /* -----------------------------------------
-       DETAILS
-       ----------------------------------------- */
+    /* =====================================================
+       DETAILS BUTTON
+       ===================================================== */
 
     grid
         .querySelectorAll(
@@ -7338,7 +9104,9 @@ function attachSwaadyaProductEvents() {
 
 
                         if (!card) {
+
                             return;
+
                         }
 
 
@@ -7353,9 +9121,9 @@ function attachSwaadyaProductEvents() {
         );
 
 
-    /* -----------------------------------------
+    /* =====================================================
        ADD TO CART
-       ----------------------------------------- */
+       ===================================================== */
 
     grid
         .querySelectorAll(
@@ -7375,7 +9143,9 @@ function attachSwaadyaProductEvents() {
 
 
                         if (!card) {
+
                             return;
+
                         }
 
 
@@ -7386,16 +9156,18 @@ function attachSwaadyaProductEvents() {
 
 
                         if (!select) {
+
                             return;
+
                         }
-
-
-                        const variantId =
-                            select.value;
 
 
                         const productId =
                             card.dataset.productId;
+
+
+                        const variantId =
+                            select.value;
 
 
                         const product =
@@ -7428,14 +9200,48 @@ function attachSwaadyaProductEvents() {
                             !product ||
                             !variant
                         ) {
+
                             return;
+
                         }
 
 
-                        addSwaadyaCartItem(
-                            product,
-                            variant
-                        );
+                        const success =
+                            addSwaadyaCartItem(
+                                product,
+                                variant,
+                                1
+                            );
+
+
+                        if (success) {
+
+                            const original =
+                                "🛒 Add to Cart";
+
+
+                            button.textContent =
+                                "✓ Added";
+
+
+                            button.disabled =
+                                true;
+
+
+                            setTimeout(
+                                () => {
+
+                                    button.textContent =
+                                        original;
+
+                                    button.disabled =
+                                        false;
+
+                                },
+                                1000
+                            );
+
+                        }
 
                     }
                 );
@@ -7447,237 +9253,9 @@ function attachSwaadyaProductEvents() {
 
 
 /* =========================================================
-   CART
-   ========================================================= */
-
-function getSwaadyaCart() {
-
-    try {
-
-        return JSON.parse(
-            localStorage.getItem(
-                "swaadya_cart"
-            ) || "[]"
-        );
-
-    } catch {
-
-        return [];
-
-    }
-
-}
-
-
-function saveSwaadyaCart(cart) {
-
-    localStorage.setItem(
-        "swaadya_cart",
-        JSON.stringify(cart)
-    );
-
-}
-
-
-/* =========================================================
-   ADD ITEM
-   ========================================================= */
-
-function addSwaadyaCartItem(
-    product,
-    variant
-) {
-
-    const cart =
-        getSwaadyaCart();
-
-
-    const productId =
-        product.id;
-
-
-    const variantId =
-        variant.id;
-
-
-    const existing =
-        cart.find(
-            item =>
-                String(item.productId) ===
-                String(productId) &&
-                String(item.variantId) ===
-                String(variantId)
-        );
-
-
-    if (existing) {
-
-        existing.quantity =
-            Number(
-                existing.quantity || 0
-            ) + 1;
-
-    } else {
-
-        /*
-           IMPORTANT:
-           Keep the SAME property names
-           used by your existing checkout:
-           
-           productId
-           variantId
-           size
-           quantity
-        */
-
-        cart.push({
-
-            productId:
-                product.id,
-
-            variantId:
-                variant.id,
-
-            productName:
-                product.name,
-
-            size:
-                variant.weight_grams ||
-                variant.size_label,
-
-            sizeLabel:
-                variant.size_label,
-
-            quantity:
-                1,
-
-            price:
-                Number(
-                    variant.price || 0
-                ),
-
-            image:
-                getSwaadyaProductImage(
-                    product
-                )
-
-        });
-
-    }
-
-
-    saveSwaadyaCart(
-        cart
-    );
-
-
-    /*
-       Update the EXISTING cart UI
-       rather than creating a second cart system.
-    */
-
-    if (
-        typeof window.updateCartUI ===
-        "function"
-    ) {
-
-        window.updateCartUI();
-
-    }
-
-
-    if (
-        typeof window.renderCart ===
-        "function"
-    ) {
-
-        window.renderCart();
-
-    }
-
-
-    updateSwaadyaCartCount();
-
-
-    const toast =
-        document.getElementById(
-            "toast"
-        );
-
-
-    if (toast) {
-
-        toast.textContent =
-            `${product.name} added to cart`;
-
-        toast.classList.add(
-            "show"
-        );
-
-
-        setTimeout(
-            () => {
-
-                toast.classList.remove(
-                    "show"
-                );
-
-            },
-            1800
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   CART COUNT
-   ========================================================= */
-
-function updateSwaadyaCartCount() {
-
-    const cart =
-        getSwaadyaCart();
-
-
-    const count =
-        cart.reduce(
-            (
-                total,
-                item
-            ) =>
-                total +
-                Number(
-                    item.quantity || 0
-                ),
-            0
-        );
-
-
-    document
-        .querySelectorAll(
-            ".cart-count"
-        )
-        .forEach(
-            element => {
-
-                element.textContent =
-                    count;
-
-                element.style.display =
-                    count > 0
-                        ? "grid"
-                        : "none";
-
-            }
-        );
-
-}
-
-
-/* =========================================================
+   =========================================================
    LOAD PRODUCTS
+   =========================================================
    ========================================================= */
 
 async function loadSwaadyaProducts() {
@@ -7689,14 +9267,20 @@ async function loadSwaadyaProducts() {
 
 
     if (!grid) {
+
         return;
+
     }
 
 
     grid.innerHTML = `
+
         <div class="products-loading">
+
             Loading products…
+
         </div>
+
     `;
 
 
@@ -7713,7 +9297,8 @@ async function loadSwaadyaProducts() {
                 .order(
                     "created_at",
                     {
-                        ascending: false
+                        ascending:
+                            false
                     }
                 );
 
@@ -7738,7 +9323,8 @@ async function loadSwaadyaProducts() {
                 .order(
                     "created_at",
                     {
-                        ascending: true
+                        ascending:
+                            true
                     }
                 );
 
@@ -7753,11 +9339,13 @@ async function loadSwaadyaProducts() {
 
 
         window.SWAADYA_PRODUCTS =
-            productResult.data || [];
+            productResult.data ||
+            [];
 
 
         window.SWAADYA_VARIANTS =
-            variantResult.data || [];
+            variantResult.data ||
+            [];
 
 
         renderSwaadyaProducts();
@@ -7769,12 +9357,13 @@ async function loadSwaadyaProducts() {
     } catch (error) {
 
         console.error(
-            "Product loading error:",
+            "Swaadya product loading error:",
             error
         );
 
 
         grid.innerHTML = `
+
             <div class="products-error">
 
                 <strong>
@@ -7786,6 +9375,7 @@ async function loadSwaadyaProducts() {
                 Please refresh the page.
 
             </div>
+
         `;
 
     }
@@ -7797,9 +9387,54 @@ async function loadSwaadyaProducts() {
    INITIALIZE
    ========================================================= */
 
+initializeSwaadyaCart();
+
 loadSwaadyaProducts();
 
 updateSwaadyaCartCount();
+
+
+/* =========================================================
+   CART STORAGE CHANGE
+   ========================================================= */
+
+window.addEventListener(
+    "storage",
+    event => {
+
+        if (
+            event.key ===
+            "swaadya_cart"
+        ) {
+
+            initializeSwaadyaCart();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   ESC KEY
+   ========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key ===
+            "Escape"
+        ) {
+
+            closeSwaadyaProductDetails();
+
+        }
+
+    }
+);
+
 </script>
 
 
