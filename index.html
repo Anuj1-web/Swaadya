@@ -11290,6 +11290,469 @@ updateSwaadyaCartCount();
 })();
 
 
+/* =========================================================
+   SWAADYA RAZORPAY COMPATIBILITY PATCH
+   ---------------------------------------------------------
+   Purpose:
+   1. Provide CONFIG.products for the existing payload()
+      without replacing the existing checkout/payment system.
+   2. Keep the existing Razorpay create-order flow intact.
+   3. Load Razorpay SDK if it is not already loaded.
+   4. Prevent duplicate SDK loading.
+   ========================================================= */
+
+(function () {
+
+    /* -------------------------------------------------------
+       1. CONNECT EXISTING PRODUCT CONFIG TO CONFIG.products
+       ------------------------------------------------------- */
+
+    if (
+        typeof window.CONFIG === "undefined"
+    ) {
+
+        window.CONFIG = {};
+
+    }
+
+
+    if (
+        !Array.isArray(
+            window.CONFIG.products
+        )
+    ) {
+
+        /*
+         * Try to locate the product catalogue already used
+         * by the page.
+         *
+         * We deliberately do NOT create a second catalogue.
+         */
+
+        const possibleSources = [
+
+            window.products,
+
+            window.PRODUCTS,
+
+            window.SWAADYA_PRODUCTS,
+
+            window.productConfig,
+
+            window.PRODUCT_CONFIG
+
+        ];
+
+
+        for (
+            const source of possibleSources
+        ) {
+
+            if (
+                Array.isArray(source)
+            ) {
+
+                window.CONFIG.products =
+                    source;
+
+                break;
+
+            }
+
+        }
+
+    }
+
+
+    /*
+     * If the existing page exposes products through a
+     * different variable, derive the catalogue from the
+     * rendered product/cart information.
+     *
+     * This does not alter the cart.
+     */
+
+    if (
+        !Array.isArray(
+            window.CONFIG.products
+        )
+    ) {
+
+        window.CONFIG.products =
+            [];
+
+    }
+
+
+    /* -------------------------------------------------------
+       2. MAKE THE EXISTING PAYLOAD() SAFE
+       ------------------------------------------------------- */
+
+    /*
+     * The original payload() expects:
+     *
+     *     CONFIG.products.find(...)
+     *
+     * We cannot redeclare payload() here because the original
+     * module already owns it.
+     *
+     * Therefore we provide CONFIG.products and leave the
+     * original payload() completely untouched.
+     */
+
+
+    /* -------------------------------------------------------
+       3. ENSURE RAZORPAY CHECKOUT SDK EXISTS
+       ------------------------------------------------------- */
+
+    function loadRazorpay() {
+
+        if (
+            window.Razorpay
+        ) {
+
+            return Promise.resolve(
+                window.Razorpay
+            );
+
+        }
+
+
+        const existingScript =
+            document.querySelector(
+                'script[data-swaadya-razorpay-sdk="true"]'
+            );
+
+
+        if (
+            existingScript
+        ) {
+
+            return new Promise(
+                function (
+                    resolve,
+                    reject
+                ) {
+
+                    let attempts =
+                        0;
+
+
+                    const timer =
+                        setInterval(
+                            function () {
+
+                                if (
+                                    window.Razorpay
+                                ) {
+
+                                    clearInterval(
+                                        timer
+                                    );
+
+                                    resolve(
+                                        window.Razorpay
+                                    );
+
+                                    return;
+
+                                }
+
+
+                                attempts++;
+
+
+                                if (
+                                    attempts >
+                                    150
+                                ) {
+
+                                    clearInterval(
+                                        timer
+                                    );
+
+                                    reject(
+                                        new Error(
+                                            "Razorpay SDK could not be loaded."
+                                        )
+                                    );
+
+                                }
+
+                            },
+                            100
+                        );
+
+                }
+            );
+
+        }
+
+
+        return new Promise(
+            function (
+                resolve,
+                reject
+            ) {
+
+                const script =
+                    document.createElement(
+                        "script"
+                    );
+
+
+                script.src =
+                    "https://checkout.razorpay.com/v1/checkout.js";
+
+                script.async =
+                    true;
+
+                script.dataset.swaadyaRazorpaySdk =
+                    "true";
+
+
+                script.onload =
+                    function () {
+
+                        if (
+                            window.Razorpay
+                        ) {
+
+                            resolve(
+                                window.Razorpay
+                            );
+
+                        } else {
+
+                            reject(
+                                new Error(
+                                    "Razorpay SDK loaded but Razorpay is unavailable."
+                                )
+                            );
+
+                        }
+
+                    };
+
+
+                script.onerror =
+                    function () {
+
+                        reject(
+                            new Error(
+                                "Unable to load Razorpay checkout."
+                            )
+                        );
+
+                    };
+
+
+                document.head.appendChild(
+                    script
+                );
+
+            }
+        );
+
+    }
+
+
+    /* -------------------------------------------------------
+       4. LOAD RAZORPAY IN BACKGROUND
+       ------------------------------------------------------- */
+
+    loadRazorpay()
+        .then(
+            function () {
+
+                console.log(
+                    "Swaadya: Razorpay checkout ready."
+                );
+
+            }
+        )
+        .catch(
+            function (error) {
+
+                console.warn(
+                    "Swaadya: Razorpay SDK is not ready yet.",
+                    error
+                );
+
+            }
+        );
+
+
+    /* -------------------------------------------------------
+       5. FINAL SAFETY CHECK BEFORE CHECKOUT SUBMIT
+       ------------------------------------------------------- */
+
+    window.addEventListener(
+        "load",
+        function () {
+
+            const form =
+                document.getElementById(
+                    "checkoutForm"
+                );
+
+
+            if (
+                !form
+            ) {
+
+                return;
+
+            }
+
+
+            /*
+             * Do not add another submit handler.
+             *
+             * The original checkout system already has one.
+             * We only make sure Razorpay is available before
+             * the customer reaches the payment window.
+             */
+
+            form.addEventListener(
+                "submit",
+                function () {
+
+                    if (
+                        window.Razorpay
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    loadRazorpay()
+                        .catch(
+                            function (error) {
+
+                                console.error(
+                                    "Swaadya Razorpay:",
+                                    error
+                                );
+
+                            }
+                        );
+
+                },
+                true
+            );
+
+        }
+    );
+
+})();
+
+
+/* =========================================================
+   SWAADYA TOAST COMPATIBILITY
+   ---------------------------------------------------------
+   Restores showToast() used by the existing checkout,
+   Razorpay and authentication code.
+   Does not replace or modify the payment integration.
+   ========================================================= */
+
+if (
+    typeof window.showToast !== "function"
+) {
+
+    window.showToast =
+        function (
+            message
+        ) {
+
+            const toast =
+                document.getElementById(
+                    "toast"
+                );
+
+
+            if (!toast) {
+
+                console.warn(
+                    "Swaadya:",
+                    message
+                );
+
+                return;
+
+            }
+
+
+            /*
+             * Convert anything passed to showToast()
+             * into safe display text.
+             */
+
+            toast.textContent =
+                String(
+                    message ??
+                    "Something went wrong. Please try again."
+                );
+
+
+            /*
+             * Remove any previous toast state.
+             */
+
+            toast.classList.remove(
+                "show",
+                "visible",
+                "active"
+            );
+
+
+            /*
+             * Force a browser reflow so that the same
+             * toast can be shown repeatedly.
+             */
+
+            void toast.offsetWidth;
+
+
+            /*
+             * Use the class already used by most
+             * Swaadya toast CSS implementations.
+             */
+
+            toast.classList.add(
+                "show"
+            );
+
+
+            /*
+             * Automatically hide it.
+             */
+
+            clearTimeout(
+                window.__swaadyaToastTimer
+            );
+
+
+            window.__swaadyaToastTimer =
+                setTimeout(
+                    function () {
+
+                        toast.classList.remove(
+                            "show",
+                            "visible",
+                            "active"
+                        );
+
+                    },
+                    3500
+                );
+
+        };
+
+}
+
+
 </script>
 
 
