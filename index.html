@@ -2133,10 +2133,61 @@ ul {
         padding: 25px;
     }
 
-    .process-grid {
-        grid-template-columns:
-            1fr;
-    }
+    .products-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.product-card {
+    border-radius: 12px;
+}
+
+.product-image {
+    height: 175px;
+}
+
+.product-body {
+    padding: 12px;
+}
+
+.product-name {
+    font-size: 17px;
+}
+
+.product-description {
+    font-size: 10.5px;
+    min-height: 0;
+    margin: 7px 0 10px;
+}
+
+.product-controls {
+    display: block;
+}
+
+.size-select {
+    font-size: 11px;
+    padding: 8px 7px;
+}
+
+.product-price {
+    display: block;
+    margin-top: 8px;
+    font-size: 15px;
+}
+
+.product-actions {
+    margin-top: 10px;
+}
+
+.product-actions .btn {
+    min-height: 36px;
+    font-size: 10px;
+    padding: 0 6px;
+}
+
+.product-stock {
+    font-size: 9px;
+}
 
     .process-step {
         padding: 19px;
