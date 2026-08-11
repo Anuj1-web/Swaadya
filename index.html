@@ -14328,6 +14328,335 @@ body.swaadya-policy-lock {
 })();
 </script>
 
+<!-- =========================================================
+     SWAADYA — FINAL MOBILE MENU + INSTAGRAM CONNECTION FIX
+     Place immediately before </body>
+     ========================================================= -->
+
+<script>
+(function () {
+    "use strict";
+
+    /* =========================================================
+       1. SWAADYA INSTAGRAM
+       ========================================================= */
+
+    const SWAADYA_INSTAGRAM_URL =
+        "https://www.instagram.com/Swaadya_01/";
+
+    function connectInstagramLinks() {
+
+        const instagramLink =
+            document.getElementById("instagramLink");
+
+        const footerInstagram =
+            document.getElementById("footerInstagram");
+
+
+        if (instagramLink) {
+            instagramLink.href =
+                SWAADYA_INSTAGRAM_URL;
+
+            instagramLink.target =
+                "_blank";
+
+            instagramLink.rel =
+                "noopener noreferrer";
+        }
+
+
+        if (footerInstagram) {
+            footerInstagram.href =
+                SWAADYA_INSTAGRAM_URL;
+
+            footerInstagram.target =
+                "_blank";
+
+            footerInstagram.rel =
+                "noopener noreferrer";
+        }
+
+    }
+
+
+    /* =========================================================
+       2. MOBILE MENU
+       ========================================================= */
+
+    function setupMobileMenu() {
+
+        const menuButton =
+            document.getElementById(
+                "mobileMenuButton"
+            );
+
+        const mobileNav =
+            document.getElementById(
+                "mobileNav"
+            );
+
+
+        if (!menuButton || !mobileNav) {
+            console.warn(
+                "Swaadya: Mobile navigation elements not found."
+            );
+
+            return;
+        }
+
+
+        /* Prevent duplicate handlers if this block
+           is ever loaded more than once. */
+
+        if (
+            menuButton.dataset.swaadyaMenuReady ===
+            "true"
+        ) {
+            return;
+        }
+
+
+        menuButton.dataset.swaadyaMenuReady =
+            "true";
+
+
+        /* -----------------------------------------------------
+           OPEN / CLOSE MENU
+           ----------------------------------------------------- */
+
+        menuButton.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
+
+                const isOpen =
+                    mobileNav.classList.contains(
+                        "open"
+                    );
+
+
+                if (isOpen) {
+
+                    closeMobileMenu();
+
+                } else {
+
+                    openMobileMenu();
+
+                }
+
+            },
+            false
+        );
+
+
+        /* -----------------------------------------------------
+           MOBILE NAVIGATION LINKS
+           ----------------------------------------------------- */
+
+        mobileNav
+            .querySelectorAll("a")
+            .forEach(function (link) {
+
+                link.addEventListener(
+                    "click",
+                    function () {
+
+                        closeMobileMenu();
+
+                    }
+                );
+
+            });
+
+
+        /* -----------------------------------------------------
+           CLICK OUTSIDE MENU
+           ----------------------------------------------------- */
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    !mobileNav.classList.contains(
+                        "open"
+                    )
+                ) {
+                    return;
+                }
+
+
+                if (
+                    mobileNav.contains(event.target) ||
+                    menuButton.contains(event.target)
+                ) {
+                    return;
+                }
+
+
+                closeMobileMenu();
+
+            }
+        );
+
+
+        /* -----------------------------------------------------
+           ESCAPE KEY
+           ----------------------------------------------------- */
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Escape" &&
+                    mobileNav.classList.contains("open")
+                ) {
+
+                    closeMobileMenu();
+
+                    menuButton.focus();
+
+                }
+
+            }
+        );
+
+
+        /* -----------------------------------------------------
+           CLOSE WHEN SCREEN BECOMES DESKTOP SIZE
+           ----------------------------------------------------- */
+
+        window.addEventListener(
+            "resize",
+            function () {
+
+                if (
+                    window.innerWidth > 950
+                ) {
+
+                    closeMobileMenu();
+
+                }
+
+            }
+        );
+
+
+        /* -----------------------------------------------------
+           FUNCTIONS
+           ----------------------------------------------------- */
+
+        function openMobileMenu() {
+
+            mobileNav.classList.add(
+                "open"
+            );
+
+            menuButton.setAttribute(
+                "aria-expanded",
+                "true"
+            );
+
+            menuButton.setAttribute(
+                "aria-label",
+                "Close navigation"
+            );
+
+
+            /*
+             * Change hamburger to a clean close symbol.
+             * This does not alter the desktop header.
+             */
+
+            menuButton.textContent = "×";
+
+        }
+
+
+        function closeMobileMenu() {
+
+            mobileNav.classList.remove(
+                "open"
+            );
+
+            menuButton.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+            menuButton.setAttribute(
+                "aria-label",
+                "Open navigation"
+            );
+
+
+            menuButton.textContent = "☰";
+
+        }
+
+
+        /*
+         * Expose only if another existing script
+         * needs to close the menu.
+         */
+
+        window.openSwaadyaMobileMenu =
+            openMobileMenu;
+
+        window.closeSwaadyaMobileMenu =
+            closeMobileMenu;
+
+    }
+
+
+    /* =========================================================
+       3. INITIALIZE SAFELY
+       ========================================================= */
+
+    function initializeSwaadyaNavigation() {
+
+        connectInstagramLinks();
+
+        setupMobileMenu();
+
+    }
+
+
+    /*
+     * This script is placed near </body>, but using
+     * DOMContentLoaded makes it safe even if its position
+     * changes later.
+     */
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            initializeSwaadyaNavigation,
+            {
+                once: true
+            }
+        );
+
+    } else {
+
+        initializeSwaadyaNavigation();
+
+    }
+
+})();
+</script>
+
+
 
 
 </body>
