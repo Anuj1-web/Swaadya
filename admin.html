@@ -8651,35 +8651,34 @@ function updateAdminIdentity() {
            ========================================================= */
 
         async function loadCustomers() {
-
+            /*
+             * auth.users is protected and must not be queried directly
+             * from the browser. The SECURITY DEFINER function below
+             * verifies the current admin and returns every authenticated
+             * non-admin Supabase account, including users without a
+             * profiles row.
+             */
             const {
                 data,
                 error
             } =
                 await supabaseClient
-                    .from("profiles")
-                    .select(
-                        "id,full_name,mobile,email,role,created_at,updated_at"
-                    )
-                    .order(
-                        "created_at",
-                        {
-                            ascending:
-                                false
-                        }
-                    );
-
+                    .rpc("get_admin_customers");
 
             if (error) {
+                console.error(
+                    "Swaadya: Unable to load authenticated customers:",
+                    error
+                );
                 throw error;
             }
 
-
             STATE.customers =
-                data || [];
-
+                (data || []).map(customer => ({
+                    ...customer,
+                    role: customer.role || "customer"
+                }));
         }
-
 
         function renderCustomers() {
 
@@ -9860,6 +9859,70 @@ function updateAdminIdentity() {
             }
 
         }
+
+
+        /* =========================================================
+           22A. LIVE ADMIN DATA REFRESH
+           =========================================================
+           Payment verification changes stock server-side. Refresh the
+           dashboard periodically so inventory and order information
+           reflects the database without requiring a manual reload.
+        */
+
+        let swaadyaAdminRefreshTimer = null;
+
+        function startAdminLiveRefresh() {
+            if (swaadyaAdminRefreshTimer) {
+                clearInterval(swaadyaAdminRefreshTimer);
+            }
+
+            swaadyaAdminRefreshTimer = setInterval(
+                async () => {
+                    if (document.visibilityState !== "visible") {
+                        return;
+                    }
+
+                    try {
+                        await loadAllData();
+                        renderDashboard();
+                        renderProducts();
+                        renderInventory();
+                        renderCustomers();
+                        renderOrders();
+                    } catch (error) {
+                        console.warn(
+                            "Swaadya: Background admin refresh failed:",
+                            error
+                        );
+                    }
+                },
+                30000
+            );
+        }
+
+        document.addEventListener(
+            "visibilitychange",
+            async () => {
+                if (document.visibilityState !== "visible") {
+                    return;
+                }
+
+                try {
+                    await loadAllData();
+
+                startAdminLiveRefresh();                    renderDashboard();
+                    renderProducts();
+                    renderInventory();
+                    renderCustomers();
+                    renderOrders();
+                } catch (error) {
+                    console.warn(
+                        "Swaadya: Visibility refresh failed:",
+                        error
+                    );
+                }
+            }
+        );
 
 
         /* =========================================================
