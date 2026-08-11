@@ -2062,37 +2062,107 @@ ul {
     .mobile-nav {
         top: 66px;
     }
+/* =========================================================
+   MOBILE HERO — COMPACT PREMIUM LAYOUT
+   ========================================================= */
 
-    .hero {
-        padding:
-            47px 0 40px;
-    }
+/* =========================================================
+   MOBILE HERO — SIDE-BY-SIDE PREMIUM LAYOUT
+   ========================================================= */
 
-    .hero-title {
-        font-size: 49px;
-    }
+.hero {
+    padding: 28px 0 26px;
+    overflow: hidden;
+}
 
-    .hero-description {
-        font-size: 14px;
-    }
+.hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(105px, 0.75fr);
+    align-items: center;
+    gap: 8px;
+}
 
-    .hero-visual {
-        min-height: 280px;
-    }
+.hero-content {
+    text-align: left;
+    max-width: none;
+}
 
-    .spice-plate {
-        width: 285px;
-    }
+.hero-eyebrow {
+    font-size: 8px;
+    letter-spacing: 1.2px;
+    margin-bottom: 9px;
+    justify-content: flex-start;
+}
 
-    .spice-red {
-        width: 62px;
-        height: 22px;
-    }
+.hero-title {
+    font-size: clamp(34px, 9.5vw, 44px);
+    line-height: 0.98;
+    letter-spacing: -1.6px;
+    margin: 0;
+    max-width: 230px;
+}
 
-    .spice-yellow {
-        width: 68px;
-        height: 21px;
-    }
+.hero-description {
+    max-width: 230px;
+    margin: 12px 0 0;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.hero-actions {
+    margin-top: 16px;
+    gap: 7px;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+}
+
+.hero-actions .btn {
+    min-height: 38px;
+    padding: 0 12px;
+    font-size: 10px;
+    border-radius: 8px;
+    white-space: nowrap;
+}
+
+.hero-visual {
+    min-height: 150px;
+    height: 150px;
+    width: 100%;
+    display: grid;
+    place-items: center;
+    margin: 0;
+}
+
+.spice-plate {
+    width: 145px;
+    max-width: 100%;
+}
+
+.spice-plate-inner {
+    width: 72%;
+    height: 72%;
+}
+
+.spice-red {
+    width: 40px;
+    height: 14px;
+}
+
+.spice-yellow {
+    width: 44px;
+    height: 14px;
+}
+
+.spice-brown {
+    width: 34px;
+    height: 13px;
+}
+
+.spice-green {
+    width: 36px;
+    height: 13px;
+}
+
 
     .section {
         padding: 65px 0;
@@ -2103,24 +2173,43 @@ ul {
     }
 
     .values-grid {
-        grid-template-columns:
-            1fr;
-    }
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
 
-    .value-card {
-        padding:
-            13px 4px;
+    gap: 0;
+}
 
-        border-right: 0;
+.value-card {
+    padding:
+        18px 12px;
 
-        border-bottom:
-            1px solid var(--border);
-    }
+    min-height: 105px;
 
-    .value-card:last-child {
-        border-bottom: 0;
-    }
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
+    border-right:
+        1px solid var(--border);
+
+    border-bottom:
+        1px solid var(--border);
+
+    text-align: center;
+}
+
+.value-card:nth-child(2n) {
+    border-right: 0;
+}
+
+.value-card:nth-child(3),
+.value-card:nth-child(4) {
+    border-bottom: 0;
+}
+
+.value-card:last-child {
+    border-bottom: 0;
+}
     .products-grid {
         grid-template-columns: 1fr;
     }
@@ -2203,10 +2292,42 @@ ul {
             1fr;
     }
 
-    .footer-grid {
-        grid-template-columns:
-            1fr;
-    }
+    .footer {
+    padding: 30px 0 14px;
+}
+
+.footer-grid {
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    gap: 18px 14px;
+}
+
+.footer-brand {
+    font-size: 20px;
+}
+
+.footer-description {
+    max-width: 170px;
+    margin-top: 6px;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.footer-heading {
+    margin-bottom: 8px;
+    font-size: 10px;
+}
+
+.footer-link {
+    margin: 5px 0;
+    font-size: 10px;
+}
+
+.copyright {
+    margin-top: 20px;
+    padding-top: 12px;
+    font-size: 9px;
+}
 
     .checkout-grid {
         grid-template-columns:
@@ -2678,6 +2799,481 @@ ul {
         grid-template-columns: 1fr;
     }
 
+}
+/* =========================================================
+   SWAADYA — PREMIUM MOBILE CONTENT ACCORDION
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    /* -----------------------------------------------------
+       MAIN ACCORDION SECTION
+       ----------------------------------------------------- */
+
+    .mobile-collapsible {
+        position: relative;
+        box-sizing: border-box;
+
+        height: 150px;
+        overflow: hidden;
+
+        /*
+         * No white overlay / no gradient.
+         * The next section remains completely clean.
+         */
+        background: transparent;
+
+        border-bottom: 1px solid rgba(23,45,34,0.10);
+
+        transition:
+            height 0.42s cubic-bezier(.4,0,.2,1);
+    }
+
+    .mobile-collapsible.mobile-expanded {
+        overflow: hidden;
+
+        /*
+         * Slightly stronger separation while open.
+         */
+        border-bottom-color:
+            rgba(23,45,34,0.14);
+    }
+
+
+    /* -----------------------------------------------------
+       REMOVE THE OLD WHITE FADE
+       ----------------------------------------------------- */
+
+    .mobile-collapsible:not(.mobile-expanded)::after {
+        display: none !important;
+        content: none !important;
+    }
+
+
+    /* -----------------------------------------------------
+       SECTION HEAD
+       ----------------------------------------------------- */
+
+    .mobile-collapsible .section-head {
+        margin-bottom: 17px;
+    }
+
+    .mobile-collapsible .section-title {
+        font-size: 27px;
+        line-height: 1.05;
+        letter-spacing: -0.5px;
+    }
+
+    .mobile-collapsible .section-description {
+        max-width: 300px;
+
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+
+    /* -----------------------------------------------------
+       PREMIUM CENTER CONTROL
+       ----------------------------------------------------- */
+
+    .mobile-section-toggle {
+        position: absolute;
+
+        left: 50%;
+        bottom: 9px;
+
+        transform: translateX(-50%);
+
+        width: 30px;
+        height: 30px;
+
+        padding: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid rgba(23,45,34,0.15);
+        border-radius: 50%;
+
+        background:
+            var(--cream-100);
+
+        color:
+            var(--green-700);
+
+        font-size: 16px;
+        font-weight: 700;
+
+        line-height: 1;
+
+        cursor: pointer;
+
+        box-shadow:
+            0 2px 8px rgba(23,45,34,0.06);
+
+        transition:
+            transform .32s ease,
+            background .25s ease,
+            border-color .25s ease,
+            box-shadow .25s ease;
+    }
+
+    .mobile-section-toggle:hover {
+        border-color:
+            var(--gold-600);
+
+        box-shadow:
+            0 4px 12px rgba(23,45,34,0.10);
+    }
+
+    /*
+     * Arrow points down while closed.
+     * Arrow points up while open.
+     */
+    .mobile-expanded .mobile-section-toggle {
+        transform:
+            translateX(-50%)
+            rotate(180deg);
+    }
+
+
+    /* -----------------------------------------------------
+       OPEN SECTION — MORE BREATHING ROOM
+       ----------------------------------------------------- */
+
+    .mobile-collapsible.mobile-expanded
+    .mobile-section-toggle {
+        bottom: 12px;
+    }
+
+
+    /* -----------------------------------------------------
+       OUR BEGINNING
+       ----------------------------------------------------- */
+
+    .story-section.mobile-collapsible {
+        height: 165px;
+    }
+
+    .story-section.mobile-expanded {
+        height: auto;
+    }
+
+    .story-section .story-grid {
+        gap: 18px;
+    }
+
+    .story-section .story-title {
+        font-size: 29px;
+        line-height: 1.05;
+    }
+
+    .story-section .story-text {
+        font-size: 11px;
+        line-height: 1.55;
+    }
+
+
+    /* -----------------------------------------------------
+       OUR PROCESS
+       ----------------------------------------------------- */
+
+    #process.mobile-collapsible {
+        height: 155px;
+    }
+
+    #process.mobile-expanded {
+        height: auto;
+    }
+
+    #process .process-grid {
+        gap: 5px;
+    }
+
+    #process .process-step {
+        padding: 15px 8px;
+    }
+
+    #process .process-number {
+        width: 38px;
+        height: 38px;
+        margin-bottom: 9px;
+        font-size: 10px;
+    }
+
+    #process .process-step h3 {
+        font-size: 10px;
+    }
+
+    #process .process-step p {
+        font-size: 9px;
+        line-height: 1.45;
+    }
+
+
+    /* -----------------------------------------------------
+       OUR JOURNEY
+       ----------------------------------------------------- */
+
+    .journey-section.mobile-collapsible {
+        height: 165px;
+    }
+
+    .journey-section.mobile-expanded {
+        height: auto;
+    }
+
+    .journey-section .journey-grid {
+        grid-template-columns: 1fr;
+        gap: 9px;
+    }
+
+    .journey-section .journey-card {
+        padding: 17px;
+    }
+
+    .journey-section .journey-title {
+        font-size: 19px;
+        line-height: 1.1;
+    }
+
+    .journey-section .journey-card p {
+        font-size: 10px;
+        line-height: 1.5;
+    }
+
+
+    /* -----------------------------------------------------
+       FAQ
+       ----------------------------------------------------- */
+
+    #faq.mobile-collapsible {
+        height: 180px;
+    }
+
+    #faq.mobile-expanded {
+        height: auto;
+    }
+
+    #faq .faq-item {
+        margin-bottom: 7px;
+        border-radius: 11px;
+    }
+
+    #faq .faq-question {
+        padding: 14px 15px;
+        font-size: 11px;
+    }
+
+    #faq .faq-answer {
+        padding: 0 15px 14px;
+        font-size: 10px;
+        line-height: 1.5;
+    }
+
+
+    /* -----------------------------------------------------
+       FOLLOW OUR JOURNEY
+       ----------------------------------------------------- */
+
+    .social-section.mobile-collapsible {
+        height: 155px;
+    }
+
+    .social-section.mobile-expanded {
+        height: auto;
+    }
+
+    .social-section .section-title {
+        font-size: 27px;
+    }
+
+    .social-section .social-description {
+        max-width: 280px;
+
+        font-size: 11px;
+        line-height: 1.5;
+
+        margin-bottom: 16px;
+    }
+
+
+    /* -----------------------------------------------------
+       GET IN TOUCH
+       ----------------------------------------------------- */
+
+    #contact.mobile-collapsible {
+        height: 170px;
+    }
+
+    #contact.mobile-expanded {
+        height: auto;
+    }
+
+    #contact .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 9px;
+    }
+
+    #contact .contact-card {
+        padding: 17px;
+    }
+
+    #contact .contact-value {
+        font-size: 17px;
+    }
+
+    #contact .contact-description {
+        font-size: 10px;
+    }
+}
+@media (max-width: 600px) {
+
+    /* =====================================================
+       OUR BEGINNING — DARK PREMIUM MOBILE TREATMENT
+       ===================================================== */
+
+    .story-section.mobile-collapsible {
+        background: var(--green-700) !important;
+        color: var(--white) !important;
+
+        /*
+         * Give the dark section enough room to breathe
+         * without making the collapsed preview huge.
+         */
+        height: 190px;
+
+        border-bottom:
+            1px solid rgba(255,255,255,.12);
+
+        opacity: 1 !important;
+        filter: none !important;
+
+        /*
+         * Keep the green section visually above the
+         * surrounding cream sections.
+         */
+        position: relative;
+        z-index: 3;
+    }
+
+    .story-section.mobile-expanded {
+        background: var(--green-700) !important;
+        color: var(--white) !important;
+
+        height: auto;
+
+        opacity: 1 !important;
+        filter: none !important;
+
+        z-index: 4;
+    }
+
+
+    /* -----------------------------------------------------
+       TEXT — FORCE CORRECT CONTRAST
+       ----------------------------------------------------- */
+
+    .story-section .section-eyebrow {
+        color: var(--gold-300) !important;
+    }
+
+    .story-section .story-title {
+        color: var(--white) !important;
+
+        font-size: 29px;
+        line-height: 1.06;
+
+        opacity: 1 !important;
+    }
+
+    .story-section .story-text {
+        color: #e5eee8 !important;
+
+        font-size: 11px;
+        line-height: 1.55;
+
+        opacity: 1 !important;
+    }
+
+
+    /* -----------------------------------------------------
+       WHY SWAADYA BOX
+       ----------------------------------------------------- */
+
+    .story-section .story-box {
+        background:
+            rgba(255,255,255,.075) !important;
+
+        border:
+            1px solid rgba(255,255,255,.10);
+
+        box-shadow:
+            0 10px 30px rgba(0,0,0,.08);
+
+        opacity: 1 !important;
+    }
+
+    .story-section .story-box-title {
+        color: var(--white) !important;
+
+        opacity: 1 !important;
+    }
+
+    .story-section .story-box p {
+        color: #dce9e0 !important;
+
+        opacity: 1 !important;
+    }
+
+
+    /* -----------------------------------------------------
+       BUTTON
+       ----------------------------------------------------- */
+
+    .story-section .btn-secondary {
+        border-color:
+            rgba(255,255,255,.28);
+
+        color:
+            var(--white);
+
+        background:
+            rgba(255,255,255,.07);
+    }
+
+    .story-section .btn-secondary:hover {
+        background:
+            rgba(255,255,255,.12);
+    }
+
+
+    /* -----------------------------------------------------
+       ACCORDION ARROW
+       ----------------------------------------------------- */
+
+    .story-section .mobile-section-toggle {
+        background:
+            var(--green-700);
+
+        border-color:
+            rgba(255,255,255,.25);
+
+        color:
+            var(--white);
+
+        box-shadow:
+            0 3px 12px rgba(0,0,0,.18);
+    }
+
+    .story-section .mobile-section-toggle:hover {
+        background:
+            rgba(255,255,255,.10);
+
+        border-color:
+            var(--gold-300);
+    }
 }
 </style>
 </head>
@@ -3338,7 +3934,7 @@ ul {
      FAQ
      ======================================================= -->
 
-<section class="section">
+<section class="section" id="faq">
 
     <div class="container">
 
@@ -11963,7 +12559,333 @@ if (
         };
 
 }
+/* =========================================================
+   SWAADYA MOBILE SECTION ACCORDION
+   ONLY ONE SECTION OPEN AT A TIME
+   ========================================================= */
 
+(function initSwaadyaMobileAccordion() {
+
+    const selectors = [
+        ".story-section",
+        "#process",
+        ".journey-section",
+        "#faq",
+        ".social-section",
+        "#contact"
+    ];
+
+    let sections = [];
+
+    function isMobile() {
+        return window.innerWidth <= 600;
+    }
+
+    function getNaturalHeight(section) {
+
+        const previousHeight =
+            section.style.height;
+
+        const previousOverflow =
+            section.style.overflow;
+
+        section.style.height = "auto";
+        section.style.overflow = "visible";
+
+        const height =
+            section.scrollHeight;
+
+        section.style.height =
+            previousHeight;
+
+        section.style.overflow =
+            previousOverflow;
+
+        return height;
+    }
+
+    function closeSection(section) {
+
+        if (!section) return;
+
+        const currentHeight =
+            section.getBoundingClientRect().height;
+
+        /*
+         * Freeze current height first so the browser
+         * can animate from current → collapsed.
+         */
+        section.style.height =
+            currentHeight + "px";
+
+        requestAnimationFrame(() => {
+
+            section.classList.remove(
+                "mobile-expanded"
+            );
+
+            const collapsedHeight =
+                section.dataset.collapsedHeight ||
+                "160";
+
+            section.style.height =
+                collapsedHeight + "px";
+        });
+
+        const button =
+            section.querySelector(
+                ".mobile-section-toggle"
+            );
+
+        if (button) {
+
+            button.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+            button.setAttribute(
+                "aria-label",
+                "Expand section"
+            );
+        }
+    }
+
+    function openSection(section) {
+
+        if (!section) return;
+
+        /*
+         * Close every other section first.
+         */
+        sections.forEach(other => {
+
+            if (
+                other !== section &&
+                other.classList.contains(
+                    "mobile-expanded"
+                )
+            ) {
+                closeSection(other);
+            }
+        });
+
+        /*
+         * Make sure the current section starts
+         * from its collapsed height.
+         */
+        const startHeight =
+            section.getBoundingClientRect().height;
+
+        section.style.height =
+            startHeight + "px";
+
+        section.classList.add(
+            "mobile-expanded"
+        );
+
+        /*
+         * Measure its COMPLETE natural height.
+         */
+        requestAnimationFrame(() => {
+
+            const fullHeight =
+                getNaturalHeight(section);
+
+            section.style.height =
+                fullHeight + "px";
+        });
+
+        const button =
+            section.querySelector(
+                ".mobile-section-toggle"
+            );
+
+        if (button) {
+
+            button.setAttribute(
+                "aria-expanded",
+                "true"
+            );
+
+            button.setAttribute(
+                "aria-label",
+                "Collapse section"
+            );
+        }
+    }
+
+    function createSection(section) {
+
+        if (!section) return;
+
+        /*
+         * Prevent duplicate initialization.
+         */
+        if (
+            section.classList.contains(
+                "mobile-collapsible"
+            )
+        ) {
+            return;
+        }
+
+        section.classList.add(
+            "mobile-collapsible"
+        );
+
+        /*
+         * Determine the section's collapsed height.
+         */
+        let collapsedHeight = 160;
+
+        if (
+            section.matches(
+                ".story-section"
+            )
+        ) {
+            collapsedHeight = 165;
+        }
+
+        else if (
+            section.matches(
+                "#process"
+            )
+        ) {
+            collapsedHeight = 155;
+        }
+
+        else if (
+            section.matches(
+                ".journey-section"
+            )
+        ) {
+            collapsedHeight = 165;
+        }
+
+        else if (
+            section.matches(
+                "#faq"
+            )
+        ) {
+            collapsedHeight = 180;
+        }
+
+        else if (
+            section.matches(
+                ".social-section"
+            )
+        ) {
+            collapsedHeight = 155;
+        }
+
+        else if (
+            section.matches(
+                "#contact"
+            )
+        ) {
+            collapsedHeight = 170;
+        }
+
+        section.dataset.collapsedHeight =
+            collapsedHeight;
+
+        section.style.height =
+            collapsedHeight + "px";
+
+        /*
+         * Create arrow.
+         */
+        const button =
+            document.createElement("button");
+
+        button.type = "button";
+
+        button.className =
+            "mobile-section-toggle";
+
+        button.innerHTML = "⌃";
+
+        button.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+        button.setAttribute(
+            "aria-label",
+            "Expand section"
+        );
+
+        /*
+         * Toggle this section.
+         */
+        button.addEventListener(
+            "click",
+            function(event) {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                const isOpen =
+                    section.classList.contains(
+                        "mobile-expanded"
+                    );
+
+                if (isOpen) {
+
+                    closeSection(section);
+
+                } else {
+
+                    openSection(section);
+
+                }
+            }
+        );
+
+        section.appendChild(button);
+
+        sections.push(section);
+    }
+
+    function initialize() {
+
+        if (!isMobile()) {
+            return;
+        }
+
+        sections = [];
+
+        selectors.forEach(selector => {
+
+            const section =
+                document.querySelector(selector);
+
+            if (section) {
+                createSection(section);
+            }
+        });
+    }
+
+    /*
+     * Initialize after page is ready.
+     */
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            initialize
+        );
+
+    } else {
+
+        initialize();
+    }
+
+})();
 
 </script>
 
