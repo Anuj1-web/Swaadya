@@ -12559,335 +12559,1775 @@ if (
         };
 
 }
+
+
+</script>
+
+<!-- =========================================================
+     SWAADYA — POLICY CENTER
+     =========================================================
+     IMPORTANT:
+     1. DO NOT CHANGE THE EXISTING FOOTER POLICY LINKS.
+     2. DO NOT ADD ANOTHER POLICIES COLUMN.
+     3. PLACE THIS ENTIRE BLOCK IMMEDIATELY BEFORE </body>.
+     4. This block intentionally does NOT contain footer links.
+     ========================================================= -->
+
+<style>
 /* =========================================================
-   SWAADYA MOBILE SECTION ACCORDION
-   ONLY ONE SECTION OPEN AT A TIME
+   SWAADYA POLICY CENTER
+   Completely isolated styles.
+   Does NOT modify .footer-grid, .footer-link or footer layout.
    ========================================================= */
 
-(function initSwaadyaMobileAccordion() {
+#swaadyaPolicyCenter {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
 
-    const selectors = [
-        ".story-section",
-        "#process",
-        ".journey-section",
-        "#faq",
-        ".social-section",
-        "#contact"
-    ];
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    let sections = [];
+    padding: 20px;
 
-    function isMobile() {
-        return window.innerWidth <= 600;
+    background: rgba(12, 28, 20, 0.76);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition:
+        opacity 220ms ease,
+        visibility 220ms ease;
+}
+
+#swaadyaPolicyCenter.swaadya-policy-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+
+/* =========================================================
+   MAIN POLICY WINDOW
+   ========================================================= */
+
+#swaadyaPolicyCenter .swaadya-policy-window {
+    width: min(1080px, 100%);
+    height: min(760px, calc(100vh - 40px));
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    background: #fffdf8;
+
+    border:
+        1px solid rgba(35, 77, 56, 0.14);
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 35px 100px rgba(0, 0, 0, 0.32);
+
+    transform:
+        translateY(18px)
+        scale(.985);
+
+    transition:
+        transform 260ms cubic-bezier(.2,.8,.2,1);
+}
+
+#swaadyaPolicyCenter.swaadya-policy-visible
+.swaadya-policy-window {
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+#swaadyaPolicyCenter .swaadya-policy-header {
+    flex: 0 0 auto;
+
+    min-height: 76px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 14px 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #183326,
+            #10271c
+        );
+
+    color: #ffffff;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-mark {
+    width: 40px;
+    height: 40px;
+
+    flex: 0 0 40px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: #c9a45c;
+
+    color: #183326;
+
+    font-family: Georgia, serif;
+    font-size: 18px;
+    font-weight: 800;
+
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.18);
+}
+
+#swaadyaPolicyCenter .swaadya-policy-brand-name {
+    font-size: 15px;
+    font-weight: 800;
+
+    letter-spacing: 3px;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-brand-subtitle {
+    margin-top: 2px;
+
+    color: rgba(255,255,255,.62);
+
+    font-size: 10px;
+    letter-spacing: .7px;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-close {
+    width: 39px;
+    height: 39px;
+
+    flex: 0 0 39px;
+
+    display: grid;
+    place-items: center;
+
+    border:
+        1px solid rgba(255,255,255,.16);
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.07);
+
+    color: #ffffff;
+
+    font-size: 25px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background 180ms ease,
+        transform 180ms ease;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-close:hover {
+    background:
+        rgba(255,255,255,.16);
+
+    transform: rotate(90deg);
+}
+
+
+/* =========================================================
+   BODY LAYOUT
+   ========================================================= */
+
+#swaadyaPolicyCenter .swaadya-policy-layout {
+    flex: 1 1 auto;
+
+    min-height: 0;
+
+    display: grid;
+
+    grid-template-columns:
+        280px minmax(0, 1fr);
+}
+
+
+/* =========================================================
+   LEFT POLICY NAVIGATION
+   ========================================================= */
+
+#swaadyaPolicyCenter .swaadya-policy-navigation {
+    min-width: 0;
+
+    padding: 22px 14px;
+
+    background: #f4f0e7;
+
+    border-right:
+        1px solid #e5ded0;
+
+    overflow-y: auto;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-nav-title {
+    padding:
+        0 10px 12px;
+
+    color: #8b6d35;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    letter-spacing: 1.6px;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-nav-button {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        34px minmax(0, 1fr) 14px;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 12px 10px;
+
+    margin-bottom: 5px;
+
+    border:
+        1px solid transparent;
+
+    border-radius: 12px;
+
+    background: transparent;
+
+    color: #183326;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background 180ms ease,
+        border-color 180ms ease,
+        transform 180ms ease;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-nav-button:hover {
+    background:
+        rgba(255,255,255,.65);
+
+    transform:
+        translateX(2px);
+}
+
+#swaadyaPolicyCenter .swaadya-policy-nav-button.active {
+    background: #fffdf8;
+
+    border-color:
+        rgba(24,51,38,.11);
+
+    box-shadow:
+        0 6px 20px rgba(24,51,38,.06);
+}
+
+#swaadyaPolicyCenter .swaadya-policy-icon {
+    width: 32px;
+    height: 32px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 9px;
+
+    background: #e7e0d2;
+
+    color: #183326;
+
+    font-size: 14px;
+}
+
+#swaadyaPolicyCenter
+.swaadya-policy-nav-button.active
+.swaadya-policy-icon {
+    background: #183326;
+    color: #c9a45c;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-nav-button strong {
+    display: block;
+
+    font-size: 12px;
+    font-weight: 750;
+
+    line-height: 1.3;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-nav-button small {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #7c837d;
+
+    font-size: 9px;
+
+    line-height: 1.35;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-nav-arrow {
+    color: #9a9e99;
+
+    font-size: 18px;
+}
+
+#swaadyaPolicyCenter
+.swaadya-policy-nav-button.active
+.swaadya-policy-nav-arrow {
+    color: #8b6d35;
+}
+
+
+/* =========================================================
+   CONTENT AREA
+   ========================================================= */
+
+#swaadyaPolicyCenter .swaadya-policy-content {
+    min-width: 0;
+    min-height: 0;
+
+    overflow-y: auto;
+
+    background: #fffdf8;
+
+    scroll-behavior: smooth;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-page {
+    display: none;
+
+    max-width: 760px;
+
+    margin: 0 auto;
+
+    padding:
+        42px 48px 60px;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-page.active {
+    display: block;
+
+    animation:
+        swaadyaPolicyPageIn 220ms ease;
+}
+
+@keyframes swaadyaPolicyPageIn {
+    from {
+        opacity: 0;
+        transform: translateY(7px);
     }
 
-    function getNaturalHeight(section) {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-        const previousHeight =
-            section.style.height;
+#swaadyaPolicyCenter .swaadya-policy-eyebrow {
+    margin-bottom: 9px;
 
-        const previousOverflow =
-            section.style.overflow;
+    color: #a07d3c;
 
-        section.style.height = "auto";
-        section.style.overflow = "visible";
+    font-size: 9px;
+    font-weight: 800;
 
-        const height =
-            section.scrollHeight;
+    letter-spacing: 1.8px;
+}
 
-        section.style.height =
-            previousHeight;
+#swaadyaPolicyCenter .swaadya-policy-page h1 {
+    margin:
+        0 0 15px;
 
-        section.style.overflow =
-            previousOverflow;
+    color: #183326;
 
-        return height;
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(28px, 4vw, 42px);
+
+    line-height: 1.1;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-intro {
+    margin: 0;
+
+    color: #59645d;
+
+    font-size: 14px;
+
+    line-height: 1.8;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-date {
+    display: inline-flex;
+
+    margin-top: 17px;
+
+    padding:
+        7px 11px;
+
+    border-radius: 999px;
+
+    background: #f3eee4;
+
+    color: #7c837d;
+
+    font-size: 9px;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-date strong {
+    margin-left: 4px;
+
+    color: #183326;
+}
+
+
+/* =========================================================
+   ARTICLE
+   ========================================================= */
+
+#swaadyaPolicyCenter .swaadya-policy-article {
+    margin-top: 32px;
+
+    padding-top: 25px;
+
+    border-top:
+        1px solid #e8e1d5;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-article h2 {
+    margin:
+        28px 0 9px;
+
+    color: #183326;
+
+    font-size: 15px;
+
+    line-height: 1.4;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-article h2:first-child {
+    margin-top: 0;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-article p,
+#swaadyaPolicyCenter .swaadya-policy-article li {
+    color: #59645d;
+
+    font-size: 13px;
+
+    line-height: 1.8;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-article p {
+    margin:
+        0 0 12px;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-article ul {
+    margin:
+        8px 0 17px;
+
+    padding-left: 20px;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-article li {
+    margin-bottom: 5px;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-article li::marker {
+    color: #a07d3c;
+}
+
+
+/* =========================================================
+   BOTTOM BAR
+   ========================================================= */
+
+#swaadyaPolicyCenter .swaadya-policy-footer {
+    flex: 0 0 auto;
+
+    min-height: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding:
+        9px 20px;
+
+    border-top:
+        1px solid #e5ded0;
+
+    background: #faf7f0;
+
+    color: #858b86;
+
+    font-size: 9px;
+}
+
+#swaadyaPolicyCenter .swaadya-policy-footer button {
+    padding:
+        7px 14px;
+
+    border:
+        1px solid #d8d0c1;
+
+    border-radius: 8px;
+
+    background: #fffdf8;
+
+    color: #183326;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   BACKGROUND LOCK
+   ========================================================= */
+
+html.swaadya-policy-lock,
+body.swaadya-policy-lock {
+    overflow: hidden !important;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 720px) {
+
+    #swaadyaPolicyCenter {
+        padding: 0;
+        align-items: stretch;
     }
 
-    function closeSection(section) {
+    #swaadyaPolicyCenter .swaadya-policy-window {
+        width: 100%;
+        height: 100%;
 
-        if (!section) return;
+        border: 0;
+        border-radius: 0;
+    }
 
-        const currentHeight =
-            section.getBoundingClientRect().height;
+    #swaadyaPolicyCenter .swaadya-policy-header {
+        min-height: 66px;
 
-        /*
-         * Freeze current height first so the browser
-         * can animate from current → collapsed.
-         */
-        section.style.height =
-            currentHeight + "px";
+        padding:
+            11px 15px;
+    }
 
-        requestAnimationFrame(() => {
+    #swaadyaPolicyCenter .swaadya-policy-mark {
+        width: 36px;
+        height: 36px;
 
-            section.classList.remove(
-                "mobile-expanded"
-            );
+        flex-basis: 36px;
 
-            const collapsedHeight =
-                section.dataset.collapsedHeight ||
-                "160";
+        font-size: 16px;
+    }
 
-            section.style.height =
-                collapsedHeight + "px";
-        });
+    #swaadyaPolicyCenter .swaadya-policy-brand-name {
+        font-size: 13px;
+        letter-spacing: 2.5px;
+    }
 
-        const button =
-            section.querySelector(
-                ".mobile-section-toggle"
-            );
+    #swaadyaPolicyCenter .swaadya-policy-brand-subtitle {
+        font-size: 9px;
+    }
 
-        if (button) {
+    #swaadyaPolicyCenter .swaadya-policy-layout {
+        display: flex;
+        flex-direction: column;
+    }
 
-            button.setAttribute(
-                "aria-expanded",
-                "false"
-            );
+    #swaadyaPolicyCenter .swaadya-policy-navigation {
+        flex: 0 0 auto;
 
-            button.setAttribute(
-                "aria-label",
-                "Expand section"
-            );
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 7px;
+
+        padding: 10px;
+
+        border-right: 0;
+
+        border-bottom:
+            1px solid #e5ded0;
+
+        overflow: visible;
+    }
+
+    #swaadyaPolicyCenter .swaadya-policy-nav-title {
+        display: none;
+    }
+
+    #swaadyaPolicyCenter .swaadya-policy-nav-button {
+        min-width: 0;
+
+        grid-template-columns:
+            27px minmax(0, 1fr);
+
+        gap: 7px;
+
+        padding: 9px;
+
+        margin: 0;
+    }
+
+    #swaadyaPolicyCenter .swaadya-policy-icon {
+        width: 27px;
+        height: 27px;
+
+        border-radius: 7px;
+
+        font-size: 12px;
+    }
+
+    #swaadyaPolicyCenter .swaadya-policy-nav-button strong {
+        font-size: 10px;
+    }
+
+    #swaadyaPolicyCenter .swaadya-policy-nav-button small,
+    #swaadyaPolicyCenter .swaadya-policy-nav-arrow {
+        display: none;
+    }
+
+    #swaadyaPolicyCenter .swaadya-policy-content {
+        flex: 1 1 auto;
+    }
+
+    #swaadyaPolicyCenter .swaadya-policy-page {
+        padding:
+            30px 20px 45px;
+    }
+
+    #swaadyaPolicyCenter .swaadya-policy-page h1 {
+        font-size: 30px;
+    }
+
+    #swaadyaPolicyCenter .swaadya-policy-intro {
+        font-size: 13px;
+        line-height: 1.75;
+    }
+
+    #swaadyaPolicyCenter .swaadya-policy-article {
+        margin-top: 25px;
+        padding-top: 20px;
+    }
+
+    #swaadyaPolicyCenter .swaadya-policy-article h2 {
+        font-size: 14px;
+    }
+
+    #swaadyaPolicyCenter .swaadya-policy-article p,
+    #swaadyaPolicyCenter .swaadya-policy-article li {
+        font-size: 12px;
+        line-height: 1.75;
+    }
+
+    #swaadyaPolicyCenter .swaadya-policy-footer {
+        min-height: 47px;
+
+        padding:
+            8px 13px;
+    }
+}
+</style>
+
+
+<!-- =========================================================
+     POLICY CENTER HTML
+     ========================================================= -->
+
+<div
+    id="swaadyaPolicyCenter"
+    aria-hidden="true">
+
+    <div
+        class="swaadya-policy-window"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="swaadyaPolicyHeading">
+
+
+        <!-- HEADER -->
+
+        <div class="swaadya-policy-header">
+
+            <div class="swaadya-policy-brand">
+
+                <div class="swaadya-policy-mark">
+                    S
+                </div>
+
+                <div>
+
+                    <div class="swaadya-policy-brand-name">
+                        SWAADYA
+                    </div>
+
+                    <div class="swaadya-policy-brand-subtitle">
+                        Policies & Customer Information
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="swaadya-policy-close"
+                id="swaadyaPolicyClose"
+                aria-label="Close policy">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <!-- MAIN -->
+
+        <div class="swaadya-policy-layout">
+
+
+            <!-- NAVIGATION -->
+
+            <aside class="swaadya-policy-navigation">
+
+                <div class="swaadya-policy-nav-title">
+                    INFORMATION
+                </div>
+
+
+                <button
+                    type="button"
+                    class="swaadya-policy-nav-button active"
+                    data-policy="privacy">
+
+                    <span class="swaadya-policy-icon">
+                        ⌕
+                    </span>
+
+                    <span>
+                        <strong>Privacy Policy</strong>
+                        <small>
+                            How we handle your information
+                        </small>
+                    </span>
+
+                    <span class="swaadya-policy-nav-arrow">
+                        ›
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="swaadya-policy-nav-button"
+                    data-policy="terms">
+
+                    <span class="swaadya-policy-icon">
+                        ◈
+                    </span>
+
+                    <span>
+                        <strong>Terms &amp; Conditions</strong>
+                        <small>
+                            Rules for using Swaadya
+                        </small>
+                    </span>
+
+                    <span class="swaadya-policy-nav-arrow">
+                        ›
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="swaadya-policy-nav-button"
+                    data-policy="shipping">
+
+                    <span class="swaadya-policy-icon">
+                        ⌁
+                    </span>
+
+                    <span>
+                        <strong>Shipping Policy</strong>
+                        <small>
+                            Delivery and order dispatch
+                        </small>
+                    </span>
+
+                    <span class="swaadya-policy-nav-arrow">
+                        ›
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="swaadya-policy-nav-button"
+                    data-policy="refund">
+
+                    <span class="swaadya-policy-icon">
+                        ↶
+                    </span>
+
+                    <span>
+                        <strong>Refund / Cancellation</strong>
+                        <small>
+                            Orders, cancellation and refunds
+                        </small>
+                    </span>
+
+                    <span class="swaadya-policy-nav-arrow">
+                        ›
+                    </span>
+
+                </button>
+
+            </aside>
+
+
+            <!-- CONTENT -->
+
+            <main class="swaadya-policy-content">
+
+
+                <!-- =================================================
+                     PRIVACY
+                     ================================================= -->
+
+                <section
+                    class="swaadya-policy-page active"
+                    data-policy-page="privacy">
+
+                    <div class="swaadya-policy-eyebrow">
+                        YOUR PRIVACY
+                    </div>
+
+                    <h1 id="swaadyaPolicyHeading">
+                        Privacy Policy
+                    </h1>
+
+                    <p class="swaadya-policy-intro">
+                        At Swaadya, we respect your privacy and are
+                        committed to handling your personal information
+                        responsibly. This policy explains what information
+                        we collect, why we use it, and how we protect it.
+                    </p>
+
+                    <div class="swaadya-policy-date">
+                        Last updated:
+                        <strong>11 August 2026</strong>
+                    </div>
+
+
+                    <article class="swaadya-policy-article">
+
+                        <h2>1. Information We Collect</h2>
+
+                        <p>
+                            When you create an account, place an order or
+                            communicate with us, we may collect information
+                            necessary to provide our services.
+                        </p>
+
+                        <ul>
+                            <li>Name and contact information</li>
+                            <li>Email address</li>
+                            <li>Mobile number</li>
+                            <li>Delivery address</li>
+                            <li>Order and transaction information</li>
+                            <li>Information you voluntarily provide</li>
+                        </ul>
+
+
+                        <h2>2. How We Use Your Information</h2>
+
+                        <p>
+                            We use collected information to operate and
+                            improve Swaadya, including to:
+                        </p>
+
+                        <ul>
+                            <li>Create and manage customer accounts</li>
+                            <li>Process and fulfil orders</li>
+                            <li>Process payments securely</li>
+                            <li>Communicate about orders and services</li>
+                            <li>Provide customer support</li>
+                            <li>Improve products and website functionality</li>
+                            <li>Prevent fraud and unauthorized activity</li>
+                        </ul>
+
+
+                        <h2>3. Payment Information</h2>
+
+                        <p>
+                            Payments are processed through authorized payment
+                            service providers. Swaadya does not intentionally
+                            store complete card, UPI, banking or other
+                            sensitive payment credentials.
+                        </p>
+
+
+                        <h2>4. Cookies and Similar Technologies</h2>
+
+                        <p>
+                            Swaadya may use cookies, local storage and similar
+                            technologies where necessary for authentication,
+                            preferences, website functionality and improving
+                            your experience.
+                        </p>
+
+
+                        <h2>5. Data Security</h2>
+
+                        <p>
+                            We take reasonable technical and organizational
+                            measures to protect customer information from
+                            unauthorized access, alteration, disclosure or
+                            destruction.
+                        </p>
+
+
+                        <h2>6. Third-Party Services</h2>
+
+                        <p>
+                            Certain services such as authentication, payment
+                            processing, hosting or delivery may involve
+                            trusted third-party service providers.
+                        </p>
+
+
+                        <h2>7. Your Rights</h2>
+
+                        <p>
+                            Subject to applicable law, you may request access
+                            to, correction of, or deletion of personal
+                            information associated with your account.
+                        </p>
+
+
+                        <h2>8. Contact</h2>
+
+                        <p>
+                            For privacy-related questions or requests,
+                            contact Swaadya through the official customer
+                            support channel.
+                        </p>
+
+                    </article>
+
+                </section>
+
+
+                <!-- =================================================
+                     TERMS
+                     ================================================= -->
+
+                <section
+                    class="swaadya-policy-page"
+                    data-policy-page="terms">
+
+                    <div class="swaadya-policy-eyebrow">
+                        USING SWAADYA
+                    </div>
+
+                    <h1>
+                        Terms &amp; Conditions
+                    </h1>
+
+                    <p class="swaadya-policy-intro">
+                        These Terms &amp; Conditions govern your use of the
+                        Swaadya website and your purchase of products through
+                        our platform.
+                    </p>
+
+                    <div class="swaadya-policy-date">
+                        Last updated:
+                        <strong>11 August 2026</strong>
+                    </div>
+
+
+                    <article class="swaadya-policy-article">
+
+                        <h2>1. Acceptance of Terms</h2>
+
+                        <p>
+                            By accessing or using Swaadya, you agree to comply
+                            with these Terms &amp; Conditions and applicable
+                            laws.
+                        </p>
+
+
+                        <h2>2. Customer Accounts</h2>
+
+                        <p>
+                            You are responsible for providing accurate
+                            information when creating an account and for
+                            maintaining the confidentiality of your account
+                            credentials.
+                        </p>
+
+
+                        <h2>3. Products and Information</h2>
+
+                        <p>
+                            We make reasonable efforts to ensure that product
+                            names, descriptions, images, prices and other
+                            information are accurate. Product availability,
+                            appearance and packaging may occasionally vary.
+                        </p>
+
+
+                        <h2>4. Prices</h2>
+
+                        <p>
+                            Product prices displayed on the website apply at
+                            the time of purchase. We may update prices, offers
+                            and product availability when necessary.
+                        </p>
+
+
+                        <h2>5. Orders</h2>
+
+                        <p>
+                            An order submitted through the website is a request
+                            to purchase the selected products. An order becomes
+                            confirmed according to Swaadya's order and payment
+                            confirmation process.
+                        </p>
+
+
+                        <h2>6. Payments</h2>
+
+                        <p>
+                            Payments are processed through authorized payment
+                            providers. You agree to provide valid payment
+                            information and authorize payment for the total
+                            amount shown at checkout.
+                        </p>
+
+
+                        <h2>7. Prohibited Use</h2>
+
+                        <p>
+                            You must not misuse the website, attempt
+                            unauthorized access, interfere with its operation,
+                            submit fraudulent information or use the platform
+                            for unlawful purposes.
+                        </p>
+
+
+                        <h2>8. Intellectual Property</h2>
+
+                        <p>
+                            Unless otherwise stated, Swaadya's branding,
+                            website content, graphics, text, designs and other
+                            original materials are owned by or licensed to
+                            Swaadya and may not be copied or used without
+                            appropriate permission.
+                        </p>
+
+
+                        <h2>9. Changes to These Terms</h2>
+
+                        <p>
+                            We may update these Terms &amp; Conditions from
+                            time to time. Updated terms will be published
+                            through the website.
+                        </p>
+
+
+                        <h2>10. Contact</h2>
+
+                        <p>
+                            If you have questions regarding these terms,
+                            contact Swaadya through the official customer
+                            support channel.
+                        </p>
+
+                    </article>
+
+                </section>
+
+
+                <!-- =================================================
+                     SHIPPING
+                     ================================================= -->
+
+                <section
+                    class="swaadya-policy-page"
+                    data-policy-page="shipping">
+
+                    <div class="swaadya-policy-eyebrow">
+                        DELIVERY
+                    </div>
+
+                    <h1>
+                        Shipping Policy
+                    </h1>
+
+                    <p class="swaadya-policy-intro">
+                        We prepare and pack every Swaadya order carefully
+                        and aim to dispatch orders as promptly as possible.
+                    </p>
+
+                    <div class="swaadya-policy-date">
+                        Last updated:
+                        <strong>11 August 2026</strong>
+                    </div>
+
+
+                    <article class="swaadya-policy-article">
+
+                        <h2>1. Order Processing</h2>
+
+                        <p>
+                            Orders are processed after successful order and
+                            payment confirmation. Preparation time may vary
+                            depending on product availability and order volume.
+                        </p>
+
+
+                        <h2>2. Fresh Preparation</h2>
+
+                        <p>
+                            Some Swaadya products may be prepared or processed
+                            in small batches. Where applicable, preparation
+                            time may be required before dispatch.
+                        </p>
+
+
+                        <h2>3. Shipping Time</h2>
+
+                        <p>
+                            Estimated delivery timelines may vary depending
+                            on destination, courier availability, operational
+                            conditions and other circumstances.
+                        </p>
+
+
+                        <h2>4. Delivery Address</h2>
+
+                        <p>
+                            Customers are responsible for providing a complete
+                            and accurate delivery address and contact number.
+                        </p>
+
+
+                        <h2>5. Delivery Delays</h2>
+
+                        <p>
+                            Delays may occasionally occur because of weather,
+                            transportation problems, courier operations,
+                            public holidays, unforeseen events or other
+                            circumstances beyond our reasonable control.
+                        </p>
+
+
+                        <h2>6. Order Tracking</h2>
+
+                        <p>
+                            Where tracking information is available, it may
+                            be provided through the order status or communicated
+                            to the customer.
+                        </p>
+
+
+                        <h2>7. Delivery Issues</h2>
+
+                        <p>
+                            If an order is marked delivered but you have not
+                            received it, or if the package arrives damaged,
+                            contact Swaadya customer support as soon as
+                            possible with your order details.
+                        </p>
+
+
+                        <h2>8. Contact</h2>
+
+                        <p>
+                            For shipping and delivery questions, contact
+                            Swaadya through the official customer support
+                            channel.
+                        </p>
+
+                    </article>
+
+                </section>
+
+
+                <!-- =================================================
+                     REFUND
+                     ================================================= -->
+
+                <section
+                    class="swaadya-policy-page"
+                    data-policy-page="refund">
+
+                    <div class="swaadya-policy-eyebrow">
+                        ORDERS &amp; PAYMENTS
+                    </div>
+
+                    <h1>
+                        Refund / Cancellation
+                    </h1>
+
+                    <p class="swaadya-policy-intro">
+                        We want every Swaadya order to reach you in good
+                        condition. This policy explains how cancellations,
+                        refunds and payment-related issues are handled.
+                    </p>
+
+                    <div class="swaadya-policy-date">
+                        Last updated:
+                        <strong>11 August 2026</strong>
+                    </div>
+
+
+                    <article class="swaadya-policy-article">
+
+                        <h2>1. Order Cancellation</h2>
+
+                        <p>
+                            Cancellation requests should be submitted as soon
+                            as possible after placing an order. Once an order
+                            has entered processing, preparation or dispatch,
+                            cancellation may no longer be possible.
+                        </p>
+
+
+                        <h2>2. Cancellation Before Processing</h2>
+
+                        <p>
+                            If an eligible cancellation is accepted before
+                            preparation or dispatch, the applicable refund
+                            will be initiated to the original payment method.
+                        </p>
+
+
+                        <h2>3. Payment Failure</h2>
+
+                        <p>
+                            If your payment fails but an amount appears to
+                            have been debited, the transaction will be checked
+                            against the payment provider's transaction status.
+                        </p>
+
+
+                        <h2>4. Duplicate Payment</h2>
+
+                        <p>
+                            If you believe you have been charged more than once
+                            for the same order, contact Swaadya with the
+                            relevant transaction details so the payment can
+                            be verified.
+                        </p>
+
+
+                        <h2>5. Damaged or Incorrect Products</h2>
+
+                        <p>
+                            If you receive a damaged, defective or incorrect
+                            product, contact us promptly after delivery with
+                            your order details and supporting photographs where
+                            applicable.
+                        </p>
+
+
+                        <h2>6. Refund Processing</h2>
+
+                        <p>
+                            Once a refund is approved, it will be initiated
+                            through the applicable payment method. The time
+                            taken for the amount to appear in your account may
+                            depend on the payment provider or financial
+                            institution.
+                        </p>
+
+
+                        <h2>7. Food and Spice Products</h2>
+
+                        <p>
+                            For food and spice products, returns may be
+                            restricted for hygiene and safety reasons except
+                            where applicable law or Swaadya's stated product
+                            policy provides otherwise.
+                        </p>
+
+
+                        <h2>8. Contact for Refunds</h2>
+
+                        <p>
+                            For cancellation or refund assistance, contact
+                            Swaadya customer support with your order number
+                            and relevant details.
+                        </p>
+
+                    </article>
+
+                </section>
+
+            </main>
+
+        </div>
+
+
+        <!-- BOTTOM -->
+
+        <div class="swaadya-policy-footer">
+
+            <span>
+                Swaadya · Policies &amp; Customer Information
+            </span>
+
+            <button
+                type="button"
+                id="swaadyaPolicyCloseBottom">
+
+                Close
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     POLICY JAVASCRIPT
+     ========================================================= -->
+
+<script>
+(function () {
+
+    "use strict";
+
+
+    /* =====================================================
+       ELEMENTS
+       ===================================================== */
+
+    const center =
+        document.getElementById(
+            "swaadyaPolicyCenter"
+        );
+
+    if (!center) {
+        return;
+    }
+
+
+    const closeButton =
+        document.getElementById(
+            "swaadyaPolicyClose"
+        );
+
+    const closeBottom =
+        document.getElementById(
+            "swaadyaPolicyCloseBottom"
+        );
+
+
+    const navigationButtons =
+        center.querySelectorAll(
+            ".swaadya-policy-nav-button"
+        );
+
+
+    const pages =
+        center.querySelectorAll(
+            ".swaadya-policy-page"
+        );
+
+
+    const content =
+        center.querySelector(
+            ".swaadya-policy-content"
+        );
+
+
+    /* =====================================================
+       NORMALIZE THE OLD FOOTER NAMES
+       
+       IMPORTANT:
+       Your existing footer sends full names such as:
+       
+       openPolicy('Privacy Policy')
+       openPolicy('Terms & Conditions')
+       openPolicy('Shipping & Delivery')
+       openPolicy('Refund / Cancellation')
+       
+       We convert those names to our internal IDs.
+       ===================================================== */
+
+    function normalizePolicyName(name) {
+
+        const value =
+            String(name || "")
+                .trim()
+                .toLowerCase();
+
+
+        if (
+            value === "privacy" ||
+            value === "privacy policy"
+        ) {
+            return "privacy";
         }
+
+
+        if (
+            value === "terms" ||
+            value === "terms & conditions" ||
+            value === "terms and conditions"
+        ) {
+            return "terms";
+        }
+
+
+        if (
+            value === "shipping" ||
+            value === "shipping policy" ||
+            value === "shipping & delivery" ||
+            value === "shipping and delivery"
+        ) {
+            return "shipping";
+        }
+
+
+        if (
+            value === "refund" ||
+            value === "refund / cancellation" ||
+            value === "refund/cancellation" ||
+            value === "refund & cancellation" ||
+            value === "refund and cancellation"
+        ) {
+            return "refund";
+        }
+
+
+        /* Unknown value → safe default */
+
+        return "privacy";
     }
 
-    function openSection(section) {
 
-        if (!section) return;
+    /* =====================================================
+       OPEN POLICY
+       
+       THIS IS THE FUNCTION YOUR EXISTING FOOTER NEEDS.
+       
+       It is deliberately attached to window below so
+       inline onclick="openPolicy(...)" can find it.
+       ===================================================== */
 
-        /*
-         * Close every other section first.
-         */
-        sections.forEach(other => {
+    function openPolicy(policyName) {
 
-            if (
-                other !== section &&
-                other.classList.contains(
-                    "mobile-expanded"
-                )
-            ) {
-                closeSection(other);
+        const policy =
+            normalizePolicyName(
+                policyName
+            );
+
+
+        /* Activate correct navigation button */
+
+        navigationButtons.forEach(
+            function (button) {
+
+                button.classList.toggle(
+                    "active",
+                    button.dataset.policy === policy
+                );
+
             }
-        });
-
-        /*
-         * Make sure the current section starts
-         * from its collapsed height.
-         */
-        const startHeight =
-            section.getBoundingClientRect().height;
-
-        section.style.height =
-            startHeight + "px";
-
-        section.classList.add(
-            "mobile-expanded"
         );
 
-        /*
-         * Measure its COMPLETE natural height.
-         */
-        requestAnimationFrame(() => {
 
-            const fullHeight =
-                getNaturalHeight(section);
+        /* Activate only the requested page */
 
-            section.style.height =
-                fullHeight + "px";
-        });
+        pages.forEach(
+            function (page) {
 
-        const button =
-            section.querySelector(
-                ".mobile-section-toggle"
-            );
+                page.classList.toggle(
+                    "active",
+                    page.dataset.policyPage === policy
+                );
 
-        if (button) {
-
-            button.setAttribute(
-                "aria-expanded",
-                "true"
-            );
-
-            button.setAttribute(
-                "aria-label",
-                "Collapse section"
-            );
-        }
-    }
-
-    function createSection(section) {
-
-        if (!section) return;
-
-        /*
-         * Prevent duplicate initialization.
-         */
-        if (
-            section.classList.contains(
-                "mobile-collapsible"
-            )
-        ) {
-            return;
-        }
-
-        section.classList.add(
-            "mobile-collapsible"
+            }
         );
 
-        /*
-         * Determine the section's collapsed height.
-         */
-        let collapsedHeight = 160;
 
-        if (
-            section.matches(
-                ".story-section"
-            )
-        ) {
-            collapsedHeight = 165;
+        /* Reset content scroll */
+
+        if (content) {
+            content.scrollTop = 0;
         }
 
-        else if (
-            section.matches(
-                "#process"
-            )
-        ) {
-            collapsedHeight = 155;
-        }
 
-        else if (
-            section.matches(
-                ".journey-section"
-            )
-        ) {
-            collapsedHeight = 165;
-        }
+        /* Open */
 
-        else if (
-            section.matches(
-                "#faq"
-            )
-        ) {
-            collapsedHeight = 180;
-        }
+        center.classList.add(
+            "swaadya-policy-visible"
+        );
 
-        else if (
-            section.matches(
-                ".social-section"
-            )
-        ) {
-            collapsedHeight = 155;
-        }
 
-        else if (
-            section.matches(
-                "#contact"
-            )
-        ) {
-            collapsedHeight = 170;
-        }
-
-        section.dataset.collapsedHeight =
-            collapsedHeight;
-
-        section.style.height =
-            collapsedHeight + "px";
-
-        /*
-         * Create arrow.
-         */
-        const button =
-            document.createElement("button");
-
-        button.type = "button";
-
-        button.className =
-            "mobile-section-toggle";
-
-        button.innerHTML = "⌃";
-
-        button.setAttribute(
-            "aria-expanded",
+        center.setAttribute(
+            "aria-hidden",
             "false"
         );
 
-        button.setAttribute(
-            "aria-label",
-            "Expand section"
+
+        document.documentElement.classList.add(
+            "swaadya-policy-lock"
         );
 
-        /*
-         * Toggle this section.
-         */
-        button.addEventListener(
-            "click",
-            function(event) {
-
-                event.preventDefault();
-                event.stopPropagation();
-
-                const isOpen =
-                    section.classList.contains(
-                        "mobile-expanded"
-                    );
-
-                if (isOpen) {
-
-                    closeSection(section);
-
-                } else {
-
-                    openSection(section);
-
-                }
-            }
+        document.body.classList.add(
+            "swaadya-policy-lock"
         );
 
-        section.appendChild(button);
 
-        sections.push(section);
-    }
+        /* Move keyboard focus to close button */
 
-    function initialize() {
+        if (closeButton) {
 
-        if (!isMobile()) {
-            return;
+            setTimeout(
+                function () {
+                    closeButton.focus();
+                },
+                50
+            );
+
         }
 
-        sections = [];
-
-        selectors.forEach(selector => {
-
-            const section =
-                document.querySelector(selector);
-
-            if (section) {
-                createSection(section);
-            }
-        });
     }
 
-    /*
-     * Initialize after page is ready.
-     */
-    if (
-        document.readyState ===
-        "loading"
-    ) {
 
-        document.addEventListener(
-            "DOMContentLoaded",
-            initialize
+    /* =====================================================
+       MAKE FUNCTION GLOBAL
+       
+       THIS FIXES:
+       
+       Uncaught ReferenceError:
+       openPolicy is not defined
+       
+       ===================================================== */
+
+    window.openPolicy =
+        openPolicy;
+
+
+    /* =====================================================
+       CLOSE
+       ===================================================== */
+
+    function closePolicy() {
+
+        center.classList.remove(
+            "swaadya-policy-visible"
         );
 
-    } else {
 
-        initialize();
+        center.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+        document.documentElement.classList.remove(
+            "swaadya-policy-lock"
+        );
+
+        document.body.classList.remove(
+            "swaadya-policy-lock"
+        );
+
     }
 
-})();
 
+    /* Optional global close function */
+
+    window.closePolicy =
+        closePolicy;
+
+
+    /* =====================================================
+       POLICY NAVIGATION
+       ===================================================== */
+
+    navigationButtons.forEach(
+        function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    openPolicy(
+                        button.dataset.policy
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       CLOSE BUTTONS
+       ===================================================== */
+
+    if (closeButton) {
+
+        closeButton.addEventListener(
+            "click",
+            closePolicy
+        );
+
+    }
+
+
+    if (closeBottom) {
+
+        closeBottom.addEventListener(
+            "click",
+            closePolicy
+        );
+
+    }
+
+
+    /* =====================================================
+       CLICK OUTSIDE WINDOW
+       ===================================================== */
+
+    center.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target === center
+            ) {
+
+                closePolicy();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       ESCAPE KEY
+       ===================================================== */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape" &&
+                center.classList.contains(
+                    "swaadya-policy-visible"
+                )
+            ) {
+
+                closePolicy();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       PREVENT ACCIDENTAL FORM SUBMISSION
+       ===================================================== */
+
+    center
+        .querySelectorAll("button")
+        .forEach(
+            function (button) {
+
+                if (
+                    !button.getAttribute("type")
+                ) {
+
+                    button.setAttribute(
+                        "type",
+                        "button"
+                    );
+
+                }
+
+            }
+        );
+
+
+})();
 </script>
+
 
 
 </body>
