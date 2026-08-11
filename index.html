@@ -4045,7 +4045,7 @@ ul {
 
 
         <p style="color:var(--muted);font-size:13px;">
-            Your order has been received in demo mode.
+            Your order has been received.
         </p>
 
 
@@ -5512,12 +5512,23 @@ function validate() {
 
 function payload() {
 
+    /*
+       IMPORTANT:
+       Send the exact product + variant UUIDs from the cart.
+
+       The previous version sent only:
+           product_id + variant_size
+
+       while create-razorpay-order is designed to validate the
+       exact variant UUID. That mismatch was one of the reasons
+       the Edge Function returned a non-2xx response.
+    */
+
     return {
 
         user_id:
             session?.user?.id ||
             null,
-
 
         customer: {
 
@@ -5540,7 +5551,6 @@ function payload() {
                 ""
 
         },
-
 
         delivery: {
 
@@ -5591,39 +5601,67 @@ function payload() {
 
         },
 
-
         items:
             cart.map(
                 item => {
+
+                    /*
+                       Support both the current cart shape and
+                       older saved cart objects.
+                    */
+
+                    const productId =
+                        item?.productId ||
+                        item?.product_id ||
+                        "";
+
+                    const variantId =
+                        item?.variantId ||
+                        item?.variant_id ||
+                        "";
+
+                    const sizeLabel =
+                        item?.sizeLabel ||
+                        item?.size ||
+                        item?.variant_size ||
+                        "";
 
                     const product =
                         CONFIG.products
                             .find(
                                 product =>
-                                    product.id ===
-                                    item.productId
+                                    String(product.id) ===
+                                    String(productId)
                             );
-
 
                     return {
 
                         product_id:
-                            item.productId,
+                            String(productId),
+
+                        variant_id:
+                            String(variantId),
 
                         variant_size:
-                            `${item.size}g`,
+                            String(sizeLabel),
 
                         quantity:
                             Number(
-                                item.quantity
+                                item?.quantity || 0
                             ),
 
+                        /*
+                           Kept only as a frontend snapshot.
+                           The Edge Function MUST calculate the
+                           real price from Supabase.
+                        */
                         unit_price:
                             Number(
+                                item?.price ??
                                 product
                                     ?.prices
-                                    ?.[item.size]
-                            )
+                                    ?.[item?.size]
+                            ) || 0
 
                     };
 
@@ -6167,6 +6205,53 @@ async function razor(
         "Creating payment…"
     );
 
+    /*
+       Validate the payload before calling Supabase.
+       This makes the actual problem visible instead of
+       showing only "FunctionsHttpError".
+    */
+
+    if (
+        !payloadData ||
+        !Array.isArray(payloadData.items) ||
+        !payloadData.items.length
+    ) {
+
+        throw new Error(
+            "Your cart is empty."
+        );
+
+    }
+
+    const missingVariant =
+        payloadData.items.find(
+            item =>
+                !item?.product_id ||
+                !item?.variant_id ||
+                !item?.variant_size ||
+                !Number.isInteger(
+                    Number(item?.quantity)
+                ) ||
+                Number(item?.quantity) < 1
+        );
+
+    if (missingVariant) {
+
+        console.error(
+            "Swaadya: invalid payment payload:",
+            payloadData
+        );
+
+        throw new Error(
+            "One cart item is missing its product or package information. Please remove it and add it again."
+        );
+
+    }
+
+    console.log(
+        "Swaadya: creating Razorpay order with payload:",
+        payloadData
+    );
 
     const result =
         await supabase
@@ -6180,44 +6265,91 @@ async function razor(
                 }
             );
 
+    /*
+       supabase-js can expose a FunctionsHttpError without
+       the JSON error returned by the Edge Function.
+       Read result.data first and then fall back to result.error.
+    */
 
     if (
         result.error
     ) {
 
-        throw result.error;
+        console.error(
+            "Swaadya create-razorpay-order failed:",
+            result.error,
+            result.data
+        );
 
-    }
-
-
-    if (
-        !result.data?.order_id ||
-        !result.data?.amount
-    ) {
+        const backendMessage =
+            result?.data?.error ||
+            result?.error?.context?.error ||
+            result?.error?.message ||
+            "Unable to create the Razorpay payment order.";
 
         throw new Error(
-            "Invalid payment order response"
+            String(backendMessage)
         );
 
     }
 
+    if (
+        !result.data?.success ||
+        !result.data?.order_id ||
+        !result.data?.amount ||
+        !result.data?.key_id
+    ) {
+
+        console.error(
+            "Swaadya: invalid create-order response:",
+            result.data
+        );
+
+        throw new Error(
+            result.data?.error ||
+            "Invalid payment order response from Swaadya."
+        );
+
+    }
+
+    /*
+       Razorpay may be loaded by the existing page loader.
+       If it is not ready yet, wait briefly for it instead of
+       immediately failing.
+    */
+
+    if (
+        !window.Razorpay
+    ) {
+
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    500
+                )
+        );
+
+    }
 
     if (
         !window.Razorpay
     ) {
 
         throw new Error(
-            "Payment gateway is unavailable."
+            "Payment gateway is unavailable. Please refresh the page and try again."
         );
 
     }
-
 
     return new Promise(
         (
             resolve,
             reject
         ) => {
+
+            let paymentHandled =
+                false;
 
             const options = {
 
@@ -6240,7 +6372,6 @@ async function razor(
                 order_id:
                     result.data.order_id,
 
-
                 prefill: {
 
                     name:
@@ -6260,24 +6391,25 @@ async function razor(
 
                 },
 
-
                 theme: {
-
                     color:
                         "#234d38"
-
                 },
-
 
                 modal: {
 
                     ondismiss:
                         () => {
 
+                            if (
+                                paymentHandled
+                            ) {
+                                return;
+                            }
+
                             busyState(
                                 false
                             );
-
 
                             reject(
                                 new Error(
@@ -6289,9 +6421,14 @@ async function razor(
 
                 },
 
-
                 handler:
                     async response => {
+
+                        if (
+                            paymentHandled
+                        ) {
+                            return;
+                        }
 
                         try {
 
@@ -6300,6 +6437,9 @@ async function razor(
                                 "Verifying payment…"
                             );
 
+                            console.log(
+                                "Swaadya: Razorpay payment response received."
+                            );
 
                             const verification =
                                 await supabase
@@ -6310,7 +6450,18 @@ async function razor(
                                         {
                                             body: {
 
-                                                ...response,
+                                                razorpay_order_id:
+                                                    response
+                                                        .razorpay_order_id ||
+                                                    result.data.order_id,
+
+                                                razorpay_payment_id:
+                                                    response
+                                                        .razorpay_payment_id,
+
+                                                razorpay_signature:
+                                                    response
+                                                        .razorpay_signature,
 
                                                 checkout:
                                                     payloadData
@@ -6319,23 +6470,53 @@ async function razor(
                                         }
                                     );
 
-
                             if (
-                                verification.error ||
-                                !verification
-                                    .data
-                                    ?.verified
+                                verification.error
                             ) {
 
-                                throw (
-                                    verification.error ||
-                                    new Error(
-                                        "Payment verification failed"
+                                console.error(
+                                    "Swaadya verify-razorpay-payment failed:",
+                                    verification.error,
+                                    verification.data
+                                );
+
+                                const backendMessage =
+                                    verification?.data?.error ||
+                                    verification?.error?.context?.error ||
+                                    verification?.error?.message ||
+                                    "Payment verification failed.";
+
+                                throw new Error(
+                                    String(
+                                        backendMessage
                                     )
                                 );
 
                             }
 
+                            if (
+                                !verification
+                                    .data
+                                    ?.verified
+                            ) {
+
+                                throw new Error(
+                                    verification
+                                        .data
+                                        ?.error ||
+                                    "Payment verification failed."
+                                );
+
+                            }
+
+                            paymentHandled =
+                                true;
+
+                            const verifiedOrder =
+                                verification
+                                    .data
+                                    .order ||
+                                {};
 
                             $("orderResult")
                                 .innerHTML = `
@@ -6346,9 +6527,7 @@ async function razor(
 
                                     #
                                     ${esc(
-                                        verification
-                                            .data
-                                            .order
+                                        verifiedOrder
                                             .order_number ||
                                         "SW-PENDING"
                                     )}
@@ -6361,10 +6540,10 @@ async function razor(
 
                                     ${formatPrice(
                                         Number(
-                                            verification
-                                                .data
-                                                .order
-                                                .total
+                                            verifiedOrder
+                                                .total ||
+                                            result.data.total ||
+                                            0
                                         )
                                     )}
 
@@ -6376,7 +6555,8 @@ async function razor(
 
                                     ${esc(
                                         response
-                                            .razorpay_payment_id
+                                            .razorpay_payment_id ||
+                                        ""
                                     )}
 
                                     <br>
@@ -6385,7 +6565,11 @@ async function razor(
                                         Order Status:
                                     </strong>
 
-                                    Confirmed
+                                    ${esc(
+                                        verifiedOrder
+                                            .order_status ||
+                                        "confirmed"
+                                    )}
 
                                     <br><br>
 
@@ -6393,25 +6577,19 @@ async function razor(
 
                                 `;
 
-
                             cart =
                                 [];
 
-
                             saveCart();
-
 
                             $("checkoutForm")
                                 .reset();
-
 
                             $("customerState")
                                 .value =
                                 "Rajasthan";
 
-
                             closeCheckout();
-
 
                             $("successModal")
                                 .classList
@@ -6419,18 +6597,19 @@ async function razor(
                                     "open"
                                 );
 
-
                             $("overlay")
                                 .classList
                                 .add(
                                     "active"
                                 );
 
+                            busyState(
+                                false
+                            );
 
                             resolve(
                                 verification.data
                             );
-
 
                         } catch (error) {
 
@@ -6438,6 +6617,10 @@ async function razor(
                                 false
                             );
 
+                            console.error(
+                                "Swaadya payment verification error:",
+                                error
+                            );
 
                             showToast(
                                 msg(
@@ -6445,7 +6628,6 @@ async function razor(
                                     "Payment could not be verified. Your cart has been kept so you can retry."
                                 )
                             );
-
 
                             reject(
                                 error
@@ -6457,19 +6639,49 @@ async function razor(
 
             };
 
-
             try {
 
-                new window.Razorpay(
-                    options
-                ).open();
+                const razorpayInstance =
+                    new window.Razorpay(
+                        options
+                    );
+
+                razorpayInstance.on(
+                    "payment.failed",
+                    function (failure) {
+
+                        console.error(
+                            "Swaadya Razorpay payment.failed:",
+                            failure
+                        );
+
+                        busyState(
+                            false
+                        );
+
+                        if (
+                            !paymentHandled
+                        ) {
+
+                            showToast(
+                                failure
+                                    ?.error
+                                    ?.description ||
+                                "Payment failed. Your cart has been kept."
+                            );
+
+                        }
+
+                    }
+                );
+
+                razorpayInstance.open();
 
             } catch (error) {
 
                 busyState(
                     false
                 );
-
 
                 reject(
                     error
