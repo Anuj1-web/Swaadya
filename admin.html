@@ -9957,9 +9957,9 @@ async function saveStoreSettings() {
         );
 
 
-    /* -----------------------------------------------------
+    /* ---------------------------------------------
        VALIDATION
-       ----------------------------------------------------- */
+       --------------------------------------------- */
 
     if (
         !Number.isFinite(threshold) ||
@@ -9991,31 +9991,14 @@ async function saveStoreSettings() {
     }
 
 
-    /* -----------------------------------------------------
-       MAKE SURE ADMIN SESSION EXISTS
-       ----------------------------------------------------- */
-
-    if (
-        !session ||
-        !session.user ||
-        !session.user.id
-    ) {
-
-        toast(
-            "Admin session not found. Please log in again.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    /* -----------------------------------------------------
-       SAVE TO SUPABASE
-       ----------------------------------------------------- */
-
     try {
+
+        /*
+         * Store settings are intentionally kept in
+         * one row.
+         *
+         * id = 1 must be the permanent settings row.
+         */
 
         const {
             data,
@@ -10027,14 +10010,15 @@ async function saveStoreSettings() {
                     {
                         id: 1,
 
+                        default_shipping_charge:
+                            shipping,
+
                         free_shipping_threshold:
                             threshold,
 
-                        shipping_charge:
-                            shipping,
-
                         updated_at:
                             new Date().toISOString()
+
                     },
                     {
                         onConflict: "id"
@@ -10047,45 +10031,41 @@ async function saveStoreSettings() {
         if (error) {
 
             console.error(
-                "Swaadya: store settings save failed:",
+                "Swaadya: store_settings save failed:",
                 error
             );
 
-            toast(
-                "Could not save store settings.",
-                "error"
-            );
-
-            return;
+            throw error;
 
         }
 
 
-        /* -------------------------------------------------
-           UPDATE CURRENT ADMIN STATE ONLY AFTER
-           SUPABASE SUCCESS
-           ------------------------------------------------- */
+        /*
+         * Update current admin state only AFTER
+         * database save succeeds.
+         */
 
-        STATE.settings.freeShippingThreshold =
+        STATE.settings
+            .freeShippingThreshold =
             Number(
                 data.free_shipping_threshold
             );
 
-
-        STATE.settings.shippingCharge =
+        STATE.settings
+            .shippingCharge =
             Number(
-                data.shipping_charge
+                data.default_shipping_charge
             );
 
 
         toast(
-            "Store shipping settings saved successfully.",
+            "Shipping settings saved successfully.",
             "success"
         );
 
 
         console.log(
-            "Swaadya: store settings saved:",
+            "Swaadya: store settings persisted:",
             data
         );
 
@@ -10093,13 +10073,14 @@ async function saveStoreSettings() {
     } catch (error) {
 
         console.error(
-            "Swaadya: unexpected store settings error:",
+            "Swaadya: Unable to save store settings:",
             error
         );
 
 
         toast(
-            "Unable to save store settings.",
+            error?.message ||
+            "Unable to save shipping settings.",
             "error"
         );
 
