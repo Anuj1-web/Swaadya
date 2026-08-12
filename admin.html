@@ -10010,9 +10010,8 @@ async function saveStoreSettings() {
                     {
                         id: 1,
 
-                        default_shipping_charge:
-                            shipping,
-
+                        shipping_charge:
+    shipping,
                         free_shipping_threshold:
                             threshold,
 
@@ -10052,10 +10051,10 @@ async function saveStoreSettings() {
             );
 
         STATE.settings
-            .shippingCharge =
-            Number(
-                data.default_shipping_charge
-            );
+    .shippingCharge =
+    Number(
+        data.shipping_charge
+    );
 
 
         toast(
