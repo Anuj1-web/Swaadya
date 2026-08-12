@@ -9939,67 +9939,173 @@ function updateAdminIdentity() {
            local values have been persisted to the database.
         */
 
-        function saveStoreSettings() {
+        /* =========================================================
+   SWAADYA — SUPABASE STORE SETTINGS
+   Saves shipping settings to public.store_settings
+   ========================================================= */
 
-            const threshold =
-                Number(
-                    $("#freeShippingThreshold")
-                        .value
-                );
+async function saveStoreSettings() {
 
+    const threshold =
+        Number(
+            $("#freeShippingThreshold").value
+        );
 
-            const shipping =
-                Number(
-                    $("#shippingCharge")
-                        .value
-                );
-
-
-            if (
-                !Number.isFinite(threshold) ||
-                threshold < 0
-            ) {
-
-                toast(
-                    "Invalid free-shipping threshold.",
-                    "error"
-                );
-
-                return;
-
-            }
+    const shipping =
+        Number(
+            $("#shippingCharge").value
+        );
 
 
-            if (
-                !Number.isFinite(shipping) ||
-                shipping < 0
-            ) {
+    /* -----------------------------------------------------
+       VALIDATION
+       ----------------------------------------------------- */
 
-                toast(
-                    "Invalid shipping charge.",
-                    "error"
-                );
+    if (
+        !Number.isFinite(threshold) ||
+        threshold < 0
+    ) {
 
-                return;
+        toast(
+            "Invalid free-shipping threshold.",
+            "error"
+        );
 
-            }
+        return;
+
+    }
 
 
-            STATE.settings.freeShippingThreshold =
-                threshold;
+    if (
+        !Number.isFinite(shipping) ||
+        shipping < 0
+    ) {
+
+        toast(
+            "Invalid shipping charge.",
+            "error"
+        );
+
+        return;
+
+    }
 
 
-            STATE.settings.shippingCharge =
-                shipping;
+    /* -----------------------------------------------------
+       MAKE SURE ADMIN SESSION EXISTS
+       ----------------------------------------------------- */
 
+    if (
+        !session ||
+        !session.user ||
+        !session.user.id
+    ) {
+
+        toast(
+            "Admin session not found. Please log in again.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------------------
+       SAVE TO SUPABASE
+       ----------------------------------------------------- */
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("store_settings")
+                .upsert(
+                    {
+                        id: 1,
+
+                        free_shipping_threshold:
+                            threshold,
+
+                        shipping_charge:
+                            shipping,
+
+                        updated_at:
+                            new Date().toISOString()
+                    },
+                    {
+                        onConflict: "id"
+                    }
+                )
+                .select()
+                .single();
+
+
+        if (error) {
+
+            console.error(
+                "Swaadya: store settings save failed:",
+                error
+            );
 
             toast(
-                "Store values updated for this admin session. Persist them in your protected settings table when that table is enabled.",
-                "info"
+                "Could not save store settings.",
+                "error"
             );
+
+            return;
 
         }
 
+
+        /* -------------------------------------------------
+           UPDATE CURRENT ADMIN STATE ONLY AFTER
+           SUPABASE SUCCESS
+           ------------------------------------------------- */
+
+        STATE.settings.freeShippingThreshold =
+            Number(
+                data.free_shipping_threshold
+            );
+
+
+        STATE.settings.shippingCharge =
+            Number(
+                data.shipping_charge
+            );
+
+
+        toast(
+            "Store shipping settings saved successfully.",
+            "success"
+        );
+
+
+        console.log(
+            "Swaadya: store settings saved:",
+            data
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Swaadya: unexpected store settings error:",
+            error
+        );
+
+
+        toast(
+            "Unable to save store settings.",
+            "error"
+        );
+
+    }
+
+}
 
         /* =========================================================
            24. LOGOUT
