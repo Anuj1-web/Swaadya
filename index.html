@@ -14655,7 +14655,2184 @@ body.swaadya-policy-lock {
 
 })();
 </script>
+<!-- =========================================================
+     SWAADYA — MOBILE SECTION PAGES
+     
+     IMPORTANT:
+     • Add this ENTIRE block immediately before </body>
+     • This works with the EXISTING index.html
+     • Does NOT rewrite Journey / Social / FAQ / Contact content
+     • Uses the EXISTING sections from the page
+     • Desktop remains unchanged
+     • Mobile shows 6 options in ONE SINGLE COLUMN
+     • Six sections disappear from the normal mobile page
+     • Footer therefore follows Products directly
+     • ☰ opens the section menu
+     • X closes the section menu
+     ========================================================= -->
 
+
+<style>
+
+/* =========================================================
+   1. MOBILE SECTION PAGE
+   HIDDEN BY DEFAULT
+   ========================================================= */
+
+#swaadyaMobileSectionsPage {
+
+    display: none !important;
+
+    visibility: hidden;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   2. OPEN STATE
+   ONLY THIS STATE MAKES THE PAGE VISIBLE
+   ========================================================= */
+
+#swaadyaMobileSectionsPage.open {
+
+    display: flex !important;
+
+    visibility: visible;
+
+    opacity: 1;
+
+    pointer-events: auto;
+}
+
+
+/* =========================================================
+   3. DESKTOP SAFETY
+   NEVER SHOW MOBILE SECTION PAGE ON DESKTOP
+   ========================================================= */
+
+@media (min-width: 721px) {
+
+    #swaadyaMobileSectionsPage {
+
+        display: none !important;
+
+        visibility: hidden !important;
+
+        opacity: 0 !important;
+
+        pointer-events: none !important;
+    }
+
+}
+
+
+/* =========================================================
+   4. MOBILE ONLY
+   ========================================================= */
+
+@media (max-width: 720px) {
+
+
+    /* -----------------------------------------------------
+       HIDE THE ORIGINAL SIX SECTIONS ON THE MAIN MOBILE PAGE
+
+       Products
+       ↓
+       Footer
+
+       Their content is NOT deleted.
+       It remains in the DOM and is cloned into the
+       dedicated mobile section page when required.
+       ----------------------------------------------------- */
+
+    .story-section,
+    #process,
+    .journey-section,
+    #faq,
+    .social-section,
+    #contact {
+
+        display: none !important;
+
+    }
+
+
+    /* -----------------------------------------------------
+       LOCK PAGE WHEN MOBILE SECTION PAGE IS OPEN
+       ----------------------------------------------------- */
+
+    html.swaadya-mobile-sections-open,
+    body.swaadya-mobile-sections-open {
+
+        overflow: hidden !important;
+
+    }
+
+
+    /* -----------------------------------------------------
+       FULL SCREEN MOBILE PAGE
+       ----------------------------------------------------- */
+
+    #swaadyaMobileSectionsPage {
+
+        position: fixed;
+
+        inset: 0;
+
+        z-index: 999999;
+
+        width: 100%;
+
+        height: 100dvh;
+
+        display: none;
+
+        flex-direction: column;
+
+        background:
+            var(--green-700, #183326);
+
+        overflow: hidden;
+
+    }
+
+
+    #swaadyaMobileSectionsPage.open {
+
+        display: flex !important;
+
+    }
+
+
+    /* =====================================================
+       MOBILE PAGE HEADER
+       ===================================================== */
+
+    .swaadya-mobile-page-header {
+
+        flex:
+            0 0 auto;
+
+        min-height: 68px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 12px;
+
+        padding:
+            12px 16px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #183326,
+                #10271c
+            );
+
+        border-bottom:
+            1px solid rgba(
+                255,
+                255,
+                255,
+                .10
+            );
+
+        box-shadow:
+            0 5px 25px rgba(
+                0,
+                0,
+                0,
+                .18
+            );
+
+    }
+
+
+    /* -----------------------------------------------------
+       BRAND
+       ----------------------------------------------------- */
+
+    .swaadya-mobile-page-brand {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        min-width: 0;
+
+    }
+
+
+    .swaadya-mobile-page-brand-mark {
+
+        width: 38px;
+
+        height: 38px;
+
+        flex:
+            0 0 38px;
+
+        display: grid;
+
+        place-items: center;
+
+        border-radius: 50%;
+
+        background:
+            var(--gold-300, #c9a45c);
+
+        color:
+            #183326;
+
+        font-family:
+            Georgia,
+            "Times New Roman",
+            serif;
+
+        font-size: 17px;
+
+        font-weight: 800;
+
+        box-shadow:
+            0 4px 14px rgba(
+                0,
+                0,
+                0,
+                .18
+            );
+
+    }
+
+
+    .swaadya-mobile-page-brand-text {
+
+        min-width: 0;
+
+    }
+
+
+    .swaadya-mobile-page-brand-name {
+
+        color: #ffffff;
+
+        font-size: 13px;
+
+        font-weight: 900;
+
+        letter-spacing: 2.5px;
+
+        line-height: 1.1;
+
+    }
+
+
+    .swaadya-mobile-page-brand-sub {
+
+        margin-top: 3px;
+
+        color:
+            rgba(
+                255,
+                255,
+                255,
+                .58
+            );
+
+        font-size: 8px;
+
+        letter-spacing: .8px;
+
+        line-height: 1.2;
+
+    }
+
+
+    /* =====================================================
+       X CLOSE BUTTON
+       ===================================================== */
+
+    #swaadyaMobileSectionsClose {
+
+        width: 38px;
+
+        height: 38px;
+
+        flex:
+            0 0 38px;
+
+        display: grid;
+
+        place-items: center;
+
+        border:
+            1px solid rgba(
+                255,
+                255,
+                255,
+                .16
+            );
+
+        border-radius: 50%;
+
+        background:
+            rgba(
+                255,
+                255,
+                255,
+                .07
+            );
+
+        color: #ffffff;
+
+        font-size: 24px;
+
+        line-height: 1;
+
+        cursor: pointer;
+
+        -webkit-tap-highlight-color:
+            transparent;
+
+        transition:
+            background .2s ease,
+            transform .2s ease;
+
+    }
+
+
+    #swaadyaMobileSectionsClose:active {
+
+        transform:
+            scale(.92);
+
+        background:
+            rgba(
+                255,
+                255,
+                255,
+                .14
+            );
+
+    }
+
+
+    /* =====================================================
+       PAGE BODY
+       ===================================================== */
+
+    .swaadya-mobile-page-body {
+
+        flex:
+            1 1 auto;
+
+        min-height: 0;
+
+        overflow-y: auto;
+
+        overflow-x: hidden;
+
+        -webkit-overflow-scrolling:
+            touch;
+
+        background:
+            var(
+                --cream-100,
+                #fffdf8
+            );
+
+    }
+
+
+    /* =====================================================
+       SIX OPTIONS MENU
+
+       IMPORTANT:
+       ONE SINGLE COLUMN
+       NOT TWO COLUMNS
+       ===================================================== */
+
+    #swaadyaMobileSectionMenu {
+
+        width: 100%;
+
+        padding:
+            18px 16px 28px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 9px;
+
+    }
+
+
+    .swaadya-mobile-menu-label {
+
+        padding:
+            2px 5px 8px;
+
+        color:
+            #8b6d35;
+
+        font-size: 9px;
+
+        font-weight: 900;
+
+        letter-spacing: 1.7px;
+
+    }
+
+
+    /* =====================================================
+       EACH OPTION
+       ===================================================== */
+
+    .swaadya-mobile-section-option {
+
+        width: 100%;
+
+        min-height: 61px;
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+
+        padding:
+            10px 12px;
+
+        border:
+            1px solid
+            rgba(
+                24,
+                51,
+                38,
+                .10
+            );
+
+        border-radius: 14px;
+
+        background:
+            #ffffff;
+
+        color:
+            #183326;
+
+        text-align: left;
+
+        cursor: pointer;
+
+        box-shadow:
+            0 5px 18px
+            rgba(
+                24,
+                51,
+                38,
+                .055
+            );
+
+        -webkit-tap-highlight-color:
+            transparent;
+
+        transition:
+            transform .18s ease,
+            background .18s ease,
+            border-color .18s ease;
+
+    }
+
+
+    .swaadya-mobile-section-option:active {
+
+        transform:
+            scale(.985);
+
+        background:
+            #f7f3ea;
+
+    }
+
+
+    /* -----------------------------------------------------
+       OPTION ICON
+       ----------------------------------------------------- */
+
+    .swaadya-mobile-option-icon {
+
+        width: 38px;
+
+        height: 38px;
+
+        flex:
+            0 0 38px;
+
+        display: grid;
+
+        place-items: center;
+
+        border-radius: 10px;
+
+        background:
+            #edf0eb;
+
+        color:
+            #183326;
+
+        font-size: 15px;
+
+        font-weight: 800;
+
+    }
+
+
+    /* -----------------------------------------------------
+       OPTION TEXT
+       ----------------------------------------------------- */
+
+    .swaadya-mobile-option-text {
+
+        flex:
+            1 1 auto;
+
+        min-width: 0;
+
+    }
+
+
+    .swaadya-mobile-option-title {
+
+        display: block;
+
+        color:
+            #183326;
+
+        font-size: 12px;
+
+        font-weight: 800;
+
+        line-height: 1.3;
+
+    }
+
+
+    .swaadya-mobile-option-description {
+
+        display: block;
+
+        margin-top: 3px;
+
+        color:
+            #7a827c;
+
+        font-size: 9px;
+
+        line-height: 1.35;
+
+    }
+
+
+    /* -----------------------------------------------------
+       RIGHT ARROW
+       ----------------------------------------------------- */
+
+    .swaadya-mobile-option-arrow {
+
+        flex:
+            0 0 auto;
+
+        color:
+            #9b8a61;
+
+        font-size: 20px;
+
+        line-height: 1;
+
+    }
+
+
+    /* =====================================================
+       ACTUAL CLONED CONTENT
+       ===================================================== */
+
+    #swaadyaMobileSectionContent {
+
+        display: none;
+
+        min-height: 100%;
+
+    }
+
+
+    #swaadyaMobileSectionContent.active {
+
+        display: block;
+
+    }
+
+
+    /* -----------------------------------------------------
+       BACK BUTTON INSIDE CONTENT PAGE
+       ----------------------------------------------------- */
+
+    .swaadya-mobile-content-head {
+
+        position: sticky;
+
+        top: 0;
+
+        z-index: 20;
+
+        min-height: 54px;
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        padding:
+            8px 14px;
+
+        background:
+            rgba(
+                255,
+                253,
+                248,
+                .96
+            );
+
+        backdrop-filter:
+            blur(12px);
+
+        -webkit-backdrop-filter:
+            blur(12px);
+
+        border-bottom:
+            1px solid
+            rgba(
+                24,
+                51,
+                38,
+                .09
+            );
+
+    }
+
+
+    .swaadya-mobile-content-back {
+
+        width: 34px;
+
+        height: 34px;
+
+        display: grid;
+
+        place-items: center;
+
+        flex:
+            0 0 34px;
+
+        border:
+            1px solid
+            rgba(
+                24,
+                51,
+                38,
+                .12
+            );
+
+        border-radius: 50%;
+
+        background:
+            #ffffff;
+
+        color:
+            #183326;
+
+        font-size: 18px;
+
+        cursor: pointer;
+
+    }
+
+
+    .swaadya-mobile-content-title {
+
+        color:
+            #183326;
+
+        font-size: 12px;
+
+        font-weight: 800;
+
+    }
+
+
+    /* -----------------------------------------------------
+       CLONED SECTION
+       ----------------------------------------------------- */
+
+    #swaadyaMobileSectionClone {
+
+        width: 100%;
+
+        overflow: visible;
+
+    }
+
+
+    #swaadyaMobileSectionClone > section {
+
+        display: block !important;
+
+        height: auto !important;
+
+        min-height: 0 !important;
+
+        overflow: visible !important;
+
+        margin: 0 !important;
+
+    }
+
+
+    /* -----------------------------------------------------
+       Remove original mobile accordion artifacts from clone
+       ----------------------------------------------------- */
+
+    #swaadyaMobileSectionClone
+    .mobile-section-toggle {
+
+        display: none !important;
+
+    }
+
+
+    /* -----------------------------------------------------
+       Keep journey cards properly arranged
+       ----------------------------------------------------- */
+
+    #swaadyaMobileSectionClone
+    .journey-grid {
+
+        grid-template-columns:
+            1fr !important;
+
+    }
+
+
+    /* -----------------------------------------------------
+       Keep process readable
+       ----------------------------------------------------- */
+
+    #swaadyaMobileSectionClone
+    .process-grid {
+
+        grid-template-columns:
+            1fr !important;
+
+    }
+
+
+    /* -----------------------------------------------------
+       Contact cards
+       ----------------------------------------------------- */
+
+    #swaadyaMobileSectionClone
+    .contact-grid {
+
+        grid-template-columns:
+            1fr !important;
+
+    }
+
+
+    /* -----------------------------------------------------
+       SOCIAL CONTENT
+       ----------------------------------------------------- */
+
+    #swaadyaMobileSectionClone
+    .social-section {
+
+        display: block !important;
+
+    }
+
+
+    /* -----------------------------------------------------
+       STORY DARK BACKGROUND
+       ----------------------------------------------------- */
+
+    #swaadyaMobileSectionClone
+    .story-section {
+
+        background:
+            var(
+                --green-700,
+                #183326
+            ) !important;
+
+        color:
+            #ffffff !important;
+
+    }
+
+
+    /* =====================================================
+       MENU PAGE FOOTER
+       ===================================================== */
+
+    .swaadya-mobile-menu-footer {
+
+        margin-top: 3px;
+
+        padding:
+            8px 5px 0;
+
+        text-align: center;
+
+        color:
+            #969b96;
+
+        font-size: 8px;
+
+        letter-spacing: .3px;
+
+    }
+
+}
+
+
+/* =========================================================
+   5. EXTRA SMALL DEVICES
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .swaadya-mobile-page-header {
+
+        padding:
+            10px 13px;
+
+    }
+
+
+    #swaadyaMobileSectionMenu {
+
+        padding:
+            15px 12px 24px;
+
+        gap: 8px;
+
+    }
+
+
+    .swaadya-mobile-section-option {
+
+        min-height: 58px;
+
+        padding:
+            9px 10px;
+
+    }
+
+
+    .swaadya-mobile-option-icon {
+
+        width: 35px;
+
+        height: 35px;
+
+        flex-basis: 35px;
+
+    }
+
+}
+
+</style>
+
+
+<!-- =========================================================
+     MOBILE SECTION PAGE
+     ========================================================= -->
+
+<div
+    id="swaadyaMobileSectionsPage"
+    aria-hidden="true"
+>
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div
+        class="swaadya-mobile-page-header"
+    >
+
+
+        <div
+            class="swaadya-mobile-page-brand"
+        >
+
+            <span
+                class="swaadya-mobile-page-brand-mark"
+            >
+                S
+            </span>
+
+
+            <div
+                class="swaadya-mobile-page-brand-text"
+            >
+
+                <div
+                    class="swaadya-mobile-page-brand-name"
+                >
+                    SWAADYA
+                </div>
+
+                <div
+                    class="swaadya-mobile-page-brand-sub"
+                >
+                    EXPLORE SWAADYA
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- X -->
+
+        <button
+            type="button"
+            id="swaadyaMobileSectionsClose"
+            aria-label="Close menu"
+        >
+            ×
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         BODY
+         ===================================================== -->
+
+    <div
+        class="swaadya-mobile-page-body"
+        id="swaadyaMobilePageBody"
+    >
+
+
+        <!-- =================================================
+             SIX OPTIONS
+             ================================================= -->
+
+        <div
+            id="swaadyaMobileSectionMenu"
+        >
+
+
+            <div
+                class="swaadya-mobile-menu-label"
+            >
+                EXPLORE SWAADYA
+            </div>
+
+
+            <!-- OUR BEGINNING -->
+
+            <button
+                type="button"
+                class="swaadya-mobile-section-option"
+                data-swaadya-section="story"
+            >
+
+                <span
+                    class="swaadya-mobile-option-icon"
+                >
+                    ✦
+                </span>
+
+                <span
+                    class="swaadya-mobile-option-text"
+                >
+
+                    <span
+                        class="swaadya-mobile-option-title"
+                    >
+                        Our Beginning
+                    </span>
+
+                    <span
+                        class="swaadya-mobile-option-description"
+                    >
+                        Why Swaadya started
+                    </span>
+
+                </span>
+
+                <span
+                    class="swaadya-mobile-option-arrow"
+                >
+                    ›
+                </span>
+
+            </button>
+
+
+            <!-- OUR PROCESS -->
+
+            <button
+                type="button"
+                class="swaadya-mobile-section-option"
+                data-swaadya-section="process"
+            >
+
+                <span
+                    class="swaadya-mobile-option-icon"
+                >
+                    ◈
+                </span>
+
+                <span
+                    class="swaadya-mobile-option-text"
+                >
+
+                    <span
+                        class="swaadya-mobile-option-title"
+                    >
+                        Our Process
+                    </span>
+
+                    <span
+                        class="swaadya-mobile-option-description"
+                    >
+                        From selection to delivery
+                    </span>
+
+                </span>
+
+                <span
+                    class="swaadya-mobile-option-arrow"
+                >
+                    ›
+                </span>
+
+            </button>
+
+
+            <!-- OUR JOURNEY -->
+
+            <button
+                type="button"
+                class="swaadya-mobile-section-option"
+                data-swaadya-section="journey"
+            >
+
+                <span
+                    class="swaadya-mobile-option-icon"
+                >
+                    ↗
+                </span>
+
+                <span
+                    class="swaadya-mobile-option-text"
+                >
+
+                    <span
+                        class="swaadya-mobile-option-title"
+                    >
+                        Our Journey
+                    </span>
+
+                    <span
+                        class="swaadya-mobile-option-description"
+                    >
+                        From our kitchen to yours
+                    </span>
+
+                </span>
+
+                <span
+                    class="swaadya-mobile-option-arrow"
+                >
+                    ›
+                </span>
+
+            </button>
+
+
+            <!-- FAQ -->
+
+            <button
+                type="button"
+                class="swaadya-mobile-section-option"
+                data-swaadya-section="faq"
+            >
+
+                <span
+                    class="swaadya-mobile-option-icon"
+                >
+                    ?
+                </span>
+
+                <span
+                    class="swaadya-mobile-option-text"
+                >
+
+                    <span
+                        class="swaadya-mobile-option-title"
+                    >
+                        FAQ
+                    </span>
+
+                    <span
+                        class="swaadya-mobile-option-description"
+                    >
+                        Common questions answered
+                    </span>
+
+                </span>
+
+                <span
+                    class="swaadya-mobile-option-arrow"
+                >
+                    ›
+                </span>
+
+            </button>
+
+
+            <!-- GET IN TOUCH -->
+
+            <button
+                type="button"
+                class="swaadya-mobile-section-option"
+                data-swaadya-section="contact"
+            >
+
+                <span
+                    class="swaadya-mobile-option-icon"
+                >
+                    @
+                </span>
+
+                <span
+                    class="swaadya-mobile-option-text"
+                >
+
+                    <span
+                        class="swaadya-mobile-option-title"
+                    >
+                        Get in Touch
+                    </span>
+
+                    <span
+                        class="swaadya-mobile-option-description"
+                    >
+                        Contact Swaadya
+                    </span>
+
+                </span>
+
+                <span
+                    class="swaadya-mobile-option-arrow"
+                >
+                    ›
+                </span>
+
+            </button>
+
+
+            <!-- FOLLOW OUR JOURNEY -->
+
+            <button
+                type="button"
+                class="swaadya-mobile-section-option"
+                data-swaadya-section="social"
+            >
+
+                <span
+                    class="swaadya-mobile-option-icon"
+                >
+                    ◎
+                </span>
+
+                <span
+                    class="swaadya-mobile-option-text"
+                >
+
+                    <span
+                        class="swaadya-mobile-option-title"
+                    >
+                        Follow Our Journey
+                    </span>
+
+                    <span
+                        class="swaadya-mobile-option-description"
+                    >
+                        See Swaadya come to life
+                    </span>
+
+                </span>
+
+                <span
+                    class="swaadya-mobile-option-arrow"
+                >
+                    ›
+                </span>
+
+            </button>
+
+
+            <div
+                class="swaadya-mobile-menu-footer"
+            >
+                Swaadya · Freshly prepared in small batches
+            </div>
+
+
+        </div>
+
+
+        <!-- =================================================
+             ACTUAL SECTION CONTENT
+             ================================================= -->
+
+        <div
+            id="swaadyaMobileSectionContent"
+        >
+
+            <div
+                class="swaadya-mobile-content-head"
+            >
+
+                <button
+                    type="button"
+                    class="swaadya-mobile-content-back"
+                    id="swaadyaMobileContentBack"
+                    aria-label="Back to Swaadya menu"
+                >
+                    ‹
+                </button>
+
+                <div
+                    class="swaadya-mobile-content-title"
+                    id="swaadyaMobileContentTitle"
+                >
+                    Swaadya
+                </div>
+
+            </div>
+
+
+            <div
+                id="swaadyaMobileSectionClone"
+            >
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+(function () {
+
+    "use strict";
+
+
+    /* =====================================================
+       ELEMENTS
+       ===================================================== */
+
+    const mobileMenuButton =
+        document.getElementById(
+            "mobileMenuButton"
+        );
+
+
+    const mobilePage =
+        document.getElementById(
+            "swaadyaMobileSectionsPage"
+        );
+
+
+    const mobileClose =
+        document.getElementById(
+            "swaadyaMobileSectionsClose"
+        );
+
+
+    const mobileMenu =
+        document.getElementById(
+            "swaadyaMobileSectionMenu"
+        );
+
+
+    const mobileContent =
+        document.getElementById(
+            "swaadyaMobileSectionContent"
+        );
+
+
+    const mobileClone =
+        document.getElementById(
+            "swaadyaMobileSectionClone"
+        );
+
+
+    const mobileBack =
+        document.getElementById(
+            "swaadyaMobileContentBack"
+        );
+
+
+    const mobileContentTitle =
+        document.getElementById(
+            "swaadyaMobileContentTitle"
+        );
+
+
+    if (!mobilePage) {
+
+        console.warn(
+            "Swaadya: Mobile section page not found."
+        );
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       SECTION MAP
+
+       These point to the EXISTING sections in index.html.
+
+       Nothing is rewritten manually.
+       ===================================================== */
+
+    const sectionMap = {
+
+        story: {
+            selector:
+                "#story",
+
+            title:
+                "Our Beginning"
+        },
+
+
+        process: {
+            selector:
+                "#process",
+
+            title:
+                "Our Process"
+        },
+
+
+        journey: {
+            selector:
+                ".journey-section",
+
+            title:
+                "Our Journey"
+        },
+
+
+        faq: {
+            selector:
+                "#faq",
+
+            title:
+                "FAQ"
+        },
+
+
+        contact: {
+            selector:
+                "#contact",
+
+            title:
+                "Get in Touch"
+        },
+
+
+        social: {
+            selector:
+                ".social-section",
+
+            title:
+                "Follow Our Journey"
+        }
+
+    };
+
+
+    /* =====================================================
+       STATE
+       ===================================================== */
+
+    let currentSection =
+        null;
+
+
+    /* =====================================================
+       HIDE MOBILE PAGE
+       IMMEDIATELY
+
+       This is important.
+
+       The page MUST NOT open automatically.
+       ===================================================== */
+
+    mobilePage.classList.remove(
+        "open"
+    );
+
+
+    mobilePage.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+
+    mobileContent.classList.remove(
+        "active"
+    );
+
+
+    mobileMenu.style.display =
+        "";
+
+
+    /* =====================================================
+       OPEN MAIN SIX-OPTION PAGE
+       ===================================================== */
+
+    function openMobileSectionsPage() {
+
+        /* Only activate on mobile */
+
+        if (
+            window.innerWidth >
+            720
+        ) {
+
+            return;
+
+        }
+
+
+        /* Clear any previously opened section */
+
+        currentSection =
+            null;
+
+
+        mobileClone.innerHTML =
+            "";
+
+
+        mobileContent.classList.remove(
+            "active"
+        );
+
+
+        mobileMenu.style.display =
+            "";
+
+
+        /* Open */
+
+        mobilePage.classList.add(
+            "open"
+        );
+
+
+        mobilePage.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+
+        document.documentElement.classList.add(
+            "swaadya-mobile-sections-open"
+        );
+
+
+        document.body.classList.add(
+            "swaadya-mobile-sections-open"
+        );
+
+
+        /* Tell accessibility state */
+
+        mobileMenuButton?.setAttribute(
+            "aria-expanded",
+            "true"
+        );
+
+
+        /* Always start from top */
+
+        const body =
+            document.getElementById(
+                "swaadyaMobilePageBody"
+            );
+
+
+        if (body) {
+
+            body.scrollTop =
+                0;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       CLOSE EVERYTHING
+       ===================================================== */
+
+    function closeMobileSectionsPage() {
+
+        currentSection =
+            null;
+
+
+        mobileClone.innerHTML =
+            "";
+
+
+        mobileContent.classList.remove(
+            "active"
+        );
+
+
+        mobileMenu.style.display =
+            "";
+
+
+        mobilePage.classList.remove(
+            "open"
+        );
+
+
+        mobilePage.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+        document.documentElement.classList.remove(
+            "swaadya-mobile-sections-open"
+        );
+
+
+        document.body.classList.remove(
+            "swaadya-mobile-sections-open"
+        );
+
+
+        mobileMenuButton?.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+    }
+
+
+    /* =====================================================
+       RETURN TO SIX OPTIONS
+       ===================================================== */
+
+    function returnToMobileSectionMenu() {
+
+        currentSection =
+            null;
+
+
+        mobileClone.innerHTML =
+            "";
+
+
+        mobileContent.classList.remove(
+            "active"
+        );
+
+
+        mobileMenu.style.display =
+            "";
+
+
+        const body =
+            document.getElementById(
+                "swaadyaMobilePageBody"
+            );
+
+
+        if (body) {
+
+            body.scrollTop =
+                0;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       OPEN AN ACTUAL EXISTING SECTION
+       ===================================================== */
+
+    function openMobileSection(
+        sectionName
+    ) {
+
+        if (
+            window.innerWidth >
+            720
+        ) {
+
+            return;
+
+        }
+
+
+        const config =
+            sectionMap[
+                sectionName
+            ];
+
+
+        if (!config) {
+
+            console.warn(
+                "Swaadya: Unknown mobile section:",
+                sectionName
+            );
+
+            return;
+
+        }
+
+
+        const source =
+            document.querySelector(
+                config.selector
+            );
+
+
+        if (!source) {
+
+            console.error(
+                "Swaadya: Existing section not found:",
+                config.selector
+            );
+
+            return;
+
+        }
+
+
+        /* -------------------------------------------------
+           Clone the REAL existing section.
+
+           This means Journey and Social use the exact
+           content already present in index.html.
+           ------------------------------------------------- */
+
+        const clone =
+            source.cloneNode(
+                true
+            );
+
+
+        /* -------------------------------------------------
+           Remove duplicate IDs from the clone.
+
+           The original DOM keeps its IDs.
+           This prevents duplicate-ID conflicts.
+           ------------------------------------------------- */
+
+        clone
+            .querySelectorAll(
+                "[id]"
+            )
+            .forEach(
+                function (element) {
+
+                    element.removeAttribute(
+                        "id"
+                    );
+
+                }
+            );
+
+
+        /* The root itself may have an ID */
+
+        clone.removeAttribute(
+            "id"
+        );
+
+
+        /* -------------------------------------------------
+           Remove old mobile accordion toggle buttons
+           from the cloned version.
+           ------------------------------------------------- */
+
+        clone
+            .querySelectorAll(
+                ".mobile-section-toggle"
+            )
+            .forEach(
+                function (element) {
+
+                    element.remove();
+
+                }
+            );
+
+
+        /* -------------------------------------------------
+           Force the cloned section to behave as a
+           complete page rather than a collapsed section.
+           ------------------------------------------------- */
+
+        clone.classList.remove(
+            "mobile-collapsible"
+        );
+
+
+        clone.classList.remove(
+            "mobile-expanded"
+        );
+
+
+        clone.style.height =
+            "auto";
+
+
+        clone.style.minHeight =
+            "0";
+
+
+        clone.style.overflow =
+            "visible";
+
+
+        /* -------------------------------------------------
+           Insert actual content
+           ------------------------------------------------- */
+
+        mobileClone.innerHTML =
+            "";
+
+
+        mobileClone.appendChild(
+            clone
+        );
+
+
+        /* -------------------------------------------------
+           Set title
+           ------------------------------------------------- */
+
+        mobileContentTitle.textContent =
+            config.title;
+
+
+        /* -------------------------------------------------
+           Show content page
+           ------------------------------------------------- */
+
+        currentSection =
+            sectionName;
+
+
+        mobileMenu.style.display =
+            "none";
+
+
+        mobileContent.classList.add(
+            "active"
+        );
+
+
+        const body =
+            document.getElementById(
+                "swaadyaMobilePageBody"
+            );
+
+
+        if (body) {
+
+            body.scrollTop =
+                0;
+
+        }
+
+
+        /* -------------------------------------------------
+           Make FAQ details work normally in the clone.
+
+           Native <details> works automatically.
+           This also prevents multiple FAQ details from
+           affecting each other.
+           ------------------------------------------------- */
+
+        if (
+            sectionName ===
+            "faq"
+        ) {
+
+            const details =
+                clone.querySelectorAll(
+                    "details.faq-item"
+                );
+
+
+            details.forEach(
+                function (detail) {
+
+                    detail.addEventListener(
+                        "toggle",
+                        function () {
+
+                            if (
+                                !detail.open
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            details.forEach(
+                                function (other) {
+
+                                    if (
+                                        other !==
+                                        detail
+                                    ) {
+
+                                        other.open =
+                                            false;
+
+                                    }
+
+                                }
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           SOCIAL / INSTAGRAM
+
+           If the original Instagram link already contains
+           the Swaadya Instagram URL, the clone keeps that
+           same href.
+
+           We do NOT rewrite the actual social content.
+           ------------------------------------------------- */
+
+        if (
+            sectionName ===
+            "social"
+        ) {
+
+            clone
+                .querySelectorAll(
+                    "a"
+                )
+                .forEach(
+                    function (link) {
+
+                        /*
+                         * Make external social links open
+                         * safely without changing their URL.
+                         */
+
+                        const href =
+                            link.getAttribute(
+                                "href"
+                            );
+
+
+                        if (
+                            href &&
+                            (
+                                href.startsWith(
+                                    "http://"
+                                ) ||
+                                href.startsWith(
+                                    "https://"
+                                )
+                            )
+                        ) {
+
+                            link.target =
+                                "_blank";
+
+                            link.rel =
+                                "noopener noreferrer";
+
+                        }
+
+                    }
+                );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       THREE-LINE BUTTON
+
+       ONLY HERE DO WE OPEN THE SIX OPTIONS.
+       ===================================================== */
+
+    if (
+        mobileMenuButton
+    ) {
+
+        mobileMenuButton.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    window.innerWidth >
+                    720
+                ) {
+
+                    return;
+
+                }
+
+
+                event.preventDefault();
+
+
+                openMobileSectionsPage();
+
+            },
+            false
+        );
+
+    }
+
+
+    /* =====================================================
+       SIX OPTIONS
+       ===================================================== */
+
+    const options =
+        mobilePage.querySelectorAll(
+            ".swaadya-mobile-section-option"
+        );
+
+
+    options.forEach(
+        function (option) {
+
+            option.addEventListener(
+                "click",
+                function () {
+
+                    const sectionName =
+                        option.dataset
+                            .swaadyaSection;
+
+
+                    openMobileSection(
+                        sectionName
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       X BUTTON
+       ===================================================== */
+
+    if (
+        mobileClose
+    ) {
+
+        mobileClose.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
+                closeMobileSectionsPage();
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       BACK BUTTON
+       ===================================================== */
+
+    if (
+        mobileBack
+    ) {
+
+        mobileBack.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
+                returnToMobileSectionMenu();
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       ESCAPE KEY
+       ===================================================== */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key !==
+                "Escape"
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                mobilePage.classList.contains(
+                    "open"
+                )
+            ) {
+
+                closeMobileSectionsPage();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       CLICK OUTSIDE — SAFETY
+       ===================================================== */
+
+    mobilePage.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target ===
+                mobilePage
+            ) {
+
+                closeMobileSectionsPage();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       RESIZE SAFETY
+
+       If user rotates phone or switches to desktop,
+       close the mobile page automatically.
+       ===================================================== */
+
+    window.addEventListener(
+        "resize",
+        function () {
+
+            if (
+                window.innerWidth >
+                720
+            ) {
+
+                closeMobileSectionsPage();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       PUBLIC FUNCTIONS
+
+       Useful if existing code wants to close the page.
+       ===================================================== */
+
+    window.openSwaadyaMobileSections =
+        openMobileSectionsPage;
+
+
+    window.closeSwaadyaMobileSections =
+        closeMobileSectionsPage;
+
+
+    console.log(
+        "Swaadya: Mobile section page system ready."
+    );
+
+
+})();
+
+</script>
 
 
 
