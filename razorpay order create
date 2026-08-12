@@ -1,0 +1,860 @@
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "jsr:@supabase/supabase-js@2";
+
+const RAZORPAY_KEY_ID =
+    Deno.env.get("RAZORPAY_KEY_ID") ?? "";
+
+const RAZORPAY_KEY_SECRET =
+    Deno.env.get("RAZORPAY_KEY_SECRET") ?? "";
+
+const SUPABASE_URL =
+    Deno.env.get("SUPABASE_URL") ?? "";
+
+const SUPABASE_SERVICE_ROLE_KEY =
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+
+const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+        "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods":
+        "POST, OPTIONS",
+    "Content-Type":
+        "application/json"
+};
+
+const supabaseAdmin =
+    createClient(
+        SUPABASE_URL,
+        SUPABASE_SERVICE_ROLE_KEY,
+        {
+            auth: {
+                autoRefreshToken: false,
+                persistSession: false
+            }
+        }
+    );
+
+function json(
+    data: unknown,
+    status = 200
+) {
+    return new Response(
+        JSON.stringify(data),
+        {
+            status,
+            headers: corsHeaders
+        }
+    );
+}
+
+function normalizeId(
+    value: unknown
+): string {
+    return String(
+        value ?? ""
+    ).trim();
+}
+
+function normalizeSize(
+    value: unknown
+): string {
+    return String(
+        value ?? ""
+    )
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "");
+}
+
+function parseWeight(
+    value: unknown
+): number | null {
+
+    const text =
+        normalizeSize(value);
+
+    const match =
+        text.match(
+            /^(\d+(?:\.\d+)?)(kg|g)$/
+        );
+
+    if (!match) {
+        return null;
+    }
+
+    const number =
+        Number(match[1]);
+
+    if (!Number.isFinite(number)) {
+        return null;
+    }
+
+    return match[2] === "kg"
+        ? number * 1000
+        : number;
+}
+
+function isActiveProduct(
+    product: Record<string, unknown>
+): boolean {
+
+    /*
+       Your create function already uses products.status.
+       Keep that schema consistent with the verification
+       function instead of requiring a separate is_active column.
+    */
+
+    return String(
+        product.status ?? ""
+    )
+        .trim()
+        .toLowerCase() === "active";
+}
+
+function isActiveVariant(
+    variant: Record<string, unknown>
+): boolean {
+
+    if (
+        variant.is_active === false
+    ) {
+        return false;
+    }
+
+    const status =
+        String(
+            variant.status ?? ""
+        )
+            .trim()
+            .toLowerCase();
+
+    return (
+        !status ||
+        status === "active"
+    );
+}
+
+function razorpayAuthHeader(): string {
+
+    return "Basic " +
+        btoa(
+            `${RAZORPAY_KEY_ID}:${RAZORPAY_KEY_SECRET}`
+        );
+}
+
+Deno.serve(
+    async req => {
+
+        if (
+            req.method ===
+            "OPTIONS"
+        ) {
+            return new Response(
+                "ok",
+                {
+                    status: 200,
+                    headers:
+                        corsHeaders
+                }
+            );
+        }
+
+        if (
+            req.method !==
+            "POST"
+        ) {
+            return json(
+                {
+                    success: false,
+                    error:
+                        "Method not allowed."
+                },
+                405
+            );
+        }
+
+        if (
+            !RAZORPAY_KEY_ID ||
+            !RAZORPAY_KEY_SECRET
+        ) {
+            console.error(
+                "create-razorpay-order: Razorpay secrets are missing."
+            );
+
+            return json(
+                {
+                    success: false,
+                    error:
+                        "Razorpay is not configured. Check RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET."
+                },
+                500
+            );
+        }
+
+        if (
+            !SUPABASE_URL ||
+            !SUPABASE_SERVICE_ROLE_KEY
+        ) {
+            return json(
+                {
+                    success: false,
+                    error:
+                        "Supabase server configuration is incomplete."
+                },
+                500
+            );
+        }
+
+        try {
+
+            const payload =
+                await req.json();
+
+            const items =
+                Array.isArray(
+                    payload?.items
+                )
+                    ? payload.items
+                    : [];
+
+            if (
+                !items.length
+            ) {
+                return json(
+                    {
+                        success: false,
+                        error:
+                            "Cart is empty."
+                    },
+                    400
+                );
+            }
+
+            if (
+                items.length > 100
+            ) {
+                return json(
+                    {
+                        success: false,
+                        error:
+                            "Too many cart items."
+                    },
+                    400
+                );
+            }
+
+            const productIds = [
+                ...new Set(
+                    items
+                        .map(
+                            item =>
+                                normalizeId(
+                                    item?.product_id ||
+                                    item?.productId
+                                )
+                        )
+                        .filter(Boolean)
+                )
+            ];
+
+            if (
+                !productIds.length
+            ) {
+                return json(
+                    {
+                        success: false,
+                        error:
+                            "No valid products were supplied."
+                    },
+                    400
+                );
+            }
+
+            const {
+                data: products,
+                error: productsError
+            } =
+                await supabaseAdmin
+                    .from("products")
+                    .select(
+                        "id,name,status"
+                    )
+                    .in(
+                        "id",
+                        productIds
+                    );
+
+            if (
+                productsError
+            ) {
+                console.error(
+                    "create-razorpay-order products lookup:",
+                    productsError
+                );
+
+                return json(
+                    {
+                        success: false,
+                        error:
+                            "Unable to verify products.",
+                        details:
+                            productsError.message
+                    },
+                    500
+                );
+            }
+
+            const productMap =
+                new Map(
+                    (
+                        products ?? []
+                    ).map(
+                        product => [
+                            String(
+                                product.id
+                            ),
+                            product
+                        ]
+                    )
+                );
+
+            const {
+                data: variants,
+                error: variantsError
+            } =
+                await supabaseAdmin
+                    .from("product_variants")
+                    .select(
+                        "id,product_id,size_label,weight_grams,price,stock,status,is_active"
+                    )
+                    .in(
+                        "product_id",
+                        productIds
+                    );
+
+            if (
+                variantsError
+            ) {
+                console.error(
+                    "create-razorpay-order variants lookup:",
+                    variantsError
+                );
+
+                return json(
+                    {
+                        success: false,
+                        error:
+                            "Unable to verify product variants.",
+                        details:
+                            variantsError.message
+                    },
+                    500
+                );
+            }
+
+            const variantList =
+                variants ?? [];
+
+            let subtotal = 0;
+
+            const validatedItems = [];
+
+            for (
+                const rawItem of items
+            ) {
+
+                const productId =
+                    normalizeId(
+                        rawItem?.product_id ||
+                        rawItem?.productId
+                    );
+
+                const requestedVariantId =
+                    normalizeId(
+                        rawItem?.variant_id ||
+                        rawItem?.variantId
+                    );
+
+                const requestedSize =
+                    normalizeId(
+                        rawItem?.variant_size ||
+                        rawItem?.variantSize ||
+                        rawItem?.sizeLabel ||
+                        rawItem?.size
+                    );
+
+                const quantity =
+                    Number(
+                        rawItem?.quantity
+                    );
+
+                if (
+                    !productId ||
+                    !Number.isInteger(
+                        quantity
+                    ) ||
+                    quantity < 1 ||
+                    quantity > 100
+                ) {
+                    return json(
+                        {
+                            success: false,
+                            error:
+                                "Invalid cart item."
+                        },
+                        400
+                    );
+                }
+
+                const product =
+                    productMap.get(
+                        productId
+                    );
+
+                if (!product) {
+                    return json(
+                        {
+                            success: false,
+                            error:
+                                "A product in your cart no longer exists."
+                        },
+                        400
+                    );
+                }
+
+                if (
+                    !isActiveProduct(
+                        product
+                    )
+                ) {
+                    return json(
+                        {
+                            success: false,
+                            error:
+                                `${product.name} is currently unavailable.`
+                        },
+                        400
+                    );
+                }
+
+                const normalizedRequestedSize =
+                    normalizeSize(
+                        requestedSize
+                    );
+
+                const requestedWeight =
+                    parseWeight(
+                        requestedSize
+                    );
+
+                let matchingVariants =
+                    variantList.filter(
+                        candidate =>
+                            String(
+                                candidate.product_id
+                            ) === productId &&
+                            isActiveVariant(
+                                candidate
+                            )
+                    );
+
+                if (
+                    requestedVariantId
+                ) {
+
+                    matchingVariants =
+                        matchingVariants.filter(
+                            candidate =>
+                                String(
+                                    candidate.id
+                                ) ===
+                                requestedVariantId
+                        );
+
+                } else {
+
+                    matchingVariants =
+                        matchingVariants.filter(
+                            candidate => {
+
+                                const label =
+                                    normalizeSize(
+                                        candidate.size_label
+                                    );
+
+                                if (
+                                    normalizedRequestedSize &&
+                                    label ===
+                                    normalizedRequestedSize
+                                ) {
+                                    return true;
+                                }
+
+                                return (
+                                    requestedWeight !==
+                                    null &&
+                                    Number(
+                                        candidate.weight_grams
+                                    ) ===
+                                    requestedWeight
+                                );
+
+                            }
+                        );
+
+                }
+
+                if (
+                    matchingVariants.length !== 1
+                ) {
+                    return json(
+                        {
+                            success: false,
+                            error:
+                                requestedVariantId
+                                    ? "The selected product package is unavailable."
+                                    : "The selected product package could not be uniquely identified. Please remove the item and add it again."
+                        },
+                        400
+                    );
+                }
+
+                const variant =
+                    matchingVariants[0];
+
+                const unitPrice =
+                    Number(
+                        variant.price
+                    );
+
+                if (
+                    !Number.isFinite(
+                        unitPrice
+                    ) ||
+                    unitPrice <= 0
+                ) {
+                    return json(
+                        {
+                            success: false,
+                            error:
+                                `${product.name} has an invalid price configuration.`
+                        },
+                        500
+                    );
+                }
+
+                const stock =
+                    Number(
+                        variant.stock
+                    );
+
+                if (
+                    Number.isFinite(
+                        stock
+                    ) &&
+                    stock < quantity
+                ) {
+                    return json(
+                        {
+                            success: false,
+                            error:
+                                `${product.name} (${variant.size_label || requestedSize}) does not have enough stock.`
+                        },
+                        400
+                    );
+                }
+
+                const itemTotal =
+                    Math.round(
+                        unitPrice *
+                        quantity *
+                        100
+                    ) / 100;
+
+                subtotal +=
+                    itemTotal;
+
+                validatedItems.push(
+                    {
+                        product_id:
+                            String(
+                                product.id
+                            ),
+
+                        variant_id:
+                            String(
+                                variant.id
+                            ),
+
+                        product_name:
+                            product.name,
+
+                        size_label:
+                            variant.size_label,
+
+                        weight_grams:
+                            variant.weight_grams,
+
+                        quantity,
+
+                        unit_price:
+                            unitPrice,
+
+                        item_total:
+                            itemTotal
+                    }
+                );
+
+            }
+
+            subtotal =
+                Math.round(
+                    subtotal * 100
+                ) / 100;
+
+            const FREE_SHIPPING_THRESHOLD =
+                500;
+
+            const SHIPPING_CHARGE =
+                50;
+
+            const shipping =
+                subtotal >=
+                FREE_SHIPPING_THRESHOLD
+                    ? 0
+                    : SHIPPING_CHARGE;
+
+            const total =
+                Math.round(
+                    (
+                        subtotal +
+                        shipping
+                    ) * 100
+                ) / 100;
+
+            const amountInPaise =
+                Math.round(
+                    total * 100
+                );
+
+            if (
+                amountInPaise <= 0
+            ) {
+                return json(
+                    {
+                        success: false,
+                        error:
+                            "Invalid Razorpay amount."
+                    },
+                    400
+                );
+            }
+
+            const receipt =
+                "swaadya_" +
+                Date.now() +
+                "_" +
+                crypto
+                    .randomUUID()
+                    .slice(
+                        0,
+                        8
+                    );
+
+            const razorpayResponse =
+                await fetch(
+                    "https://api.razorpay.com/v1/orders",
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+                            Authorization:
+                                razorpayAuthHeader(),
+
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                {
+                                    amount:
+                                        amountInPaise,
+
+                                    currency:
+                                        "INR",
+
+                                    receipt,
+
+                                    notes: {
+                                        source:
+                                            "Swaadya",
+
+                                        customer_name:
+                                            String(
+                                                payload
+                                                    ?.customer
+                                                    ?.full_name ||
+                                                ""
+                                            ),
+
+                                        customer_mobile:
+                                            String(
+                                                payload
+                                                    ?.customer
+                                                    ?.mobile ||
+                                                ""
+                                            ),
+
+                                        item_count:
+                                            String(
+                                                validatedItems.length
+                                            )
+                                    }
+                                }
+                            )
+                    }
+                );
+
+            const razorpayRaw =
+                await razorpayResponse.text();
+
+            let razorpayData: any = {};
+
+            try {
+                razorpayData =
+                    JSON.parse(
+                        razorpayRaw
+                    );
+            } catch {
+                console.error(
+                    "Razorpay returned non-JSON:",
+                    razorpayRaw
+                );
+
+                return json(
+                    {
+                        success: false,
+                        error:
+                            "Razorpay returned an invalid response."
+                    },
+                    502
+                );
+            }
+
+            if (
+                !razorpayResponse.ok
+            ) {
+
+                console.error(
+                    "Razorpay order creation failed:",
+                    razorpayData
+                );
+
+                const description =
+                    String(
+                        razorpayData
+                            ?.error
+                            ?.description ||
+                        razorpayData
+                            ?.error
+                            ?.reason ||
+                        "Razorpay could not create the payment order."
+                    );
+
+                return json(
+                    {
+                        success: false,
+                        error:
+                            description
+                    },
+                    400
+                );
+            }
+
+            const orderId =
+                String(
+                    razorpayData?.id ||
+                    ""
+                );
+
+            const amount =
+                Number(
+                    razorpayData?.amount ||
+                    0
+                );
+
+            const currency =
+                String(
+                    razorpayData?.currency ||
+                    "INR"
+                );
+
+            if (
+                !orderId ||
+                !Number.isInteger(
+                    amount
+                ) ||
+                amount <= 0
+            ) {
+                return json(
+                    {
+                        success: false,
+                        error:
+                            "Razorpay returned an invalid payment order."
+                    },
+                    502
+                );
+            }
+
+            return json(
+                {
+                    success: true,
+
+                    order_id:
+                        orderId,
+
+                    amount,
+
+                    currency,
+
+                    key_id:
+                        RAZORPAY_KEY_ID,
+
+                    subtotal,
+
+                    shipping,
+
+                    total,
+
+                    items:
+                        validatedItems,
+
+                    receipt
+                }
+            );
+
+        } catch (error) {
+
+            console.error(
+                "create-razorpay-order error:",
+                error
+            );
+
+            return json(
+                {
+                    success: false,
+                    error:
+                        error instanceof Error
+                            ? error.message
+                            : "Unable to create payment order."
+                },
+                500
+            );
+
+        }
+
+    }
+);
