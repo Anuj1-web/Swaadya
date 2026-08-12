@@ -5378,7 +5378,8 @@ function updateAdminIdentity() {
                 loadProducts(),
                 loadVariants(),
                 loadOrders(),
-                loadCustomers()
+                loadCustomers(),
+                loadStoreSettings()
             ]);
 
 
@@ -9926,166 +9927,259 @@ function updateAdminIdentity() {
 
 
         /* =========================================================
-           23. STORE SETTINGS
+           23. STORE SETTINGS — SUPABASE CONTROLLED
            =========================================================
 
-           These are frontend configuration placeholders.
+           Single source of truth:
+               public.store_settings
 
-           If you later want these to be editable by the admin
-           and shared with index.html dynamically, create a
-           protected store_settings table in Supabase.
+           Columns used by the current Supabase table:
+               id
+               shipping_charge
+               free_shipping_threshold
+               updated_at
+               updated_by
 
-           This page deliberately does not pretend that these
-           local values have been persisted to the database.
-        */
+           IMPORTANT:
+           There is intentionally only ONE saveStoreSettings()
+           function in this file. It does not maintain a
+           session-only shipping configuration.
+           ========================================================= */
 
-        /* =========================================================
-   SWAADYA — SUPABASE STORE SETTINGS
-   Saves shipping settings to public.store_settings
-   ========================================================= */
+        async function loadStoreSettings() {
 
-async function saveStoreSettings() {
+            try {
 
-    const threshold =
-        Number(
-            $("#freeShippingThreshold").value
-        );
+                const {
+                    data,
+                    error
+                } =
+                    await supabaseClient
+                        .from("store_settings")
+                        .select(
+                            "id,shipping_charge,free_shipping_threshold,updated_at,updated_by"
+                        )
+                        .eq("id", 1)
+                        .maybeSingle();
 
-    const shipping =
-        Number(
-            $("#shippingCharge").value
-        );
+                if (error) {
+                    console.error(
+                        "Swaadya: store_settings load failed:",
+                        error
+                    );
 
+                    throw error;
+                }
 
-    /* ---------------------------------------------
-       VALIDATION
-       --------------------------------------------- */
+                if (!data) {
+                    console.warn(
+                        "Swaadya: store_settings row id=1 was not found."
+                    );
+                    return false;
+                }
 
-    if (
-        !Number.isFinite(threshold) ||
-        threshold < 0
-    ) {
+                const shipping = Number(data.shipping_charge);
+                const threshold = Number(data.free_shipping_threshold);
 
-        toast(
-            "Invalid free-shipping threshold.",
-            "error"
-        );
+                if (!Number.isFinite(shipping) || shipping < 0) {
+                    throw new Error(
+                        "Invalid shipping_charge in store_settings."
+                    );
+                }
 
-        return;
+                if (!Number.isFinite(threshold) || threshold < 0) {
+                    throw new Error(
+                        "Invalid free_shipping_threshold in store_settings."
+                    );
+                }
 
-    }
+                STATE.settings.shippingCharge = shipping;
+                STATE.settings.freeShippingThreshold = threshold;
 
+                const shippingInput = $("#shippingCharge");
+                const thresholdInput = $("#freeShippingThreshold");
 
-    if (
-        !Number.isFinite(shipping) ||
-        shipping < 0
-    ) {
+                if (shippingInput) {
+                    shippingInput.value = String(shipping);
+                }
 
-        toast(
-            "Invalid shipping charge.",
-            "error"
-        );
+                if (thresholdInput) {
+                    thresholdInput.value = String(threshold);
+                }
 
-        return;
+                console.log(
+                    "Swaadya: store settings loaded from Supabase:",
+                    data
+                );
 
-    }
+                return true;
 
+            } catch (error) {
 
-    try {
+                console.error(
+                    "Swaadya: unable to load store settings:",
+                    error
+                );
 
-        /*
-         * Store settings are intentionally kept in
-         * one row.
-         *
-         * id = 1 must be the permanent settings row.
-         */
+                toast(
+                    error?.message ||
+                    "Unable to load store shipping settings.",
+                    "error"
+                );
 
-        const {
-            data,
-            error
-        } =
-            await supabaseClient
-                .from("store_settings")
-                .upsert(
-                    {
-                        id: 1,
+                return false;
 
-                        shipping_charge:
-    shipping,
-                        free_shipping_threshold:
-                            threshold,
-
-                        updated_at:
-                            new Date().toISOString()
-
-                    },
-                    {
-                        onConflict: "id"
-                    }
-                )
-                .select()
-                .single();
-
-
-        if (error) {
-
-            console.error(
-                "Swaadya: store_settings save failed:",
-                error
-            );
-
-            throw error;
+            }
 
         }
 
 
-        /*
-         * Update current admin state only AFTER
-         * database save succeeds.
-         */
+        async function saveStoreSettings() {
 
-        STATE.settings
-            .freeShippingThreshold =
-            Number(
-                data.free_shipping_threshold
-            );
+            const thresholdInput = $("#freeShippingThreshold");
+            const shippingInput = $("#shippingCharge");
 
-        STATE.settings
-    .shippingCharge =
-    Number(
-        data.shipping_charge
-    );
+            if (!thresholdInput || !shippingInput) {
+                toast(
+                    "Store shipping settings fields were not found.",
+                    "error"
+                );
+                return;
+            }
 
+            const threshold = Number(thresholdInput.value);
+            const shipping = Number(shippingInput.value);
 
-        toast(
-            "Shipping settings saved successfully.",
-            "success"
-        );
+            if (!Number.isFinite(threshold) || threshold < 0) {
+                toast(
+                    "Invalid free-shipping threshold.",
+                    "error"
+                );
+                return;
+            }
 
+            if (!Number.isFinite(shipping) || shipping < 0) {
+                toast(
+                    "Invalid shipping charge.",
+                    "error"
+                );
+                return;
+            }
 
-        console.log(
-            "Swaadya: store settings persisted:",
-            data
-        );
+            if (!STATE.user?.id) {
+                toast(
+                    "Admin session not found. Please log in again.",
+                    "error"
+                );
+                return;
+            }
 
+            const button = $("#saveStoreSettings");
+            const originalText = button?.textContent || "Save Settings";
 
-    } catch (error) {
+            if (button) {
+                button.disabled = true;
+                button.textContent = "Saving…";
+            }
 
-        console.error(
-            "Swaadya: Unable to save store settings:",
-            error
-        );
+            try {
 
+                const {
+                    data,
+                    error
+                } =
+                    await supabaseClient
+                        .from("store_settings")
+                        .upsert(
+                            {
+                                id: 1,
+                                shipping_charge: shipping,
+                                free_shipping_threshold: threshold,
+                                updated_at: new Date().toISOString(),
+                                updated_by: STATE.user.id
+                            },
+                            {
+                                onConflict: "id"
+                            }
+                        )
+                        .select(
+                            "id,shipping_charge,free_shipping_threshold,updated_at,updated_by"
+                        )
+                        .single();
 
-        toast(
-            error?.message ||
-            "Unable to save shipping settings.",
-            "error"
-        );
+                if (error) {
+                    console.error(
+                        "Swaadya: store_settings save failed:",
+                        error
+                    );
+                    throw error;
+                }
 
-    }
+                if (!data) {
+                    throw new Error(
+                        "Supabase did not return the saved store settings row."
+                    );
+                }
 
-}
+                const savedShipping = Number(data.shipping_charge);
+                const savedThreshold = Number(data.free_shipping_threshold);
+
+                if (
+                    !Number.isFinite(savedShipping) ||
+                    savedShipping < 0 ||
+                    !Number.isFinite(savedThreshold) ||
+                    savedThreshold < 0
+                ) {
+                    throw new Error(
+                        "Supabase returned invalid saved shipping settings."
+                    );
+                }
+
+                /* Only update local state after Supabase confirms the save. */
+                STATE.settings.shippingCharge = savedShipping;
+                STATE.settings.freeShippingThreshold = savedThreshold;
+
+                shippingInput.value = String(savedShipping);
+                thresholdInput.value = String(savedThreshold);
+
+                toast(
+                    "Shipping settings saved successfully.",
+                    "success"
+                );
+
+                console.log(
+                    "Swaadya: store settings persisted:",
+                    data
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Swaadya: unable to save store settings:",
+                    error
+                );
+
+                const message =
+                    error?.code === "42501"
+                        ? "Supabase denied this update. Check the store_settings RLS policy for authenticated admins."
+                        : error?.message ||
+                          "Unable to save shipping settings.";
+
+                toast(
+                    message,
+                    "error"
+                );
+
+            } finally {
+
+                if (button) {
+                    button.disabled = false;
+                    button.textContent = originalText;
+                }
+
+            }
+
+        }
 
         /* =========================================================
            24. LOGOUT
