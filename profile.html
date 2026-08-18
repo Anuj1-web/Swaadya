@@ -7753,12 +7753,12 @@ function renderOrderDetails(
 
 
     const deliveryName =
-        order.delivery_full_name ||
+        order.customer_name ||
         "—";
 
 
     const deliveryMobile =
-        order.delivery_mobile ||
+        order.customer_mobile ||
         "—";
 
 
@@ -7766,7 +7766,6 @@ function renderOrderDetails(
         [
             order.delivery_address,
             order.delivery_area,
-            order.delivery_landmark,
             order.delivery_city,
             order.delivery_district,
             order.delivery_state,
@@ -8988,4 +8987,3 @@ initialize();
 
 </body>
 </html>
-
