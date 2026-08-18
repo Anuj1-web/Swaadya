@@ -5369,6 +5369,29 @@ function updateAdminIdentity() {
         }
 
 
+        async function loadStoreSettings() {
+            const { data, error } = await supabaseClient
+                .from("store_settings")
+                .select("shipping_charge,free_shipping_threshold,updated_at")
+                .eq("id", 1)
+                .maybeSingle();
+
+            if (error) throw error;
+
+            const settings = data || {
+                shipping_charge: 77,
+                free_shipping_threshold: 777
+            };
+
+            STATE.settings.shippingCharge = Number(settings.shipping_charge || 0);
+            STATE.settings.freeShippingThreshold = Number(settings.free_shipping_threshold || 0);
+
+            const thresholdInput = $("#freeShippingThreshold");
+            const shippingInput = $("#shippingCharge");
+            if (thresholdInput) thresholdInput.value = STATE.settings.freeShippingThreshold;
+            if (shippingInput) shippingInput.value = STATE.settings.shippingCharge;
+        }
+
         /* =========================================================
            9. LOAD ALL DATA
            ========================================================= */
@@ -5379,7 +5402,8 @@ function updateAdminIdentity() {
                 loadProducts(),
                 loadVariants(),
                 loadOrders(),
-                loadCustomers()
+                loadCustomers(),
+                loadStoreSettings()
             ]);
 
 
@@ -7287,9 +7311,9 @@ function updateAdminIdentity() {
                         order =>
                             [
                                 order.order_number,
-                                order.delivery_full_name,
-                                order.delivery_mobile,
-                                order.delivery_email,
+                                order.customer_name,
+                                order.customer_mobile,
+                                order.customer_email,
                                 order.razorpay_order_id,
                                 order.razorpay_payment_id
                             ]
@@ -7464,11 +7488,11 @@ function updateAdminIdentity() {
                         <div class="order-customer">
 
                             <strong>
-                                ${escapeHTML(order.delivery_full_name || "Guest")}
+                                ${escapeHTML(order.customer_name || "Guest")}
                             </strong>
 
                             <span class="cell-muted">
-                                ${escapeHTML(order.delivery_mobile || "")}
+                                ${escapeHTML(order.customer_mobile || "")}
                             </span>
 
                         </div>
@@ -7646,7 +7670,7 @@ function updateAdminIdentity() {
                                     </div>
 
                                     <div class="detail-value">
-                                        ${escapeHTML(order.delivery_full_name || "—")}
+                                        ${escapeHTML(order.customer_name || "—")}
                                     </div>
 
                                 </div>
@@ -7659,7 +7683,7 @@ function updateAdminIdentity() {
                                     </div>
 
                                     <div class="detail-value">
-                                        ${escapeHTML(order.delivery_mobile || "—")}
+                                        ${escapeHTML(order.customer_mobile || "—")}
                                     </div>
 
                                 </div>
@@ -7672,7 +7696,7 @@ function updateAdminIdentity() {
                                     </div>
 
                                     <div class="detail-value">
-                                        ${escapeHTML(order.delivery_email || "—")}
+                                        ${escapeHTML(order.customer_email || "—")}
                                     </div>
 
                                 </div>
@@ -7704,12 +7728,6 @@ function updateAdminIdentity() {
                                         ${
                                             order.delivery_area
                                                 ? `<br>${escapeHTML(order.delivery_area)}`
-                                                : ""
-                                        }
-
-                                        ${
-                                            order.delivery_landmark
-                                                ? `<br>Landmark: ${escapeHTML(order.delivery_landmark)}`
                                                 : ""
                                         }
 
@@ -8124,99 +8142,66 @@ function updateAdminIdentity() {
         }
 
 
-        async function saveOrderStatus(
-            orderId
-        ) {
+        async function saveOrderStatus(orderId) {
 
-            const orderStatus =
-                $("#adminOrderStatus")
-                    .value;
+            const orderStatus = $("#adminOrderStatus").value;
+            const paymentStatus = $("#adminPaymentStatus").value;
+            const button = $("#saveOrderStatusBtn");
 
-
-            const paymentStatus =
-                $("#adminPaymentStatus")
-                    .value;
-
-
-            const button =
-                $("#saveOrderStatusBtn");
-
-
-            button.disabled =
-                true;
-
-            button.textContent =
-                "Saving...";
-
+            button.disabled = true;
+            button.textContent = "Saving...";
 
             try {
+                const currentOrder = STATE.orders.find(o => String(o.id) === String(orderId));
+                if (!currentOrder) throw new Error("Order not found.");
 
-                const {
-                    error
-                } =
-                    await supabaseClient
-                        .from("orders")
-                        .update({
-
-                            order_status:
-                                orderStatus,
-
-                            payment_status:
-                                paymentStatus,
-
-                            updated_at:
-                                new Date()
-                                    .toISOString()
-
-                        })
-                        .eq(
-                            "id",
-                            orderId
-                        );
-
-
-                if (error) {
-                    throw error;
+                if (currentOrder.order_status === "cancelled" && orderStatus !== "cancelled") {
+                    throw new Error("A cancelled order cannot be reopened from the admin panel.");
                 }
 
+                if (orderStatus === "cancelled" && currentOrder.order_status !== "cancelled") {
+                    const { data, error } = await supabaseClient.rpc("cancel_swaadya_order", {
+                        p_order_id: orderId,
+                        p_reason: "Cancelled by admin"
+                    });
+                    if (error) throw error;
+                    if (!data?.success) throw new Error("Order cancellation could not be completed.");
+                } else {
+                    const { error } = await supabaseClient
+                        .from("orders")
+                        .update({
+                            order_status: orderStatus,
+                            payment_status: paymentStatus,
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq("id", orderId);
+                    if (error) throw error;
+                }
 
                 await loadOrders();
-
+                await loadVariants();
                 renderOrders();
+                renderInventory();
                 renderDashboard();
 
-
                 toast(
-                    "Order status updated.",
+                    orderStatus === "cancelled"
+                        ? "Order cancelled and stock restored."
+                        : "Order status updated.",
                     "success"
                 );
 
-
-                closeModal(
-                    "orderModal"
-                );
-
+                closeModal("orderModal");
 
             } catch (error) {
-
                 toast(
-                    friendlyError(
-                        error,
-                        "Unable to update order."
-                    ),
+                    friendlyError(error, "Unable to update order."),
                     "error"
                 );
-
             } finally {
-
-                button.disabled =
-                    false;
-
-                button.textContent =
-                    "Save Order Status";
-
+                button.disabled = false;
+                button.textContent = "Save Order Status";
             }
-
         }
 
 
@@ -9014,11 +8999,14 @@ function updateAdminIdentity() {
                 STATE.orders;
 
 
+            const activeOrders =
+                orders.filter(order =>
+                    String(order.order_status || "").toLowerCase() !== "cancelled"
+                );
+
             const paidOrders =
-                orders.filter(
-                    order =>
-                        order.payment_status ===
-                        "paid"
+                activeOrders.filter(order =>
+                    String(order.payment_status || "").toLowerCase() === "paid"
                 );
 
 
@@ -9054,7 +9042,7 @@ function updateAdminIdentity() {
 
             $("#statOrders")
                 .textContent =
-                orders.length
+                activeOrders.length
                     .toLocaleString(
                         "en-IN"
                     );
@@ -9195,7 +9183,7 @@ function updateAdminIdentity() {
                                             </td>
 
                                             <td>
-                                                ${escapeHTML(order.delivery_full_name || "Guest")}
+                                                ${escapeHTML(order.customer_name || "Guest")}
                                             </td>
 
                                             <td>
@@ -10020,7 +10008,7 @@ async function saveStoreSettings() {
                     {
                         id: 1,
 
-                        default_shipping_charge:
+                        shipping_charge:
                             shipping,
 
                         free_shipping_threshold:
@@ -10064,7 +10052,7 @@ async function saveStoreSettings() {
         STATE.settings
             .shippingCharge =
             Number(
-                data.default_shipping_charge
+                data.shipping_charge
             );
 
 
