@@ -7085,6 +7085,18 @@ async function razor(
    a real shipping rule; this keeps the payment amount identical
    to the current cart total instead of inventing a fee.
    ========================================================= */
+   function formatPrice(value) {
+    const amount = Number(value);
+
+    if (!Number.isFinite(amount)) {
+        return "₹0.00";
+    }
+
+    return "₹" + amount.toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
 function getShippingCharge(subtotal) {
     const value = Number(subtotal);
     return Number.isFinite(value) ? 0 : 0;
