@@ -7097,6 +7097,18 @@ async function razor(
         maximumFractionDigits: 2
     });
 }
+function closeSuccess() {
+    const modal = document.getElementById("successModal");
+    const overlay = document.getElementById("overlay");
+
+    if (modal) {
+        modal.classList.remove("open");
+    }
+
+    if (overlay) {
+        overlay.classList.remove("active");
+    }
+}
 function getShippingCharge(subtotal) {
     const value = Number(subtotal);
     return Number.isFinite(value) ? 0 : 0;
