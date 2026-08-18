@@ -4743,7 +4743,6 @@ import {
 
 const SWAADYA_BACKEND = {
 
-    /* Swaadya owns products, users, addresses and orders. */
     supabaseUrl:
         "https://qogtlsrtigcnzkpbhdna.supabase.co",
 
@@ -4751,24 +4750,7 @@ const SWAADYA_BACKEND = {
         "sb_publishable_9RnptVmME1ZHWL_Hiy5mOg_QNekZoeU",
 
     paymentMode:
-        "razorpay-test"
-
-};
-
-/* Universal Razorpay project.
- * Only publishable configuration is used in the browser.
- * Razorpay secrets remain inside the Universal Edge Functions.
- */
-const UNIVERSAL_RAZORPAY = {
-
-    supabaseUrl:
-        "https://fxfseupydvkgujwfsppu.supabase.co",
-
-    publishableKey:
-        "sb_publishable_rABRwgXj2GuJQEFNumAAhQ_9_xcD8zF",
-
-    merchantKey:
-        "LOCALHOST_DEMO",
+        "razorpay-test",
 
     createOrderFunction:
         "create-razorpay-order",
@@ -6241,7 +6223,7 @@ function payload() {
                         "";
 
                     const product =
-                        (window.SWAADYA_PRODUCTS || [])
+                        CONFIG.products
                             .find(
                                 product =>
                                     String(product.id) ===
@@ -6765,284 +6747,8 @@ function confirmMap() {
 
 
 /* =========================================================
-   PAYMENT / ORDER COMPATIBILITY HELPERS
+   BUSY STATE
    ========================================================= */
-
-function formatPrice(value) {
-
-    const amount = Number(value);
-
-    if (!Number.isFinite(amount)) {
-        return "₹0.00";
-    }
-
-    return "₹" + amount.toLocaleString("en-IN", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-
-}
-
-/* Inline onclick handlers cannot see module-scoped functions. */
-window.formatPrice = formatPrice;
-
-window.closeSuccess = function () {
-
-    const modal = $("successModal");
-    const overlay = $("overlay");
-
-    if (modal) {
-        modal.classList.remove("open");
-    }
-
-    if (overlay) {
-        overlay.classList.remove("active");
-    }
-
-    try {
-        busyState(false);
-    } catch (_) {}
-
-};
-
-function getShippingCharge(subtotal) {
-
-    const value = Number(subtotal) || 0;
-
-    const settings = window.SWAADYA_STORE_SETTINGS || {};
-    const charge = Number(settings.shipping_charge);
-    const threshold = Number(settings.free_shipping_threshold);
-
-    if (Number.isFinite(threshold) && threshold > 0 && value >= threshold) {
-        return 0;
-    }
-
-    return Number.isFinite(charge) ? charge : 77;
-
-}
-
-async function loadSwaadyaStoreSettings() {
-
-    if (window.SWAADYA_STORE_SETTINGS) {
-        return window.SWAADYA_STORE_SETTINGS;
-    }
-
-    const result = await supabase
-        .from("store_settings")
-        .select("shipping_charge,free_shipping_threshold")
-        .eq("id", 1)
-        .maybeSingle();
-
-    if (result.error) {
-        console.warn("Swaadya: store settings unavailable; using safe defaults.", result.error);
-        window.SWAADYA_STORE_SETTINGS = {
-            shipping_charge: 77,
-            free_shipping_threshold: 777
-        };
-    } else {
-        window.SWAADYA_STORE_SETTINGS = result.data || {
-            shipping_charge: 77,
-            free_shipping_threshold: 777
-        };
-    }
-
-    return window.SWAADYA_STORE_SETTINGS;
-}
-
-function generateExternalOrderId() {
-
-    return "SWAADYA-" +
-        Date.now() +
-        "-" +
-        crypto.randomUUID().replaceAll("-", "").slice(0, 16);
-
-}
-
-async function prepareSwaadyaCheckout(payloadData) {
-
-    if (!session?.user?.id) {
-        throw new Error("Please log in before placing an order so your order can be saved to your profile.");
-    }
-
-    const variantIds = [
-        ...new Set(
-            payloadData.items
-                .map(item => item.variant_id)
-                .filter(Boolean)
-        )
-    ];
-
-    const { data: variants, error: variantsError } =
-        await supabase
-            .from("product_variants")
-            .select("id,product_id,price,stock,size_label,weight_grams,sku,status,is_active")
-            .in("id", variantIds);
-
-    if (variantsError) {
-        throw new Error("Unable to verify the products in your cart.");
-    }
-
-    const variantMap = new Map(
-        (variants || []).map(variant => [String(variant.id), variant])
-    );
-
-    let subtotal = 0;
-
-    for (const item of payloadData.items) {
-
-        const variant = variantMap.get(String(item.variant_id));
-
-        if (!variant || variant.is_active === false || String(variant.status || "active").toLowerCase() !== "active") {
-            throw new Error("One of the selected product packages is no longer available.");
-        }
-
-        const quantity = Number(item.quantity);
-
-        if (!Number.isInteger(quantity) || quantity < 1) {
-            throw new Error("Invalid product quantity.");
-        }
-
-        if (Number(variant.stock) < quantity) {
-            throw new Error("One of the selected products does not have enough stock.");
-        }
-
-        subtotal += Number(variant.price) * quantity;
-    }
-
-    subtotal = Math.round(subtotal * 100) / 100;
-
-    await loadSwaadyaStoreSettings();
-
-    const shipping = getShippingCharge(subtotal);
-    const total = Math.round((subtotal + shipping) * 100) / 100;
-    const amountPaise = Math.round(total * 100);
-
-    if (!Number.isInteger(amountPaise) || amountPaise <= 0) {
-        throw new Error("Invalid checkout amount.");
-    }
-
-    const externalOrderId = generateExternalOrderId();
-
-    /*
-     * This intent is the bridge between the Swaadya database and the
-     * Universal Razorpay database. It is created BEFORE payment and is
-     * finalized only after the Universal project verifies the payment.
-     */
-    const intentResult = await supabase
-        .from("checkout_intents")
-        .insert({
-            external_order_id: externalOrderId,
-            user_id: session.user.id,
-            customer: {
-                user_id: session.user.id,
-                full_name: payloadData.customer.full_name,
-                mobile: payloadData.customer.mobile,
-                email: payloadData.customer.email
-            },
-            delivery: payloadData.delivery,
-            items: payloadData.items.map(item => ({
-                product_id: item.product_id,
-                variant_id: item.variant_id,
-                variant_size: item.variant_size,
-                quantity: Number(item.quantity)
-            })),
-            expected_amount_paise: amountPaise,
-            currency: "INR",
-            status: "pending"
-        })
-        .select("id,external_order_id,expected_amount_paise,currency")
-        .single();
-
-    if (intentResult.error) {
-        console.error("Swaadya checkout intent creation failed:", intentResult.error);
-        throw new Error("Unable to prepare your order. Please try again.");
-    }
-
-    return {
-        externalOrderId,
-        checkoutIntentId: intentResult.data.id,
-        subtotal,
-        shipping,
-        total,
-        amountPaise,
-        variantMap
-    };
-}
-
-async function universalPaymentRequest(functionName, body) {
-
-    const response = await fetch(
-        `${UNIVERSAL_RAZORPAY.supabaseUrl}/functions/v1/${functionName}`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "apikey": UNIVERSAL_RAZORPAY.publishableKey,
-                "Authorization": `Bearer ${UNIVERSAL_RAZORPAY.publishableKey}`,
-                "x-merchant-key": UNIVERSAL_RAZORPAY.merchantKey
-            },
-            body: JSON.stringify(body)
-        }
-    );
-
-    const text = await response.text();
-    let data = {};
-
-    try {
-        data = text ? JSON.parse(text) : {};
-    } catch (_) {
-        throw new Error("Universal Razorpay service returned an invalid response.");
-    }
-
-    if (!response.ok || data?.success === false) {
-        throw new Error(
-            String(
-                data?.error ||
-                data?.message ||
-                `Universal Razorpay service returned HTTP ${response.status}.`
-            )
-        );
-    }
-
-    return data;
-}
-
-async function finalizeSwaadyaOrder(paymentResponse, paymentMethod, externalOrderId) {
-
-    const result = await supabase.rpc(
-        "finalize_swaadya_paid_order",
-        {
-            p_external_order_id: externalOrderId,
-            p_razorpay_order_id: paymentResponse.razorpay_order_id,
-            p_razorpay_payment_id: paymentResponse.razorpay_payment_id,
-            p_payment_method: paymentMethod || "unknown",
-            p_amount_paise: Number(paymentResponse.amount),
-            p_currency: paymentResponse.currency || "INR"
-        }
-    );
-
-    if (result.error) {
-        console.error("Swaadya order finalization failed:", result.error);
-        const detail = String(result.error?.message || result.error?.details || "").trim();
-        throw new Error(
-            "Payment was verified, but Swaadya could not finalize the order. " +
-            "DO NOT PAY AGAIN. Payment ID: " +
-            paymentResponse.razorpay_payment_id +
-            (detail ? " — " + detail : "")
-        );
-    }
-
-    if (!result.data?.success) {
-        throw new Error(
-            result.data?.error ||
-            "Swaadya could not finalize the paid order."
-        );
-    }
-
-    return result.data;
-}
-
-
 
 function busyState(
     value,
@@ -7086,256 +6792,502 @@ function busyState(
    RAZORPAY
    ========================================================= */
 
-async function razor(payloadData) {
+async function razor(
+    payloadData
+) {
 
-    busyState(true, "Preparing order…");
+    busyState(
+        true,
+        "Creating payment…"
+    );
 
-    if (!payloadData || !Array.isArray(payloadData.items) || !payloadData.items.length) {
-        throw new Error("Your cart is empty.");
+    /*
+       Validate the payload before calling Supabase.
+       This makes the actual problem visible instead of
+       showing only "FunctionsHttpError".
+    */
+
+    if (
+        !payloadData ||
+        !Array.isArray(payloadData.items) ||
+        !payloadData.items.length
+    ) {
+
+        throw new Error(
+            "Your cart is empty."
+        );
+
     }
 
-    const missingVariant = payloadData.items.find(item =>
-        !item?.product_id ||
-        !item?.variant_id ||
-        !item?.variant_size ||
-        !Number.isInteger(Number(item?.quantity)) ||
-        Number(item?.quantity) < 1
-    );
+    const missingVariant =
+        payloadData.items.find(
+            item =>
+                !item?.product_id ||
+                !item?.variant_id ||
+                !item?.variant_size ||
+                !Number.isInteger(
+                    Number(item?.quantity)
+                ) ||
+                Number(item?.quantity) < 1
+        );
 
     if (missingVariant) {
-        throw new Error("One cart item is missing its product or package information. Please remove it and add it again.");
+
+        console.error(
+            "Swaadya: invalid payment payload:",
+            payloadData
+        );
+
+        throw new Error(
+            "One cart item is missing its product or package information. Please remove it and add it again."
+        );
+
     }
 
-    /* Swaadya creates the checkout intent and calculates the amount. */
-    const checkout = await prepareSwaadyaCheckout(payloadData);
+    console.log(
+        "Swaadya: creating Razorpay order with payload:",
+        payloadData
+    );
 
-    const universalOrder = await universalPaymentRequest(
-        UNIVERSAL_RAZORPAY.createOrderFunction,
-        {
-            amount: checkout.amountPaise,
-            currency: "INR",
-            external_order_id: checkout.externalOrderId,
-            customer: {
-                name: payloadData.customer.full_name,
-                email: payloadData.customer.email,
-                phone: payloadData.customer.mobile
-            },
-            metadata: {
-                source: "Swaadya",
-                checkout_intent_id: checkout.checkoutIntentId,
-                user_id: session.user.id,
-                subtotal: checkout.subtotal,
-                shipping: checkout.shipping,
-                total: checkout.total
+    const result =
+        await supabase
+            .functions
+            .invoke(
+                SWAADYA_BACKEND
+                    .createOrderFunction,
+                {
+                    body:
+                        payloadData
+                }
+            );
+
+    /*
+       supabase-js can expose a FunctionsHttpError without
+       the JSON error returned by the Edge Function.
+       Read result.data first and then fall back to result.error.
+    */
+
+    if (
+        result.error
+    ) {
+
+        console.error(
+            "Swaadya create-razorpay-order failed:",
+            result.error,
+            result.data
+        );
+
+        const backendMessage =
+            result?.data?.error ||
+            result?.error?.context?.error ||
+            result?.error?.message ||
+            "Unable to create the Razorpay payment order.";
+
+        throw new Error(
+            String(backendMessage)
+        );
+
+    }
+
+    if (
+        !result.data?.success ||
+        !result.data?.order_id ||
+        !result.data?.amount ||
+        !result.data?.key_id
+    ) {
+
+        console.error(
+            "Swaadya: invalid create-order response:",
+            result.data
+        );
+
+        throw new Error(
+            result.data?.error ||
+            "Invalid payment order response from Swaadya."
+        );
+
+    }
+
+    /*
+       Razorpay may be loaded by the existing page loader.
+       If it is not ready yet, wait briefly for it instead of
+       immediately failing.
+    */
+
+    if (
+        !window.Razorpay
+    ) {
+
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    500
+                )
+        );
+
+    }
+
+    if (
+        !window.Razorpay
+    ) {
+
+        throw new Error(
+            "Payment gateway is unavailable. Please refresh the page and try again."
+        );
+
+    }
+
+    return new Promise(
+        (
+            resolve,
+            reject
+        ) => {
+
+            let paymentHandled =
+                false;
+
+            const options = {
+
+                key:
+                    result.data.key_id,
+
+                amount:
+                    result.data.amount,
+
+                currency:
+                    result.data.currency ||
+                    "INR",
+
+                name:
+                    "Swaadya",
+
+                description:
+                    "The Taste of Real Spices",
+
+                order_id:
+                    result.data.order_id,
+
+                prefill: {
+
+                    name:
+                        payloadData
+                            .customer
+                            .full_name,
+
+                    email:
+                        payloadData
+                            .customer
+                            .email,
+
+                    contact:
+                        payloadData
+                            .customer
+                            .mobile
+
+                },
+
+                theme: {
+                    color:
+                        "#234d38"
+                },
+
+                modal: {
+
+                    ondismiss:
+                        () => {
+
+                            if (
+                                paymentHandled
+                            ) {
+                                return;
+                            }
+
+                            busyState(
+                                false
+                            );
+
+                            reject(
+                                new Error(
+                                    "Payment was not completed."
+                                )
+                            );
+
+                        }
+
+                },
+
+                handler:
+                    async response => {
+
+                        if (
+                            paymentHandled
+                        ) {
+                            return;
+                        }
+
+                        try {
+
+                            busyState(
+                                true,
+                                "Verifying payment…"
+                            );
+
+                            console.log(
+                                "Swaadya: Razorpay payment response received."
+                            );
+
+                            const verification =
+                                await supabase
+                                    .functions
+                                    .invoke(
+                                        SWAADYA_BACKEND
+                                            .verifyPaymentFunction,
+                                        {
+                                            body: {
+
+                                                razorpay_order_id:
+                                                    response
+                                                        .razorpay_order_id ||
+                                                    result.data.order_id,
+
+                                                razorpay_payment_id:
+                                                    response
+                                                        .razorpay_payment_id,
+
+                                                razorpay_signature:
+                                                    response
+                                                        .razorpay_signature,
+
+                                                checkout:
+                                                    payloadData
+
+                                            }
+                                        }
+                                    );
+
+                            if (
+                                verification.error
+                            ) {
+
+                                console.error(
+                                    "Swaadya verify-razorpay-payment failed:",
+                                    verification.error,
+                                    verification.data
+                                );
+
+                                const backendMessage =
+                                    verification?.data?.error ||
+                                    verification?.error?.context?.error ||
+                                    verification?.error?.message ||
+                                    "Payment verification failed.";
+
+                                throw new Error(
+                                    String(
+                                        backendMessage
+                                    )
+                                );
+
+                            }
+
+                            if (
+                                !verification
+                                    .data
+                                    ?.verified
+                            ) {
+
+                                throw new Error(
+                                    verification
+                                        .data
+                                        ?.error ||
+                                    "Payment verification failed."
+                                );
+
+                            }
+
+                            paymentHandled =
+                                true;
+
+                            const verifiedOrder =
+                                verification
+                                    .data
+                                    .order ||
+                                {};
+
+                            $("orderResult")
+                                .innerHTML = `
+
+                                    <strong>
+                                        Order:
+                                    </strong>
+
+                                    #
+                                    ${esc(
+                                        verifiedOrder
+                                            .order_number ||
+                                        "SW-PENDING"
+                                    )}
+
+                                    <br>
+
+                                    <strong>
+                                        Amount Paid:
+                                    </strong>
+
+                                    ${formatPrice(
+                                        Number(
+                                            verifiedOrder
+                                                .total ||
+                                            result.data.total ||
+                                            0
+                                        )
+                                    )}
+
+                                    <br>
+
+                                    <strong>
+                                        Payment ID:
+                                    </strong>
+
+                                    ${esc(
+                                        response
+                                            .razorpay_payment_id ||
+                                        ""
+                                    )}
+
+                                    <br>
+
+                                    <strong>
+                                        Order Status:
+                                    </strong>
+
+                                    ${esc(
+                                        verifiedOrder
+                                            .order_status ||
+                                        "confirmed"
+                                    )}
+
+                                    <br><br>
+
+                                    Thank you for ordering from Swaadya.
+
+                                `;
+
+                            cart =
+                                [];
+
+                            saveCart();
+
+                            $("checkoutForm")
+                                .reset();
+
+                            $("customerState")
+                                .value =
+                                "Rajasthan";
+
+                            closeCheckout();
+
+                            $("successModal")
+                                .classList
+                                .add(
+                                    "open"
+                                );
+
+                            $("overlay")
+                                .classList
+                                .add(
+                                    "active"
+                                );
+
+                            busyState(
+                                false
+                            );
+
+                            resolve(
+                                verification.data
+                            );
+
+                        } catch (error) {
+
+                            busyState(
+                                false
+                            );
+
+                            console.error(
+                                "Swaadya payment verification error:",
+                                error
+                            );
+
+                            showToast(
+                                msg(
+                                    error,
+                                    "Payment could not be verified. Your cart has been kept so you can retry."
+                                )
+                            );
+
+                            reject(
+                                error
+                            );
+
+                        }
+
+                    }
+
+            };
+
+            try {
+
+                const razorpayInstance =
+                    new window.Razorpay(
+                        options
+                    );
+
+                razorpayInstance.on(
+                    "payment.failed",
+                    function (failure) {
+
+                        console.error(
+                            "Swaadya Razorpay payment.failed:",
+                            failure
+                        );
+
+                        busyState(
+                            false
+                        );
+
+                        if (
+                            !paymentHandled
+                        ) {
+
+                            showToast(
+                                failure
+                                    ?.error
+                                    ?.description ||
+                                "Payment failed. Your cart has been kept."
+                            );
+
+                        }
+
+                    }
+                );
+
+                razorpayInstance.open();
+
+            } catch (error) {
+
+                busyState(
+                    false
+                );
+
+                reject(
+                    error
+                );
+
             }
+
         }
     );
 
-    const razorpayData = universalOrder?.razorpay || universalOrder;
-    const razorpayOrderId = razorpayData?.order_id;
-    const razorpayAmount = Number(razorpayData?.amount || checkout.amountPaise);
-    const razorpayCurrency = razorpayData?.currency || "INR";
-    const razorpayKeyId = razorpayData?.key_id || universalOrder?.key_id;
-
-    if (!razorpayOrderId || !razorpayKeyId || !Number.isInteger(razorpayAmount) || razorpayAmount <= 0) {
-        console.error("Swaadya: invalid Universal Razorpay order response:", universalOrder);
-        throw new Error("Universal Razorpay returned an invalid payment order.");
-    }
-
-    if (razorpayAmount !== checkout.amountPaise) {
-        throw new Error("Payment amount changed while preparing checkout. Please refresh and try again.");
-    }
-
-    if (!window.Razorpay) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-    }
-
-    if (!window.Razorpay) {
-        throw new Error("Payment gateway is unavailable. Please refresh the page and try again.");
-    }
-
-    busyState(true, "Opening payment…");
-
-    return new Promise((resolve, reject) => {
-
-        let paymentHandled = false;
-
-        const options = {
-
-            key: razorpayKeyId,
-            amount: razorpayAmount,
-            currency: razorpayCurrency,
-            name: "Swaadya",
-            description: "The Taste of Real Spices",
-            order_id: razorpayOrderId,
-
-            prefill: {
-                name: payloadData.customer.full_name,
-                email: payloadData.customer.email,
-                contact: payloadData.customer.mobile
-            },
-
-            notes: {
-                external_order_id: checkout.externalOrderId,
-                checkout_intent_id: checkout.checkoutIntentId
-            },
-
-            theme: {
-                color: "#234d38"
-            },
-
-            modal: {
-                ondismiss: () => {
-                    if (paymentHandled) return;
-                    busyState(false);
-                    reject(new Error("Payment was not completed."));
-                }
-            },
-
-            handler: async response => {
-
-                if (paymentHandled) return;
-
-                try {
-
-                    busyState(true, "Verifying payment…");
-
-                    if (!response?.razorpay_order_id || !response?.razorpay_payment_id || !response?.razorpay_signature) {
-                        throw new Error("Razorpay returned incomplete payment verification data.");
-                    }
-
-                    /*
-                     * Verify ONLY against the Universal Razorpay project.
-                     * The Swaadya project is deliberately not used for
-                     * payment verification.
-                     */
-                    const verification = await universalPaymentRequest(
-                        UNIVERSAL_RAZORPAY.verifyPaymentFunction,
-                        {
-                            razorpay_order_id: response.razorpay_order_id,
-                            razorpay_payment_id: response.razorpay_payment_id,
-                            razorpay_signature: response.razorpay_signature
-                        }
-                    );
-
-                    if (!verification?.success) {
-                        throw new Error(verification?.error || "Payment verification failed.");
-                    }
-
-                    const verifiedPayment = verification.payment || {};
-                    const verifiedPaymentId = verifiedPayment.razorpay_payment_id || response.razorpay_payment_id;
-                    const verifiedOrderId = verifiedPayment.razorpay_order_id || response.razorpay_order_id;
-                    const verifiedAmount = Number(verifiedPayment.amount || checkout.amountPaise);
-                    const verifiedCurrency = verifiedPayment.currency || "INR";
-                    const verifiedStatus = String(verifiedPayment.status || "").toLowerCase();
-
-                    if (verifiedOrderId !== razorpayOrderId) {
-                        throw new Error("Verified payment does not belong to this checkout.");
-                    }
-
-                    if (verifiedAmount !== checkout.amountPaise) {
-                        throw new Error("Verified payment amount does not match the Swaadya order.");
-                    }
-
-                    if (verifiedCurrency.toUpperCase() !== "INR") {
-                        throw new Error("Verified payment currency is invalid.");
-                    }
-
-                    if (verifiedStatus !== "captured") {
-                        throw new Error("Payment has not been captured yet. Please wait for capture before the order is confirmed.");
-                    }
-
-                    /*
-                     * The final Swaadya order is created by the existing
-                     * SECURITY DEFINER database function. It validates the
-                     * checkout intent, rechecks prices/stock, inserts the
-                     * order + order_items, decrements stock and marks the
-                     * intent paid atomically.
-                     */
-                    const finalized = await finalizeSwaadyaOrder(
-                        {
-                            razorpay_order_id: verifiedOrderId,
-                            razorpay_payment_id: verifiedPaymentId,
-                            amount: verifiedAmount,
-                            currency: verifiedCurrency
-                        },
-                        verifiedPayment.method || "unknown",
-                        checkout.externalOrderId
-                    );
-
-                    paymentHandled = true;
-
-                    const orderNumber = finalized.order_number || finalized.order?.order_number || "SW-PENDING";
-                    const finalTotal = Number(finalized.total ?? checkout.total);
-
-                    $("orderResult").innerHTML = `
-                        <strong>Order:</strong> #${esc(orderNumber)}<br>
-                        <strong>Amount Paid:</strong> ${formatPrice(finalTotal)}<br>
-                        <strong>Payment ID:</strong> ${esc(verifiedPaymentId)}<br>
-                        <strong>Order Status:</strong> confirmed<br><br>
-                        Thank you for ordering from Swaadya.
-                    `;
-
-                    cart = [];
-                    saveCart();
-
-                    $("checkoutForm")?.reset();
-                    if ($("customerState")) {
-                        $("customerState").value = "Rajasthan";
-                    }
-
-                    closeCheckout();
-
-                    $("successModal")?.classList.add("open");
-                    $("overlay")?.classList.add("active");
-
-                    busyState(false);
-                    resolve({
-                        ...verification,
-                        swaadya_order: finalized,
-                        external_order_id: checkout.externalOrderId
-                    });
-
-                } catch (error) {
-
-                    busyState(false);
-                    console.error("Swaadya payment/order finalization error:", error);
-
-                    showToast(msg(
-                        error,
-                        "Payment could not be completed. Your cart has been kept."
-                    ));
-
-                    reject(error);
-                }
-            }
-        };
-
-        try {
-
-            const razorpayInstance = new window.Razorpay(options);
-
-            razorpayInstance.on("payment.failed", failure => {
-
-                busyState(false);
-
-                console.error("Swaadya Razorpay payment.failed:", failure);
-
-                if (!paymentHandled) {
-                    showToast(
-                        failure?.error?.description ||
-                        "Payment failed. Your cart has been kept."
-                    );
-                }
-            });
-
-            razorpayInstance.open();
-
-        } catch (error) {
-            busyState(false);
-            reject(error);
-        }
-    });
 }
 
 
@@ -7534,18 +7486,13 @@ async function submit(
 
     try {
 
-        await maybeSaveAddress(
-            payloadData
-        );
-
-
         if (
             SWAADYA_BACKEND
                 .paymentMode ===
             "demo"
         ) {
 
-            demo(
+            await demo(
                 payloadData
             );
 
@@ -7556,6 +7503,12 @@ async function submit(
             );
 
         }
+
+        // Save the address only after the order has actually been paid
+        // and finalized. This prevents abandoned checkouts from creating
+        // address records while still preserving the customer's chosen
+        // address when the order succeeds.
+        await maybeSaveAddress(payloadData);
 
 
     } catch (error) {
@@ -10244,10 +10197,6 @@ async function loadSwaadyaProducts() {
    ========================================================= */
 
 initializeSwaadyaCart();
-
-loadSwaadyaStoreSettings().catch(error => {
-    console.warn("Swaadya: shipping settings preload failed:", error);
-});
 
 loadSwaadyaProducts();
 
