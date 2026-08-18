@@ -7023,9 +7023,12 @@ async function finalizeSwaadyaOrder(paymentResponse, paymentMethod, externalOrde
 
     if (result.error) {
         console.error("Swaadya order finalization failed:", result.error);
+        const detail = String(result.error?.message || result.error?.details || "").trim();
         throw new Error(
-            "Payment was verified, but Swaadya could not finalize the order. Please do not pay again; contact support with Payment ID " +
-            paymentResponse.razorpay_payment_id
+            "Payment was verified, but Swaadya could not finalize the order. " +
+            "DO NOT PAY AGAIN. Payment ID: " +
+            paymentResponse.razorpay_payment_id +
+            (detail ? " — " + detail : "")
         );
     }
 
@@ -7038,6 +7041,7 @@ async function finalizeSwaadyaOrder(paymentResponse, paymentMethod, externalOrde
 
     return result.data;
 }
+
 
 
 function busyState(
