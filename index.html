@@ -4743,11 +4743,22 @@ import {
 
 const SWAADYA_BACKEND = {
 
+    /* Swaadya business database */
     supabaseUrl:
         "https://qogtlsrtigcnzkpbhdna.supabase.co",
 
     supabaseAnonKey:
         "sb_publishable_9RnptVmME1ZHWL_Hiy5mOg_QNekZoeU",
+
+    /* Universal Razorpay payment service */
+    paymentApiUrl:
+        "https://fxfseupydvkgujwfsppu.supabase.co",
+
+    paymentApiKey:
+        "sb_publishable_rABRwgXj2GuJQEFNumAAhQ_9_xcD8zF",
+
+    merchantKey:
+        "LOCALHOST_DEMO",
 
     paymentMode:
         "razorpay-test",
@@ -4756,7 +4767,11 @@ const SWAADYA_BACKEND = {
         "create-razorpay-order",
 
     verifyPaymentFunction:
-        "verify-razorpay-payment"
+        "verify-razorpay-payment",
+
+    /* Created later by the checkout-intent bridge. */
+    finalizeFunction:
+        "finalize-checkout"
 
 };
 
@@ -6792,6 +6807,74 @@ function busyState(
    RAZORPAY
    ========================================================= */
 
+async function invokePaymentFunction(functionName, body) {
+
+    const url =
+        `${SWAADYA_BACKEND.paymentApiUrl}/functions/v1/${functionName}`;
+
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "apikey": SWAADYA_BACKEND.paymentApiKey,
+            "Authorization": `Bearer ${SWAADYA_BACKEND.paymentApiKey}`,
+            "x-merchant-key": SWAADYA_BACKEND.merchantKey
+        },
+        body: JSON.stringify(body)
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || data?.success === false) {
+        throw new Error(
+            data?.error ||
+            `Payment service returned HTTP ${response.status}.`
+        );
+    }
+
+    return data;
+}
+
+async function createCheckoutIntent(payloadData) {
+    if (!session?.user?.id) {
+        throw new Error("Please sign in before placing a cloud order.");
+    }
+
+    const externalOrderId =
+        `SW-${Date.now()}-${crypto.randomUUID()}`;
+
+    const subtotal = Number(getSwaadyaCartTotal() || 0);
+    const shipping = Number(getShippingCharge(subtotal) || 0);
+    const expectedAmountPaise = Math.round((subtotal + shipping) * 100);
+
+    if (!Number.isInteger(expectedAmountPaise) || expectedAmountPaise <= 0) {
+        throw new Error("Invalid checkout total.");
+    }
+
+    const { data, error } = await supabase
+        .from("checkout_intents")
+        .insert({
+            external_order_id: externalOrderId,
+            user_id: session?.user?.id || null,
+            customer: {
+                user_id: session?.user?.id || null,
+                full_name: payloadData.customer.full_name,
+                mobile: payloadData.customer.mobile,
+                email: payloadData.customer.email
+            },
+            delivery: payloadData.delivery,
+            items: payloadData.items,
+            expected_amount_paise: expectedAmountPaise,
+            currency: "INR",
+            status: "pending"
+        })
+        .select("id, external_order_id, expected_amount_paise, currency")
+        .single();
+
+    if (error) throw new Error(`Checkout could not be prepared: ${error.message}`);
+    return data;
+}
+
 async function razor(
     payloadData
 ) {
@@ -6849,17 +6932,22 @@ async function razor(
         payloadData
     );
 
+    const checkoutIntent = await createCheckoutIntent(payloadData);
+
+    payloadData.external_order_id = checkoutIntent.external_order_id;
+    payloadData.amount = checkoutIntent.expected_amount_paise;
+    payloadData.currency = checkoutIntent.currency;
+    payloadData.metadata = {
+        ...(payloadData.metadata || {}),
+        swaadya_checkout_intent_id: checkoutIntent.id,
+        source: "swaadya"
+    };
+
     const result =
-        await supabase
-            .functions
-            .invoke(
-                SWAADYA_BACKEND
-                    .createOrderFunction,
-                {
-                    body:
-                        payloadData
-                }
-            );
+        await invokePaymentFunction(
+            SWAADYA_BACKEND.createOrderFunction,
+            payloadData
+        );
 
     /*
        supabase-js can expose a FunctionsHttpError without
@@ -6891,9 +6979,9 @@ async function razor(
 
     if (
         !result.data?.success ||
-        !result.data?.order_id ||
-        !result.data?.amount ||
-        !result.data?.key_id
+        !(result.data?.order_id || result.data?.razorpay?.order_id) ||
+        !(result.data?.amount || result.data?.razorpay?.amount) ||
+        !(result.data?.key_id || result.data?.razorpay?.key_id)
     ) {
 
         console.error(
@@ -6950,13 +7038,13 @@ async function razor(
             const options = {
 
                 key:
-                    result.data.key_id,
+                    result.data.key_id || result.data.razorpay?.key_id,
 
                 amount:
-                    result.data.amount,
+                    result.data.amount || result.data.razorpay?.amount,
 
                 currency:
-                    result.data.currency ||
+                    result.data.currency || result.data.razorpay?.currency ||
                     "INR",
 
                 name:
@@ -6966,7 +7054,7 @@ async function razor(
                     "The Taste of Real Spices",
 
                 order_id:
-                    result.data.order_id,
+                    result.data.order_id || result.data.razorpay?.order_id,
 
                 prefill: {
 
@@ -7038,33 +7126,20 @@ async function razor(
                             );
 
                             const verification =
-                                await supabase
-                                    .functions
-                                    .invoke(
-                                        SWAADYA_BACKEND
-                                            .verifyPaymentFunction,
-                                        {
-                                            body: {
-
-                                                razorpay_order_id:
-                                                    response
-                                                        .razorpay_order_id ||
-                                                    result.data.order_id,
-
-                                                razorpay_payment_id:
-                                                    response
-                                                        .razorpay_payment_id,
-
-                                                razorpay_signature:
-                                                    response
-                                                        .razorpay_signature,
-
-                                                checkout:
-                                                    payloadData
-
-                                            }
-                                        }
-                                    );
+                                await invokePaymentFunction(
+                                    SWAADYA_BACKEND.verifyPaymentFunction,
+                                    {
+                                        razorpay_order_id:
+                                            response.razorpay_order_id ||
+                                            result.data.order_id ||
+                                            result.data.razorpay?.order_id,
+                                        razorpay_payment_id:
+                                            response.razorpay_payment_id,
+                                        razorpay_signature:
+                                            response.razorpay_signature,
+                                        checkout: payloadData
+                                    }
+                                );
 
                             if (
                                 verification.error
@@ -7123,8 +7198,9 @@ async function razor(
 
                                     #
                                     ${esc(
-                                        verifiedOrder
-                                            .order_number ||
+                                        verifiedOrder.order_number ||
+                                        verifiedOrder.external_order_id ||
+                                        payloadData.external_order_id ||
                                         "SW-PENDING"
                                     )}
 
@@ -16832,6 +16908,15 @@ body.swaadya-policy-lock {
 
 })();
 
+
+/* =========================================================
+   SWAADYA CLOUD CHECKOUT BRIDGE
+   ---------------------------------------------------------
+   The browser owns only the checkout intent. Razorpay secrets
+   remain in the universal payment service. Final order creation
+   and stock mutation must be performed server-side by the
+   finalize-checkout Edge Function before production launch.
+   ========================================================= */
 </script>
 
 
